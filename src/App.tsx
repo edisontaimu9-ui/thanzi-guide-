@@ -5,6 +5,8 @@ import { Home } from '@/routes/Home';
 import { Login } from '@/routes/Login';
 import { Signup } from '@/routes/Signup';
 import { Dashboard } from '@/routes/Dashboard';
+import { Foods } from '@/routes/Foods';
+import { FoodDetail } from '@/routes/FoodDetail';
 import { NotFound } from '@/routes/NotFound';
 
 export default function App() {
@@ -15,6 +17,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/foods" element={<Foods />} />
+          <Route path="/foods/:id" element={<FoodDetail />} />
           <Route
             path="/dashboard"
             element={

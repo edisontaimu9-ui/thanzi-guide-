@@ -8,6 +8,9 @@ export function Home() {
       <p className="mt-8 text-sm text-brand-300">
         Foundation scaffold — homepage design comes in a later step.
       </p>
+      <a href="/foods" className="mt-6 inline-block text-brand-500 underline">
+        Browse Malawian foods →
+      </a>
     </main>
   );
 }
