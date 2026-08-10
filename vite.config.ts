@@ -29,6 +29,8 @@ export default defineConfig(({ mode }) => ({
         // resolves correctly whether that's the root or /thanzi-guide-/.
         start_url: '.',
         scope: '.',
+        orientation: 'portrait-primary',
+        categories: ['health', 'education', 'lifestyle'],
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
@@ -36,7 +38,12 @@ export default defineConfig(({ mode }) => ({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}']
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        // Serve the cached app shell for any navigation that isn't already
+        // precached (e.g. deep links like /foods/123) so the app still
+        // loads offline — react-router then takes over client-side.
+        navigateFallback: 'index.html',
+        navigateFallbackDenylist: [/^\/registerSW\.js$/, /^\/manifest\.webmanifest$/]
       }
     })
   ],
