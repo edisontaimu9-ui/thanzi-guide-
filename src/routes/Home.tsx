@@ -243,14 +243,14 @@ function ToolsPreview() {
       <div className="mx-auto max-w-5xl px-6 py-16 text-sand-50">
         <h2 className="font-display text-2xl">Tools, built for local use</h2>
         <p className="mt-2 max-w-xl text-brand-100">
-          A BMI calculator and a basic energy estimator are in progress —
-          both will clearly explain that they give estimates, not diagnoses.
+          A BMI calculator and a daily energy estimator — quick, clear
+          estimates, not diagnoses.
         </p>
         <Link
           to="/tools"
           className="mt-6 inline-block rounded-md border border-sand-50 px-4 py-2 text-sm font-medium hover:bg-sand-50 hover:text-brand-700"
         >
-          See what's planned
+          Try the tools
         </Link>
       </div>
     </section>
