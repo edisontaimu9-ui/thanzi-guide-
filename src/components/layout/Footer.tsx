@@ -9,16 +9,7 @@ export function Footer() {
           clinician for medical concerns.
         </p>
         <p className="mt-6 text-xs text-brand-300">
-          © {new Date().getFullYear()} Thanzi Guide. Food data from the{' '}
-          <a
-            href="https://chakudya-api.edisontaimu9.workers.dev"
-            className="underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Chakudya Nutrition Registry
-          </a>
-          .
+          © {new Date().getFullYear()} Thanzi Guide.
         </p>
       </div>
     </footer>
