@@ -1,4 +1,5 @@
 {
+  "projectId": "6a7967cf000f28e73c22",
   "projectName": "Thanzi Guide",
   "databases": [
     {
@@ -18,7 +19,7 @@
       "attributes": [
         { "key": "userId", "type": "string", "size": 36, "required": true },
         { "key": "name", "type": "string", "size": 128, "required": true },
-        { "key": "role", "type": "string", "size": 32, "required": true, "default": "USER" },
+        { "key": "role", "type": "string", "size": 32, "required": false, "default": "USER" },
         { "key": "avatarUrl", "type": "string", "size": 500, "required": false },
         { "key": "bio", "type": "string", "size": 1000, "required": false },
         { "key": "preferences", "type": "string", "size": 5000, "required": false }
@@ -68,7 +69,7 @@
         { "key": "preparationMethods", "type": "string", "size": 300, "required": false, "array": true },
         { "key": "notes", "type": "string", "size": 2000, "required": false },
         { "key": "sources", "type": "string", "size": 500, "required": false, "array": true },
-        { "key": "status", "type": "string", "size": 16, "required": true, "default": "draft" }
+        { "key": "status", "type": "string", "size": 16, "required": false, "default": "draft" }
       ],
       "indexes": [
         { "key": "name_fulltext", "type": "fulltext", "attributes": ["name"] },
@@ -92,7 +93,7 @@
         { "key": "tags", "type": "string", "size": 100, "required": false, "array": true },
         { "key": "featuredImage", "type": "string", "size": 500, "required": false },
         { "key": "authorId", "type": "string", "size": 36, "required": false },
-        { "key": "status", "type": "string", "size": 16, "required": true, "default": "draft" },
+        { "key": "status", "type": "string", "size": 16, "required": false, "default": "draft" },
         { "key": "publishedAt", "type": "datetime", "required": false },
         { "key": "updatedAt", "type": "datetime", "required": false },
         { "key": "sources", "type": "string", "size": 500, "required": false, "array": true }
@@ -106,7 +107,7 @@
     },
     {
       "$id": "courses",
-      "$permissions": ["read(\"any\")", "create(\"label:nutrition_expert\")", "update(\"label:nutrition_expert\")", "delete(\"label:admin\")"],
+      "$permissions": ["read(\"any\")", "create(\"label:nutritionExpert\")", "update(\"label:nutritionExpert\")", "delete(\"label:admin\")"],
       "databaseId": "thanzi_guide",
       "name": "Courses",
       "enabled": true,
@@ -116,7 +117,7 @@
         { "key": "slug", "type": "string", "size": 200, "required": true },
         { "key": "description", "type": "string", "size": 2000, "required": false },
         { "key": "coverImage", "type": "string", "size": 500, "required": false },
-        { "key": "status", "type": "string", "size": 16, "required": true, "default": "draft" },
+        { "key": "status", "type": "string", "size": 16, "required": false, "default": "draft" },
         { "key": "order", "type": "integer", "required": false, "default": 0 }
       ],
       "indexes": [
@@ -125,7 +126,7 @@
     },
     {
       "$id": "lessons",
-      "$permissions": ["read(\"any\")", "create(\"label:nutrition_expert\")", "update(\"label:nutrition_expert\")", "delete(\"label:admin\")"],
+      "$permissions": ["read(\"any\")", "create(\"label:nutritionExpert\")", "update(\"label:nutritionExpert\")", "delete(\"label:admin\")"],
       "databaseId": "thanzi_guide",
       "name": "Lessons",
       "enabled": true,
@@ -136,7 +137,7 @@
         { "key": "slug", "type": "string", "size": 200, "required": true },
         { "key": "content", "type": "string", "size": 50000, "required": true },
         { "key": "order", "type": "integer", "required": false, "default": 0 },
-        { "key": "status", "type": "string", "size": 16, "required": true, "default": "draft" }
+        { "key": "status", "type": "string", "size": 16, "required": false, "default": "draft" }
       ],
       "indexes": [
         { "key": "course_idx", "type": "key", "attributes": ["courseId"] },
@@ -145,7 +146,7 @@
     },
     {
       "$id": "quizzes",
-      "$permissions": ["read(\"any\")", "create(\"label:nutrition_expert\")", "update(\"label:nutrition_expert\")", "delete(\"label:admin\")"],
+      "$permissions": ["read(\"any\")", "create(\"label:nutritionExpert\")", "update(\"label:nutritionExpert\")", "delete(\"label:admin\")"],
       "databaseId": "thanzi_guide",
       "name": "Quizzes",
       "enabled": true,
@@ -160,7 +161,7 @@
     },
     {
       "$id": "questions",
-      "$permissions": ["read(\"any\")", "create(\"label:nutrition_expert\")", "update(\"label:nutrition_expert\")", "delete(\"label:admin\")"],
+      "$permissions": ["read(\"any\")", "create(\"label:nutritionExpert\")", "update(\"label:nutritionExpert\")", "delete(\"label:admin\")"],
       "databaseId": "thanzi_guide",
       "name": "Questions",
       "enabled": true,
@@ -176,7 +177,7 @@
     },
     {
       "$id": "answers",
-      "$permissions": ["read(\"any\")", "create(\"label:nutrition_expert\")", "update(\"label:nutrition_expert\")", "delete(\"label:admin\")"],
+      "$permissions": ["read(\"any\")", "create(\"label:nutritionExpert\")", "update(\"label:nutritionExpert\")", "delete(\"label:admin\")"],
       "databaseId": "thanzi_guide",
       "name": "Answers",
       "enabled": true,
@@ -184,7 +185,7 @@
       "attributes": [
         { "key": "questionId", "type": "string", "size": 36, "required": true },
         { "key": "text", "type": "string", "size": 500, "required": true },
-        { "key": "isCorrect", "type": "boolean", "required": true, "default": false },
+        { "key": "isCorrect", "type": "boolean", "required": false, "default": false },
         { "key": "order", "type": "integer", "required": false, "default": 0 }
       ],
       "indexes": [
@@ -202,7 +203,7 @@
         { "key": "userId", "type": "string", "size": 36, "required": true },
         { "key": "courseId", "type": "string", "size": 36, "required": false },
         { "key": "lessonId", "type": "string", "size": 36, "required": false },
-        { "key": "completed", "type": "boolean", "required": true, "default": false },
+        { "key": "completed", "type": "boolean", "required": false, "default": false },
         { "key": "completedAt", "type": "datetime", "required": false }
       ],
       "indexes": [

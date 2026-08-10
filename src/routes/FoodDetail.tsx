@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getFood, ChakudyaFood } from '@/lib/chakudya';
+import { useAuth } from '@/lib/auth-context';
+import { useFavorites } from '@/hooks/useFavorites';
 
 export function FoodDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { isFavorite, toggleFavorite, loaded: favoritesLoaded } = useFavorites();
   const [food, setFood] = useState<ChakudyaFood | null>(null);
   const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
+  const [favoritePending, setFavoritePending] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -21,6 +27,20 @@ export function FoodDetail() {
         setStatus('error');
       });
   }, [id]);
+
+  async function handleFavoriteClick() {
+    if (!food) return;
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    setFavoritePending(true);
+    try {
+      await toggleFavorite(food.id);
+    } finally {
+      setFavoritePending(false);
+    }
+  }
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
@@ -44,10 +64,27 @@ export function FoodDetail() {
 
       {status === 'idle' && food && (
         <>
-          <h1 className="mt-6 font-display text-3xl text-brand-700">{food.food_name}</h1>
-          <p className="mt-1 text-brand-500">
-            {food.category} · {food.measure}
-          </p>
+          <div className="mt-6 flex items-start justify-between gap-4">
+            <div>
+              <h1 className="font-display text-3xl text-brand-700">{food.food_name}</h1>
+              <p className="mt-1 text-brand-500">
+                {food.category} · {food.measure}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleFavoriteClick}
+              disabled={favoritePending || !favoritesLoaded}
+              aria-pressed={isFavorite(food.id)}
+              className={`shrink-0 rounded-md border px-3 py-2 text-sm font-medium transition disabled:opacity-60 ${
+                isFavorite(food.id)
+                  ? 'border-clay-500 bg-clay-400/10 text-clay-500'
+                  : 'border-brand-100 text-brand-500 hover:border-brand-500'
+              }`}
+            >
+              {isFavorite(food.id) ? '★ Favorited' : '☆ Favorite'}
+            </button>
+          </div>
 
           <dl className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
             <NutrientStat label="Calories" value={`${food.kcal} kcal`} />
