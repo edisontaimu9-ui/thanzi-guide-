@@ -9,9 +9,13 @@ const navLinks = [
   { to: '/tools', label: 'Tools' }
 ];
 
+const ADMIN_ROLES = ['EDITOR', 'NUTRITION_EXPERT', 'ADMIN'];
+
 export function Header() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const canReview = !!profile && ADMIN_ROLES.includes(profile.role);
+  const links = canReview ? [...navLinks, { to: '/admin', label: 'Review' }] : navLinks;
 
   return (
     <header className="sticky top-0 z-40 border-b border-brand-100 bg-sand-50/95 backdrop-blur">
@@ -21,7 +25,7 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-6 sm:flex" aria-label="Primary">
-          {navLinks.map((link) => (
+          {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -66,7 +70,7 @@ export function Header() {
       {menuOpen && (
         <nav id="mobile-nav" className="border-t border-brand-100 px-6 py-4 sm:hidden" aria-label="Primary">
           <ul className="space-y-3">
-            {navLinks.map((link) => (
+            {links.map((link) => (
               <li key={link.to}>
                 <NavLink
                   to={link.to}

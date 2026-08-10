@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/lib/auth-context';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
+import { AdminRoute } from '@/components/layout/AdminRoute';
 import { Layout } from '@/components/layout/Layout';
 import { Home } from '@/routes/Home';
 import { Login } from '@/routes/Login';
@@ -17,6 +18,7 @@ import { Search } from '@/routes/Search';
 import { Tools } from '@/routes/Tools';
 import { BmiCalculator } from '@/routes/BmiCalculator';
 import { EnergyEstimator } from '@/routes/EnergyEstimator';
+import { Admin } from '@/routes/Admin';
 import { NotFound } from '@/routes/NotFound';
 
 export default function App() {
@@ -45,6 +47,14 @@ export default function App() {
                 <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <Admin />
+                </AdminRoute>
               }
             />
             <Route path="*" element={<NotFound />} />
