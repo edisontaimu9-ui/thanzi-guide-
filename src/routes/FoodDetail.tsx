@@ -69,7 +69,7 @@ function NutrientStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-brand-100 p-4 text-center">
       <dt className="text-xs uppercase tracking-wide text-brand-300">{label}</dt>
-      <dd className="mt-1 font-display text-xl text-brand-700">{value}</dd>
+      <dd className="mt-1 font-mono text-xl font-semibold text-brand-700">{value}</dd>
     </div>
   );
 }

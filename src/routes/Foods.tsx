@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
 
 export function Foods() {
-  const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('search') ?? '');
   const [foods, setFoods] = useState<ChakudyaFood[]>([]);
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
@@ -24,11 +25,14 @@ export function Foods() {
   }, []);
 
   useEffect(() => {
-    runSearch('');
-  }, [runSearch]);
+    runSearch(searchParams.get('search') ?? '');
+    // Only re-run when the URL's search param changes (e.g. arriving from the homepage).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.get('search')]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setSearchParams(query ? { search: query } : {});
     runSearch(query);
   }
 
@@ -94,19 +98,19 @@ export function Foods() {
                   <p className="text-sm text-brand-300">{food.category} · {food.measure}</p>
                   <dl className="mt-3 grid grid-cols-4 gap-2 text-center text-xs text-brand-500">
                     <div>
-                      <dt className="font-semibold text-brand-700">{food.kcal}</dt>
+                      <dt className="font-mono font-semibold text-brand-700">{food.kcal}</dt>
                       <dd>kcal</dd>
                     </div>
                     <div>
-                      <dt className="font-semibold text-brand-700">{food.protein_g}g</dt>
+                      <dt className="font-mono font-semibold text-brand-700">{food.protein_g}g</dt>
                       <dd>protein</dd>
                     </div>
                     <div>
-                      <dt className="font-semibold text-brand-700">{food.carbs_g}g</dt>
+                      <dt className="font-mono font-semibold text-brand-700">{food.carbs_g}g</dt>
                       <dd>carbs</dd>
                     </div>
                     <div>
-                      <dt className="font-semibold text-brand-700">{food.fat_g}g</dt>
+                      <dt className="font-mono font-semibold text-brand-700">{food.fat_g}g</dt>
                       <dd>fat</dd>
                     </div>
                   </dl>

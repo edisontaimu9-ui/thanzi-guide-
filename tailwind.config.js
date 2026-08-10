@@ -5,27 +5,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Placeholder palette — will be finalized in the homepage/design-system step
+        // Lake Malawi teal (primary) + harvest gold (accent) + parchment
+        // (background) — a local-inspired palette, deliberately not the
+        // cream+terracotta combination that's become an AI-generated default.
         brand: {
-          50: '#EAF4F0',
-          100: '#CFE6DB',
-          300: '#7CB8A0',
-          500: '#0F5E4C',
-          700: '#0A4438',
-          900: '#062A22'
+          50: '#EAF3F1',
+          100: '#CFE6E1',
+          300: '#6EAFA5',
+          500: '#0F6B63',
+          700: '#0B4E48',
+          900: '#072F2B'
         },
         clay: {
-          400: '#D98A5F',
-          500: '#C46F42'
+          400: '#D9A441',
+          500: '#B8811F'
         },
         sand: {
-          50: '#FBF8F2',
-          100: '#F3EEE2'
+          50: '#F2F1E6',
+          100: '#E7E4D2'
         }
       },
       fontFamily: {
         sans: ['"Inter"', 'system-ui', 'sans-serif'],
-        display: ['"Fraunces"', 'serif']
+        display: ['"Domine"', 'serif'],
+        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace']
       }
     }
   },
