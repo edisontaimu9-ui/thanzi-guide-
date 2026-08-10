@@ -10,11 +10,11 @@ import {
   listUserProgress,
   CourseDoc,
   LessonDoc,
-  QuizDoc,
   QuestionDoc,
   AnswerDoc
 } from '@/lib/courses';
 import { useAuth } from '@/lib/auth-context';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 interface QuestionWithAnswers extends QuestionDoc {
   answers: AnswerDoc[];
@@ -26,13 +26,13 @@ export function Lesson() {
 
   const [course, setCourse] = useState<CourseDoc | null>(null);
   const [lesson, setLesson] = useState<LessonDoc | null>(null);
-  const [quiz, setQuiz] = useState<QuizDoc | null>(null);
   const [questions, setQuestions] = useState<QuestionWithAnswers[]>([]);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const [quizChecked, setQuizChecked] = useState(false);
   const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
   const [alreadyComplete, setAlreadyComplete] = useState(false);
   const [marking, setMarking] = useState(false);
+  useDocumentTitle(lesson?.title);
 
   useEffect(() => {
     if (!courseSlug || !lessonSlug) return;
@@ -62,7 +62,6 @@ export function Lesson() {
       }
 
       const quizResult = await getQuizForLesson(lessonResult.$id);
-      setQuiz(quizResult);
       if (quizResult) {
         const questionResults = await listQuestions(quizResult.$id);
         const withAnswers = await Promise.all(

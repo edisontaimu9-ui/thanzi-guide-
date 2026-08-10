@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getArticleBySlug, ArticleDoc } from '@/lib/articles';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [article, setArticle] = useState<ArticleDoc | null | undefined>(undefined);
   const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
+  useDocumentTitle(article?.title);
 
   useEffect(() => {
     if (!slug) return;

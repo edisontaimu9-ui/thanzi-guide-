@@ -1,8 +1,10 @@
 import { useEffect, useState, useCallback, FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function Foods() {
+  useDocumentTitle('Foods');
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('search') ?? '');
   const [foods, setFoods] = useState<ChakudyaFood[]>([]);

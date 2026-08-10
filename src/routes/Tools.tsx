@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const tools = [
   {
@@ -14,6 +15,7 @@ const tools = [
 ];
 
 export function Tools() {
+  useDocumentTitle('Health Tools');
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="font-display text-3xl text-brand-700">Health Tools</h1>

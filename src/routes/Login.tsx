@@ -1,8 +1,10 @@
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function Login() {
+  useDocumentTitle('Log in');
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');

@@ -1,8 +1,10 @@
 import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { calculateBmi, BmiResult } from '@/lib/health';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function BmiCalculator() {
+  useDocumentTitle('BMI Calculator');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [result, setResult] = useState<BmiResult | null>(null);

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { listCourses, CourseDoc } from '@/lib/courses';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function Courses() {
+  useDocumentTitle('Courses');
   const [courses, setCourses] = useState<CourseDoc[]>([]);
   const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
 

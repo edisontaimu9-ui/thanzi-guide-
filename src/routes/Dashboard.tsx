@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
 import { useFavorites } from '@/hooks/useFavorites';
 import { getFood, ChakudyaFood } from '@/lib/chakudya';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function Dashboard() {
+  useDocumentTitle('Dashboard');
   const { user, logout } = useAuth();
   const { favorites, loaded } = useFavorites();
   const [foods, setFoods] = useState<ChakudyaFood[]>([]);

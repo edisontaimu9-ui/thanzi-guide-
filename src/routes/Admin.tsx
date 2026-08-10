@@ -15,10 +15,12 @@ import {
   deleteCourse,
   FoodAdminDoc
 } from '@/lib/admin';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 type Status = 'loading' | 'idle' | 'error';
 
 export function Admin() {
+  useDocumentTitle('Content Review');
   const { profile } = useAuth();
   const canDelete = profile?.role === 'ADMIN';
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getCourseBySlug, listLessons, listUserProgress, CourseDoc, LessonDoc, ProgressDoc } from '@/lib/courses';
 import { useAuth } from '@/lib/auth-context';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function CourseDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -10,6 +11,7 @@ export function CourseDetail() {
   const [lessons, setLessons] = useState<LessonDoc[]>([]);
   const [progress, setProgress] = useState<ProgressDoc[]>([]);
   const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
+  useDocumentTitle(course?.title);
 
   useEffect(() => {
     if (!slug) return;

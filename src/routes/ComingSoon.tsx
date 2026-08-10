@@ -1,4 +1,7 @@
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+
 export function ComingSoon({ title, description }: { title: string; description: string }) {
+  useDocumentTitle(title);
   return (
     <main className="mx-auto max-w-2xl px-6 py-24 text-center">
       <p className="text-sm font-medium uppercase tracking-wide text-clay-500">Coming soon</p>

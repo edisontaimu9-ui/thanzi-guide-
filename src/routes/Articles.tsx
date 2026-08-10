@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { listArticleCategories, listArticles, CategoryDoc, ArticleDoc } from '@/lib/articles';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function Articles() {
+  useDocumentTitle('Learn');
   const [searchParams, setSearchParams] = useSearchParams();
   const categorySlug = searchParams.get('category');
 

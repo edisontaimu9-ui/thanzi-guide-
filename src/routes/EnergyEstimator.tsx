@@ -1,8 +1,10 @@
 import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { calculateEnergy, EnergyResult, Sex, ActivityLevel, ACTIVITY_LEVELS } from '@/lib/health';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function EnergyEstimator() {
+  useDocumentTitle('Energy Estimator');
   const [sex, setSex] = useState<Sex>('female');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');

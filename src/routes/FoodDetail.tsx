@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getFood, ChakudyaFood } from '@/lib/chakudya';
 import { useAuth } from '@/lib/auth-context';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function FoodDetail() {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +14,7 @@ export function FoodDetail() {
   const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
   const [favoritePending, setFavoritePending] = useState(false);
+  useDocumentTitle(food?.food_name);
 
   useEffect(() => {
     if (!id) return;

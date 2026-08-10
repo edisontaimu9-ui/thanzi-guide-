@@ -2,8 +2,10 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
 import { listArticles, ArticleDoc } from '@/lib/articles';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export function Search() {
+  useDocumentTitle('Search');
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') ?? '';
   const [query, setQuery] = useState(initialQuery);
