@@ -43,13 +43,13 @@ function Hero() {
           and use simple tools built for local life — not imported medical
           templates.
         </p>
-        <form action="/foods" className="mt-8 flex max-w-md gap-2">
+        <form action="/search" className="mt-8 flex max-w-md gap-2">
           <label htmlFor="hero-search" className="sr-only">
             Search foods
           </label>
           <input
             id="hero-search"
-            name="search"
+            name="q"
             type="search"
             placeholder="Search a food, e.g. groundnuts"
             className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500"

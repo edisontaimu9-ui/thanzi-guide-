@@ -10,6 +10,7 @@ import { Foods } from '@/routes/Foods';
 import { FoodDetail } from '@/routes/FoodDetail';
 import { Articles } from '@/routes/Articles';
 import { ArticleDetail } from '@/routes/ArticleDetail';
+import { Search } from '@/routes/Search';
 import { ComingSoon } from '@/routes/ComingSoon';
 import { NotFound } from '@/routes/NotFound';
 
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/foods/:id" element={<FoodDetail />} />
             <Route path="/learn" element={<Articles />} />
             <Route path="/learn/:slug" element={<ArticleDetail />} />
+            <Route path="/search" element={<Search />} />
             <Route
               path="/tools"
               element={

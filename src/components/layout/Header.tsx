@@ -31,6 +31,9 @@ export function Header() {
               {link.label}
             </NavLink>
           ))}
+          <Link to="/search" aria-label="Search" className="text-brand-500 hover:text-brand-700">
+            <SearchIcon />
+          </Link>
           {!loading && (
             <Link
               to={user ? '/dashboard' : '/login'}
@@ -41,18 +44,22 @@ export function Header() {
           )}
         </nav>
 
-        <button
-          type="button"
-          className="sm:hidden"
-          aria-expanded={menuOpen}
-          aria-controls="mobile-nav"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <span className="block h-0.5 w-6 bg-brand-700" />
-          <span className="mt-1.5 block h-0.5 w-6 bg-brand-700" />
-          <span className="mt-1.5 block h-0.5 w-6 bg-brand-700" />
-        </button>
+        <div className="flex items-center gap-4 sm:hidden">
+          <Link to="/search" aria-label="Search" className="text-brand-700">
+            <SearchIcon />
+          </Link>
+          <button
+            type="button"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-nav"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span className="block h-0.5 w-6 bg-brand-700" />
+            <span className="mt-1.5 block h-0.5 w-6 bg-brand-700" />
+            <span className="mt-1.5 block h-0.5 w-6 bg-brand-700" />
+          </button>
+        </div>
       </div>
 
       {menuOpen && (
@@ -84,5 +91,14 @@ export function Header() {
         </nav>
       )}
     </header>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+      <path d="M20 20L16.65 16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
   );
 }
