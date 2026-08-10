@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
 
 const topics = [
-  'Nutrition basics',
-  'Maternal nutrition',
-  'Child nutrition',
-  'Malnutrition',
-  'Food safety',
-  'Physical activity',
-  'Water, sanitation & hygiene',
-  'Preventive health'
+  { label: 'Nutrition basics', slug: 'nutrition-basics' },
+  { label: 'Maternal nutrition', slug: 'maternal-nutrition' },
+  { label: 'Child nutrition', slug: 'child-nutrition' },
+  { label: 'Malnutrition', slug: 'malnutrition' },
+  { label: 'Food safety', slug: 'food-safety' },
+  { label: 'Physical activity', slug: 'physical-activity' },
+  { label: 'Water, sanitation & hygiene', slug: 'wash' },
+  { label: 'Preventive health', slug: 'preventive-health' }
 ];
 
 export function Home() {
@@ -168,16 +168,18 @@ function TopicsPreview() {
       <div className="mx-auto max-w-5xl px-6 py-12">
         <h2 className="font-display text-2xl text-brand-700">What you'll find here</h2>
         <p className="mt-2 max-w-xl text-brand-500">
-          Thanzi Guide's article library is still being built and reviewed by
-          nutrition professionals. Here's what it will cover:
+          Nutrition and health topics for Malawi. Coverage is growing — some
+          topics have articles now, others are still being written.
         </p>
-        <ul className="mt-6 flex flex-wrap gap-2" aria-label="Planned topics">
+        <ul className="mt-6 flex flex-wrap gap-2" aria-label="Topics">
           {topics.map((topic) => (
-            <li
-              key={topic}
-              className="rounded-full border border-brand-100 bg-white px-4 py-1.5 text-sm text-brand-700"
-            >
-              {topic}
+            <li key={topic.slug}>
+              <Link
+                to={`/learn?category=${topic.slug}`}
+                className="inline-block rounded-full border border-brand-100 bg-white px-4 py-1.5 text-sm text-brand-700 hover:border-brand-500"
+              >
+                {topic.label}
+              </Link>
             </li>
           ))}
         </ul>

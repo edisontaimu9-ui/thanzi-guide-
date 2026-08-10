@@ -8,6 +8,8 @@ import { Signup } from '@/routes/Signup';
 import { Dashboard } from '@/routes/Dashboard';
 import { Foods } from '@/routes/Foods';
 import { FoodDetail } from '@/routes/FoodDetail';
+import { Articles } from '@/routes/Articles';
+import { ArticleDetail } from '@/routes/ArticleDetail';
 import { ComingSoon } from '@/routes/ComingSoon';
 import { NotFound } from '@/routes/NotFound';
 
@@ -22,15 +24,8 @@ export default function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/foods" element={<Foods />} />
             <Route path="/foods/:id" element={<FoodDetail />} />
-            <Route
-              path="/learn"
-              element={
-                <ComingSoon
-                  title="Learn"
-                  description="Courses and articles on nutrition and health, reviewed by qualified professionals, are being built next."
-                />
-              }
-            />
+            <Route path="/learn" element={<Articles />} />
+            <Route path="/learn/:slug" element={<ArticleDetail />} />
             <Route
               path="/tools"
               element={
