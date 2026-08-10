@@ -14,7 +14,9 @@ import { Courses } from '@/routes/Courses';
 import { CourseDetail } from '@/routes/CourseDetail';
 import { Lesson } from '@/routes/Lesson';
 import { Search } from '@/routes/Search';
-import { ComingSoon } from '@/routes/ComingSoon';
+import { Tools } from '@/routes/Tools';
+import { BmiCalculator } from '@/routes/BmiCalculator';
+import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { NotFound } from '@/routes/NotFound';
 
 export default function App() {
@@ -34,15 +36,9 @@ export default function App() {
             <Route path="/courses/:slug" element={<CourseDetail />} />
             <Route path="/courses/:courseSlug/:lessonSlug" element={<Lesson />} />
             <Route path="/search" element={<Search />} />
-            <Route
-              path="/tools"
-              element={
-                <ComingSoon
-                  title="Tools"
-                  description="A BMI calculator and energy estimator are on the way — both will clearly explain that they give estimates, not diagnoses."
-                />
-              }
-            />
+            <Route path="/tools" element={<Tools />} />
+            <Route path="/tools/bmi" element={<BmiCalculator />} />
+            <Route path="/tools/energy" element={<EnergyEstimator />} />
             <Route
               path="/dashboard"
               element={
