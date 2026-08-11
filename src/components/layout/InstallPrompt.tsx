@@ -72,7 +72,7 @@ export function InstallPrompt() {
     <div
       role="dialog"
       aria-label="Install Thanzi Guide"
-      className="fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-md items-center justify-between gap-4 rounded-lg border border-brand-100 bg-white p-4 shadow-lg"
+      className="fixed inset-x-4 bottom-20 z-50 mx-auto flex max-w-md items-center justify-between gap-4 rounded-lg border border-brand-100 bg-white p-4 shadow-lg sm:bottom-4"
     >
       <div className="text-sm text-brand-700">
         <p className="font-medium">Install Thanzi Guide</p>

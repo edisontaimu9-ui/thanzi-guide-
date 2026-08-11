@@ -16,6 +16,7 @@ import { CourseDetail } from '@/routes/CourseDetail';
 import { Lesson } from '@/routes/Lesson';
 import { Search } from '@/routes/Search';
 import { Tools } from '@/routes/Tools';
+import { ComingSoon } from '@/routes/ComingSoon';
 import { BmiCalculator } from '@/routes/BmiCalculator';
 import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { Admin } from '@/routes/Admin';
@@ -38,6 +39,15 @@ export default function App() {
             <Route path="/courses/:slug" element={<CourseDetail />} />
             <Route path="/courses/:courseSlug/:lessonSlug" element={<Lesson />} />
             <Route path="/search" element={<Search />} />
+            <Route
+              path="/ask"
+              element={
+                <ComingSoon
+                  title="Ask"
+                  description="A place to ask health and nutrition questions and get answers grounded in Thanzi Guide's own content is on the way — once the food and article database has enough real content to ground it in."
+                />
+              }
+            />
             <Route path="/tools" element={<Tools />} />
             <Route path="/tools/bmi" element={<BmiCalculator />} />
             <Route path="/tools/energy" element={<EnergyEstimator />} />
