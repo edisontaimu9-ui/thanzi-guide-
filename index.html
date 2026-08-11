@@ -13,6 +13,18 @@
     <meta name="apple-mobile-web-app-title" content="Thanzi Guide" />
     <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />
 
+    <!-- Runs before React mounts so the correct theme applies on first paint —
+         otherwise the page would flash light before switching to dark. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('thanzi-theme');
+          var isDark = stored === 'dark' || (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', isDark);
+        } catch (e) {}
+      })();
+    </script>
+
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Thanzi Guide" />
     <meta property="og:title" content="Thanzi Guide — Health & Nutrition Education for Malawi" />

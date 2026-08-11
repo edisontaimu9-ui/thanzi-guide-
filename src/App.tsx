@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/lib/auth-context';
+import { ThemeProvider } from '@/lib/theme';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
 import { AdminRoute } from '@/components/layout/AdminRoute';
 import { Layout } from '@/components/layout/Layout';
@@ -17,6 +18,7 @@ import { Lesson } from '@/routes/Lesson';
 import { Search } from '@/routes/Search';
 import { Tools } from '@/routes/Tools';
 import { ComingSoon } from '@/routes/ComingSoon';
+import { Support } from '@/routes/Support';
 import { BmiCalculator } from '@/routes/BmiCalculator';
 import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { Admin } from '@/routes/Admin';
@@ -24,53 +26,56 @@ import { NotFound } from '@/routes/NotFound';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/foods" element={<Foods />} />
-            <Route path="/foods/:id" element={<FoodDetail />} />
-            <Route path="/learn" element={<Articles />} />
-            <Route path="/learn/:slug" element={<ArticleDetail />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/courses/:slug" element={<CourseDetail />} />
-            <Route path="/courses/:courseSlug/:lessonSlug" element={<Lesson />} />
-            <Route path="/search" element={<Search />} />
-            <Route
-              path="/ask"
-              element={
-                <ComingSoon
-                  title="Ask"
-                  description="A place to ask health and nutrition questions and get answers grounded in Thanzi Guide's own content is on the way — once the food and article database has enough real content to ground it in."
-                />
-              }
-            />
-            <Route path="/tools" element={<Tools />} />
-            <Route path="/tools/bmi" element={<BmiCalculator />} />
-            <Route path="/tools/energy" element={<EnergyEstimator />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute>
-                  <Admin />
-                </AdminRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/foods" element={<Foods />} />
+              <Route path="/foods/:id" element={<FoodDetail />} />
+              <Route path="/learn" element={<Articles />} />
+              <Route path="/learn/:slug" element={<ArticleDetail />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/courses/:slug" element={<CourseDetail />} />
+              <Route path="/courses/:courseSlug/:lessonSlug" element={<Lesson />} />
+              <Route path="/search" element={<Search />} />
+              <Route
+                path="/ask"
+                element={
+                  <ComingSoon
+                    title="Ask"
+                    description="A place to ask health and nutrition questions and get answers grounded in Thanzi Guide's own content is on the way — once the food and article database has enough real content to ground it in."
+                  />
+                }
+              />
+              <Route path="/tools" element={<Tools />} />
+              <Route path="/tools/bmi" element={<BmiCalculator />} />
+              <Route path="/tools/energy" element={<EnergyEstimator />} />
+              <Route path="/support" element={<Support />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <Admin />
+                  </AdminRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

@@ -31,14 +31,14 @@ function Hero() {
         <p className="text-sm font-medium uppercase tracking-wide text-clay-500">
           Health &amp; nutrition, explained for Malawi
         </p>
-        <h1 className="mt-3 font-display text-4xl leading-tight text-brand-700 sm:text-5xl">
+        <h1 className="mt-3 font-display text-4xl leading-tight text-brand-700 dark:text-sand-50 sm:text-5xl">
           Learn about your health.
           <br />
           Understand your food.
           <br />
           Make better choices.
         </h1>
-        <p className="mt-5 max-w-md text-brand-500">
+        <p className="mt-5 max-w-md text-brand-500 dark:text-brand-100">
           Search real Malawian foods, read nutrition guidance you can trust,
           and use simple tools built for local life — not imported medical
           templates.
@@ -52,7 +52,7 @@ function Hero() {
             name="q"
             type="search"
             placeholder="Search a food, e.g. groundnuts"
-            className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500"
+            className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
           />
           <button
             type="submit"
@@ -62,11 +62,11 @@ function Hero() {
           </button>
         </form>
         <div className="mt-4 flex flex-wrap gap-3 text-sm">
-          <Link to="/signup" className="font-medium text-brand-700 underline">
+          <Link to="/signup" className="font-medium text-brand-700 underline dark:text-sand-50">
             Create your free account
           </Link>
           <span className="text-brand-300">·</span>
-          <Link to="/foods" className="font-medium text-brand-700 underline">
+          <Link to="/foods" className="font-medium text-brand-700 underline dark:text-sand-50">
             Browse the food database
           </Link>
         </div>
@@ -111,7 +111,7 @@ function FoodSnapshot() {
   const food = foods[index];
 
   return (
-    <div className="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-brand-700 dark:bg-brand-900">
       <p className="text-xs font-medium uppercase tracking-wide text-brand-300">
         From the food database
       </p>
@@ -123,7 +123,7 @@ function FoodSnapshot() {
         </div>
       ) : (
         <>
-          <p className="mt-2 font-display text-xl text-brand-700">{food.food_name}</p>
+          <p className="mt-2 font-display text-xl text-brand-700 dark:text-sand-50">{food.food_name}</p>
           <p className="text-sm text-brand-300">
             {food.category} · {food.measure}
           </p>
@@ -156,7 +156,7 @@ function FoodSnapshot() {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <dt className="font-mono text-base font-semibold text-brand-700">{value}</dt>
+      <dt className="font-mono text-base font-semibold text-brand-700 dark:text-sand-50">{value}</dt>
       <dd className="text-[11px] uppercase tracking-wide text-brand-300">{label}</dd>
     </div>
   );
@@ -164,10 +164,10 @@ function Stat({ label, value }: { label: string; value: string | number }) {
 
 function TopicsPreview() {
   return (
-    <section className="border-y border-brand-100 bg-sand-100">
+    <section className="border-y border-brand-100 bg-sand-100 dark:border-brand-700 dark:bg-brand-900">
       <div className="mx-auto max-w-5xl px-6 py-12">
-        <h2 className="font-display text-2xl text-brand-700">What you'll find here</h2>
-        <p className="mt-2 max-w-xl text-brand-500">
+        <h2 className="font-display text-2xl text-brand-700 dark:text-sand-50">What you'll find here</h2>
+        <p className="mt-2 max-w-xl text-brand-500 dark:text-brand-100">
           Nutrition and health topics for Malawi. Coverage is growing — some
           topics have articles now, others are still being written.
         </p>
@@ -176,7 +176,7 @@ function TopicsPreview() {
             <li key={topic.slug}>
               <Link
                 to={`/learn?category=${topic.slug}`}
-                className="inline-block rounded-full border border-brand-100 bg-white px-4 py-1.5 text-sm text-brand-700 hover:border-brand-500"
+                className="inline-block rounded-full border border-brand-100 bg-white px-4 py-1.5 text-sm text-brand-700 hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
               >
                 {topic.label}
               </Link>
@@ -204,7 +204,7 @@ function FoodsPreview() {
   return (
     <section className="mx-auto max-w-5xl px-6 py-16">
       <div className="flex items-baseline justify-between">
-        <h2 className="font-display text-2xl text-brand-700">Foods of Malawi</h2>
+        <h2 className="font-display text-2xl text-brand-700 dark:text-sand-50">Foods of Malawi</h2>
         <Link to="/foods" className="text-sm font-medium text-brand-500 underline">
           See all
         </Link>
@@ -224,9 +224,9 @@ function FoodsPreview() {
                 <Link
                   key={food.id}
                   to={`/foods/${food.id}`}
-                  className="rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500"
+                  className="rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
                 >
-                  <p className="font-medium text-brand-700">{food.food_name}</p>
+                  <p className="font-medium text-brand-700 dark:text-sand-50">{food.food_name}</p>
                   <p className="text-xs text-brand-300">{food.category}</p>
                   <p className="mt-3 font-mono text-sm text-brand-500">{food.kcal} kcal</p>
                 </Link>

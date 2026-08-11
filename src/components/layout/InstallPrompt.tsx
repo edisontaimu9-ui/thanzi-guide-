@@ -72,14 +72,14 @@ export function InstallPrompt() {
     <div
       role="dialog"
       aria-label="Install Thanzi Guide"
-      className="fixed inset-x-4 bottom-20 z-50 mx-auto flex max-w-md items-center justify-between gap-4 rounded-lg border border-brand-100 bg-white p-4 shadow-lg sm:bottom-4"
+      className="fixed inset-x-4 bottom-20 z-50 mx-auto flex max-w-md items-center justify-between gap-4 rounded-lg border border-brand-100 bg-white p-4 shadow-lg sm:bottom-4 dark:border-brand-700 dark:bg-brand-900"
     >
-      <div className="text-sm text-brand-700">
+      <div className="text-sm text-brand-700 dark:text-sand-50">
         <p className="font-medium">Install Thanzi Guide</p>
         {deferredPrompt ? (
-          <p className="mt-0.5 text-brand-500">Add it to your home screen for quick, offline access.</p>
+          <p className="mt-0.5 text-brand-500 dark:text-brand-100">Add it to your home screen for quick, offline access.</p>
         ) : (
-          <p className="mt-0.5 text-brand-500">Tap the Share button, then "Add to Home Screen".</p>
+          <p className="mt-0.5 text-brand-500 dark:text-brand-100">Tap the Share button, then "Add to Home Screen".</p>
         )}
       </div>
       <div className="flex shrink-0 items-center gap-2">

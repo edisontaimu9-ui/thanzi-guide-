@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
+import { ThemeToggle } from './ThemeToggle';
+import { NotificationBell } from './NotificationBell';
 
 const navLinks = [
   { to: '/foods', label: 'Foods' },
@@ -18,9 +20,9 @@ export function Header() {
   const links = canReview ? [...navLinks, { to: '/admin', label: 'Review' }] : navLinks;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-brand-100 bg-sand-50/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-brand-100 bg-sand-50/95 backdrop-blur dark:border-brand-700 dark:bg-brand-900/95">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <Link to="/" className="font-display text-lg text-brand-700">
+        <Link to="/" className="font-display text-lg text-brand-700 dark:text-sand-50">
           Thanzi Guide <span aria-hidden="true">🇲🇼</span>
         </Link>
 
@@ -30,15 +32,19 @@ export function Header() {
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `text-sm font-medium ${isActive ? 'text-brand-700' : 'text-brand-500 hover:text-brand-700'}`
+                `text-sm font-medium ${
+                  isActive ? 'text-brand-700 dark:text-sand-50' : 'text-brand-500 hover:text-brand-700 dark:text-brand-100 dark:hover:text-white'
+                }`
               }
             >
               {link.label}
             </NavLink>
           ))}
-          <Link to="/search" aria-label="Search" className="text-brand-500 hover:text-brand-700">
+          <Link to="/search" aria-label="Search" className="text-brand-500 hover:text-brand-700 dark:text-brand-100 dark:hover:text-white">
             <SearchIcon />
           </Link>
+          <NotificationBell />
+          <ThemeToggle />
           {!loading && (
             <Link
               to={user ? '/dashboard' : '/login'}
@@ -50,7 +56,9 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4 sm:hidden">
-          <Link to="/search" aria-label="Search" className="text-brand-700">
+          <NotificationBell />
+          <ThemeToggle />
+          <Link to="/search" aria-label="Search" className="text-brand-700 dark:text-sand-50">
             <SearchIcon />
           </Link>
           <button
@@ -60,27 +68,36 @@ export function Header() {
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <span className="block h-0.5 w-6 bg-brand-700" />
-            <span className="mt-1.5 block h-0.5 w-6 bg-brand-700" />
-            <span className="mt-1.5 block h-0.5 w-6 bg-brand-700" />
+            <span className="block h-0.5 w-6 bg-brand-700 dark:bg-sand-50" />
+            <span className="mt-1.5 block h-0.5 w-6 bg-brand-700 dark:bg-sand-50" />
+            <span className="mt-1.5 block h-0.5 w-6 bg-brand-700 dark:bg-sand-50" />
           </button>
         </div>
       </div>
 
       {menuOpen && (
-        <nav id="mobile-nav" className="border-t border-brand-100 px-6 py-4 sm:hidden" aria-label="Primary">
+        <nav id="mobile-nav" className="border-t border-brand-100 px-6 py-4 sm:hidden dark:border-brand-700" aria-label="Primary">
           <ul className="space-y-3">
             {links.map((link) => (
               <li key={link.to}>
                 <NavLink
                   to={link.to}
                   onClick={() => setMenuOpen(false)}
-                  className="block text-sm font-medium text-brand-700"
+                  className="block text-sm font-medium text-brand-700 dark:text-sand-50"
                 >
                   {link.label}
                 </NavLink>
               </li>
             ))}
+            <li>
+              <NavLink
+                to="/support"
+                onClick={() => setMenuOpen(false)}
+                className="block text-sm font-medium text-brand-700 dark:text-sand-50"
+              >
+                Help &amp; Support
+              </NavLink>
+            </li>
             {!loading && (
               <li>
                 <Link

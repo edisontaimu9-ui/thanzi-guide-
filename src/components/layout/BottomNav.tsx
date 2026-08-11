@@ -18,7 +18,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-brand-100 bg-sand-50/95 backdrop-blur sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-brand-100 bg-sand-50/95 backdrop-blur sm:hidden dark:border-brand-700 dark:bg-brand-900/95"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <ul className="flex items-stretch justify-between px-2">
@@ -29,7 +29,7 @@ export function BottomNav() {
               end={tab.end}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-1 py-2.5 text-xs font-medium ${
-                  isActive ? 'text-brand-700' : 'text-brand-300'
+                  isActive ? 'text-brand-700 dark:text-sand-50' : 'text-brand-300 dark:text-brand-100'
                 }`
               }
             >
