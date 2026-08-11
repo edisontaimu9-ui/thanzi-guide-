@@ -108,6 +108,17 @@ export async function listAnswers(questionId: string): Promise<AnswerDoc[]> {
   return res.documents;
 }
 
+// Unscoped by course — used on the profile page to show a total completed-
+// lessons count across every course the user has touched.
+export async function listAllCompletedProgress(userId: string): Promise<ProgressDoc[]> {
+  const res = await databases.listDocuments<ProgressDoc>(DB.databaseId, DB.collections.userProgress, [
+    Query.equal('userId', userId),
+    Query.equal('completed', true),
+    Query.limit(500)
+  ]);
+  return res.documents;
+}
+
 export async function listUserProgress(userId: string, courseId: string): Promise<ProgressDoc[]> {
   const res = await databases.listDocuments<ProgressDoc>(DB.databaseId, DB.collections.userProgress, [
     Query.equal('userId', userId),

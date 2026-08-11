@@ -3,14 +3,25 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
 import { useFavorites } from '@/hooks/useFavorites';
 import { getFood, ChakudyaFood } from '@/lib/chakudya';
+import { listAllCompletedProgress } from '@/lib/courses';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
+const ROLE_LABEL: Record<string, string> = {
+  USER: 'Member',
+  EDITOR: 'Editor',
+  NUTRITION_EXPERT: 'Nutrition Expert',
+  ADMIN: 'Admin'
+};
+
+const CONTRIBUTOR_ROLES = ['EDITOR', 'NUTRITION_EXPERT', 'ADMIN'];
+
 export function Dashboard() {
-  useDocumentTitle('Dashboard');
-  const { user, logout } = useAuth();
+  useDocumentTitle('Your account');
+  const { user, profile, logout } = useAuth();
   const { favorites, loaded } = useFavorites();
   const [foods, setFoods] = useState<ChakudyaFood[]>([]);
   const [foodsStatus, setFoodsStatus] = useState<'loading' | 'idle' | 'error'>('loading');
+  const [completedCount, setCompletedCount] = useState<number | null>(null);
 
   useEffect(() => {
     if (!loaded) return;
@@ -28,17 +39,74 @@ export function Dashboard() {
       .catch(() => setFoodsStatus('error'));
   }, [loaded, favorites]);
 
+  useEffect(() => {
+    if (!user) return;
+    listAllCompletedProgress(user.$id)
+      .then((docs) => setCompletedCount(docs.length))
+      .catch(() => setCompletedCount(null));
+  }, [user]);
+
+  const role = profile?.role ?? 'USER';
+  const isContributor = CONTRIBUTOR_ROLES.includes(role);
+  const initial = (user?.name || 'T').trim().charAt(0).toUpperCase();
+  const memberSince = user?.registration
+    ? new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(new Date(user.registration))
+    : null;
+
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl text-brand-700 dark:text-sand-100">Welcome, {user?.name || 'friend'}</h1>
-        <button onClick={() => logout()} className="text-sm text-brand-500 underline dark:text-brand-100">
+      {/* Profile header */}
+      <section className="flex flex-col gap-5 rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-brand-700 dark:bg-brand-900 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-2xl text-white">
+            {initial}
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="font-display text-2xl text-brand-700 dark:text-sand-100">{user?.name || 'Friend'}</h1>
+              {role !== 'USER' && (
+                <span className="rounded-full bg-clay-400/20 px-2.5 py-0.5 text-xs font-medium uppercase tracking-wide text-clay-500 dark:text-clay-400">
+                  {ROLE_LABEL[role] ?? role}
+                </span>
+              )}
+            </div>
+            <p className="mt-0.5 text-sm text-brand-500 dark:text-brand-100">{user?.email}</p>
+            {memberSince && (
+              <p className="mt-0.5 text-xs text-brand-300 dark:text-brand-100">Member since {memberSince}</p>
+            )}
+          </div>
+        </div>
+        <button
+          onClick={() => logout()}
+          className="self-start rounded-md border border-brand-100 px-4 py-1.5 text-sm font-medium text-brand-700 hover:border-clay-500 hover:text-clay-500 dark:border-brand-700 dark:text-sand-100 sm:self-center"
+        >
           Log out
         </button>
-      </div>
+      </section>
 
+      {/* Quick stats */}
+      <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <StatTile label="Favorite foods" value={loaded ? favorites.length : null} />
+        <StatTile label="Lessons completed" value={completedCount} />
+        {isContributor && (
+          <Link
+            to="/admin"
+            className="flex flex-col justify-center rounded-lg border border-clay-400/40 bg-clay-400/10 p-4 text-clay-500 transition hover:border-clay-500 dark:text-clay-400"
+          >
+            <span className="font-mono text-base font-semibold">Review queue</span>
+            <span className="text-xs">Open admin console →</span>
+          </Link>
+        )}
+      </section>
+
+      {/* Favorite foods */}
       <section className="mt-10">
-        <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Favorite foods</h2>
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Favorite foods</h2>
+          <Link to="/foods" className="text-sm font-medium text-brand-500 underline dark:text-brand-100">
+            Browse foods
+          </Link>
+        </div>
 
         {!loaded || foodsStatus === 'loading' ? (
           <div className="mt-3 grid gap-3 sm:grid-cols-2" aria-hidden="true">
@@ -72,19 +140,85 @@ export function Dashboard() {
         )}
       </section>
 
+      {/* Learning progress */}
       <section className="mt-10">
-        <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Learning progress</h2>
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Learning progress</h2>
+          <Link to="/courses" className="text-sm font-medium text-brand-500 underline dark:text-brand-100">
+            Browse courses
+          </Link>
+        </div>
         <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-brand-700">
-          <p>Courses aren't built yet — this will show your progress once they are.</p>
+          {completedCount === null ? (
+            <p>Courses aren't built yet — this will show your progress once they are.</p>
+          ) : completedCount === 0 ? (
+            <>
+              <p>You haven't completed any lessons yet.</p>
+              <Link to="/courses" className="mt-2 inline-block text-sm font-medium text-brand-700 underline dark:text-sand-100">
+                Start a course
+              </Link>
+            </>
+          ) : (
+            <p>
+              You've completed <span className="font-mono font-semibold text-brand-700 dark:text-sand-100">{completedCount}</span>{' '}
+              lesson{completedCount === 1 ? '' : 's'} so far. Keep going!
+            </p>
+          )}
         </div>
       </section>
 
+      {/* Saved articles */}
       <section className="mt-10">
         <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Saved articles</h2>
         <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-brand-700">
           <p>Articles aren't built yet — bookmarked ones will show here.</p>
         </div>
       </section>
+
+      {/* Grow with Thanzi Guide / contribute CTA */}
+      <section className="mt-10 rounded-lg border border-brand-100 bg-sand-100 p-6 dark:border-brand-700 dark:bg-brand-700">
+        {isContributor ? (
+          <>
+            <h2 className="font-display text-lg text-brand-700 dark:text-sand-50">
+              You have {ROLE_LABEL[role] ?? role} access
+            </h2>
+            <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">
+              You can review and publish drafts from the admin console.
+            </p>
+            <Link
+              to="/admin"
+              className="mt-3 inline-block rounded-md bg-brand-500 px-4 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
+            >
+              Open admin console
+            </Link>
+          </>
+        ) : (
+          <>
+            <h2 className="font-display text-lg text-brand-700 dark:text-sand-50">Know your food or health topics well?</h2>
+            <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">
+              Thanzi Guide is written and reviewed by real editors and nutrition experts. Get in touch if you'd
+              like to help grow the food database or write articles.
+            </p>
+            <Link
+              to="/support"
+              className="mt-3 inline-block rounded-md border border-brand-500 px-4 py-1.5 text-sm font-medium text-brand-700 hover:bg-brand-500 hover:text-white dark:text-sand-50"
+            >
+              Get in touch
+            </Link>
+          </>
+        )}
+      </section>
     </main>
+  );
+}
+
+function StatTile({ label, value }: { label: string; value: number | null }) {
+  return (
+    <div className="rounded-lg border border-brand-100 bg-white p-4 dark:border-brand-700 dark:bg-brand-900">
+      <p className="font-mono text-2xl font-semibold text-brand-700 dark:text-sand-50">
+        {value === null ? '—' : value}
+      </p>
+      <p className="mt-0.5 text-xs uppercase tracking-wide text-brand-300 dark:text-brand-100">{label}</p>
+    </div>
   );
 }
