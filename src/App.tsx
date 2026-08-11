@@ -22,6 +22,8 @@ import { Support } from '@/routes/Support';
 import { Care } from '@/routes/Care';
 import { ProviderDetail } from '@/routes/ProviderDetail';
 import { Partner } from '@/routes/Partner';
+import { Terms } from '@/routes/Terms';
+import { Privacy } from '@/routes/Privacy';
 import { BmiCalculator } from '@/routes/BmiCalculator';
 import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { Admin } from '@/routes/Admin';
@@ -61,6 +63,8 @@ export default function App() {
               <Route path="/care" element={<Care />} />
               <Route path="/care/:id" element={<ProviderDetail />} />
               <Route path="/partner" element={<Partner />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route
                 path="/dashboard"
                 element={
