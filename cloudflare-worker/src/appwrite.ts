@@ -100,7 +100,7 @@ export async function verifyAdminJwt(env: Env, jwt: string): Promise<{ id: strin
   });
   if (!res.ok) return null;
   const account = (await res.json()) as { $id: string; labels?: string[] };
-  if (!account.labels?.includes('admin')) return null;
+  if (!account.labels?.some((l) => l.toLowerCase() === 'admin')) return null;
   return { id: account.$id };
 }
 
