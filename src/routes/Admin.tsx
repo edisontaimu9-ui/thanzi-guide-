@@ -74,15 +74,15 @@ export function Admin() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="font-display text-3xl text-brand-700">Content Review</h1>
-      <p className="mt-2 text-brand-500">
+      <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Content Review</h1>
+      <p className="mt-2 text-brand-500 dark:text-brand-100">
         Draft content awaiting publish. Editing still happens in the Appwrite console — this is for
         approving what's ready.
       </p>
 
-      {status === 'loading' && <p className="mt-8 text-brand-500">Loading…</p>}
+      {status === 'loading' && <p className="mt-8 text-brand-500 dark:text-brand-100">Loading…</p>}
       {status === 'error' && (
-        <p role="alert" className="mt-8 text-sm text-clay-500">
+        <p role="alert" className="mt-8 text-sm text-clay-500 dark:text-clay-400">
           Couldn't load draft content right now.
         </p>
       )}
@@ -141,23 +141,23 @@ function ReviewSection({
 }) {
   return (
     <section>
-      <h2 className="font-display text-lg text-brand-700">{title}</h2>
+      <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">{title}</h2>
 
-      {items.length === 0 && <p className="mt-2 text-sm text-brand-500">{emptyLabel}</p>}
+      {items.length === 0 && <p className="mt-2 text-sm text-brand-500 dark:text-brand-100">{emptyLabel}</p>}
 
       {items.length > 0 && (
         <ul className="mt-3 space-y-2">
           {items.map((item) => (
             <li
               key={item.id}
-              className="flex items-center justify-between gap-3 rounded-lg border border-brand-100 bg-white p-4"
+              className="flex items-center justify-between gap-3 rounded-lg border border-brand-100 bg-white p-4 dark:border-brand-700 dark:bg-brand-900"
             >
               {item.href ? (
-                <Link to={item.href} className="text-sm font-medium text-brand-700 underline">
+                <Link to={item.href} className="text-sm font-medium text-brand-700 underline dark:text-sand-100">
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-sm font-medium text-brand-700">{item.label}</span>
+                <span className="text-sm font-medium text-brand-700 dark:text-sand-100">{item.label}</span>
               )}
 
               <div className="flex shrink-0 gap-2">
@@ -172,7 +172,7 @@ function ReviewSection({
                   <button
                     onClick={() => onDelete(item.id)}
                     disabled={pendingId === item.id}
-                    className="rounded-md border border-clay-500 px-3 py-1.5 text-xs font-medium text-clay-500 hover:bg-clay-400/10 disabled:opacity-50"
+                    className="rounded-md border border-clay-500 px-3 py-1.5 text-xs font-medium text-clay-500 hover:bg-clay-400/10 disabled:opacity-50 dark:text-clay-400"
                   >
                     Delete
                   </button>

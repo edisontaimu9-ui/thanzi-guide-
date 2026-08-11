@@ -94,7 +94,7 @@ export function InstallPrompt() {
         <button
           onClick={dismiss}
           aria-label="Dismiss"
-          className="rounded-md px-2 py-1.5 text-sm text-brand-300 hover:text-brand-700"
+          className="rounded-md px-2 py-1.5 text-sm text-brand-300 hover:text-brand-700 dark:text-brand-100"
         >
           ✕
         </button>

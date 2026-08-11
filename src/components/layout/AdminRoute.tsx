@@ -7,7 +7,7 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth();
 
   if (loading) {
-    return <div className="flex min-h-screen items-center justify-center text-brand-500">Loading…</div>;
+    return <div className="flex min-h-screen items-center justify-center text-brand-500 dark:text-brand-100">Loading…</div>;
   }
 
   if (!user) {
@@ -17,8 +17,8 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
   if (!profile || !ADMIN_ROLES.includes(profile.role)) {
     return (
       <main className="mx-auto max-w-md px-6 py-24 text-center">
-        <h1 className="font-display text-2xl text-brand-700">Not authorized</h1>
-        <p className="mt-2 text-brand-500">
+        <h1 className="font-display text-2xl text-brand-700 dark:text-sand-100">Not authorized</h1>
+        <p className="mt-2 text-brand-500 dark:text-brand-100">
           This area is for editors, nutrition experts, and admins. Ask an admin to update your role
           if you think this is a mistake.
         </p>

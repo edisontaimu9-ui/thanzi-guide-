@@ -29,10 +29,10 @@ export function Signup() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-6">
-      <h1 className="font-display text-2xl text-brand-700">Create your account</h1>
+      <h1 className="font-display text-2xl text-brand-700 dark:text-sand-100">Create your account</h1>
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-brand-700">
+          <label htmlFor="name" className="block text-sm font-medium text-brand-700 dark:text-sand-100">
             Name
           </label>
           <input
@@ -40,11 +40,11 @@ export function Signup() {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-md border border-brand-100 px-3 py-2 focus:border-brand-500"
+            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
           />
         </div>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-brand-700">
+          <label htmlFor="email" className="block text-sm font-medium text-brand-700 dark:text-sand-100">
             Email
           </label>
           <input
@@ -53,11 +53,11 @@ export function Signup() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border border-brand-100 px-3 py-2 focus:border-brand-500"
+            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
           />
         </div>
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-brand-700">
+          <label htmlFor="password" className="block text-sm font-medium text-brand-700 dark:text-sand-100">
             Password
           </label>
           <input
@@ -67,11 +67,11 @@ export function Signup() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border border-brand-100 px-3 py-2 focus:border-brand-500"
+            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
           />
         </div>
         {error && (
-          <p role="alert" className="text-sm text-clay-500">
+          <p role="alert" className="text-sm text-clay-500 dark:text-clay-400">
             {error}
           </p>
         )}
@@ -83,7 +83,7 @@ export function Signup() {
           {submitting ? 'Creating account…' : 'Sign up'}
         </button>
       </form>
-      <p className="mt-4 text-sm text-brand-500">
+      <p className="mt-4 text-sm text-brand-500 dark:text-brand-100">
         Already have an account? <Link to="/login" className="underline">Log in</Link>
       </p>
     </main>

@@ -28,7 +28,7 @@ function Hero() {
   return (
     <section className="mx-auto grid max-w-5xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[3fr_2fr] lg:items-center">
       <div>
-        <p className="text-sm font-medium uppercase tracking-wide text-clay-500">
+        <p className="text-sm font-medium uppercase tracking-wide text-clay-500 dark:text-clay-400">
           Health &amp; nutrition, explained for Malawi
         </p>
         <h1 className="mt-3 font-display text-4xl leading-tight text-brand-700 dark:text-sand-50 sm:text-5xl">
@@ -65,7 +65,7 @@ function Hero() {
           <Link to="/signup" className="font-medium text-brand-700 underline dark:text-sand-50">
             Create your free account
           </Link>
-          <span className="text-brand-300">·</span>
+          <span className="text-brand-300 dark:text-brand-100">·</span>
           <Link to="/foods" className="font-medium text-brand-700 underline dark:text-sand-50">
             Browse the food database
           </Link>
@@ -112,19 +112,19 @@ function FoodSnapshot() {
 
   return (
     <div className="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-brand-700 dark:bg-brand-900">
-      <p className="text-xs font-medium uppercase tracking-wide text-brand-300">
+      <p className="text-xs font-medium uppercase tracking-wide text-brand-300 dark:text-brand-100">
         From the food database
       </p>
 
       {status === 'loading' || !food ? (
         <div className="mt-3 animate-pulse space-y-3" aria-hidden="true">
-          <div className="h-5 w-2/3 rounded bg-brand-50" />
-          <div className="h-16 rounded bg-brand-50" />
+          <div className="h-5 w-2/3 rounded bg-brand-50 dark:bg-brand-700" />
+          <div className="h-16 rounded bg-brand-50 dark:bg-brand-700" />
         </div>
       ) : (
         <>
           <p className="mt-2 font-display text-xl text-brand-700 dark:text-sand-50">{food.food_name}</p>
-          <p className="text-sm text-brand-300">
+          <p className="text-sm text-brand-300 dark:text-brand-100">
             {food.category} · {food.measure}
           </p>
           <dl className="mt-4 grid grid-cols-4 gap-2 text-center">
@@ -142,7 +142,7 @@ function FoodSnapshot() {
                   aria-selected={i === index}
                   aria-label={f.food_name}
                   onClick={() => setIndex(i)}
-                  className={`h-1.5 w-4 rounded-full ${i === index ? 'bg-brand-500' : 'bg-brand-100'}`}
+                  className={`h-1.5 w-4 rounded-full ${i === index ? 'bg-brand-500' : 'bg-brand-100 dark:bg-brand-700'}`}
                 />
               ))}
             </div>
@@ -157,7 +157,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
       <dt className="font-mono text-base font-semibold text-brand-700 dark:text-sand-50">{value}</dt>
-      <dd className="text-[11px] uppercase tracking-wide text-brand-300">{label}</dd>
+      <dd className="text-[11px] uppercase tracking-wide text-brand-300 dark:text-brand-100">{label}</dd>
     </div>
   );
 }
@@ -205,20 +205,20 @@ function FoodsPreview() {
     <section className="mx-auto max-w-5xl px-6 py-16">
       <div className="flex items-baseline justify-between">
         <h2 className="font-display text-2xl text-brand-700 dark:text-sand-50">Foods of Malawi</h2>
-        <Link to="/foods" className="text-sm font-medium text-brand-500 underline">
+        <Link to="/foods" className="text-sm font-medium text-brand-500 underline dark:text-brand-100">
           See all
         </Link>
       </div>
 
       {status === 'error' && (
-        <p className="mt-4 text-sm text-clay-500">Couldn't load foods right now.</p>
+        <p className="mt-4 text-sm text-clay-500 dark:text-clay-400">Couldn't load foods right now.</p>
       )}
 
       {status !== 'error' && (
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {status === 'loading'
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-32 animate-pulse rounded-lg border border-brand-100 bg-white" />
+                <div key={i} className="h-32 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-brand-700 dark:bg-brand-900" />
               ))
             : foods.map((food) => (
                 <Link
@@ -227,8 +227,8 @@ function FoodsPreview() {
                   className="rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
                 >
                   <p className="font-medium text-brand-700 dark:text-sand-50">{food.food_name}</p>
-                  <p className="text-xs text-brand-300">{food.category}</p>
-                  <p className="mt-3 font-mono text-sm text-brand-500">{food.kcal} kcal</p>
+                  <p className="text-xs text-brand-300 dark:text-brand-100">{food.category}</p>
+                  <p className="mt-3 font-mono text-sm text-brand-500 dark:text-brand-100">{food.kcal} kcal</p>
                 </Link>
               ))}
         </div>
@@ -239,7 +239,7 @@ function FoodsPreview() {
 
 function ToolsPreview() {
   return (
-    <section className="border-t border-brand-100 bg-brand-700">
+    <section className="border-t border-brand-100 bg-brand-700 dark:border-brand-700">
       <div className="mx-auto max-w-5xl px-6 py-16 text-sand-50">
         <h2 className="font-display text-2xl">Tools, built for local use</h2>
         <p className="mt-2 max-w-xl text-brand-100">

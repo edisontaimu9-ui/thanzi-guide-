@@ -35,8 +35,8 @@ export function Articles() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="font-display text-3xl text-brand-700">Learn</h1>
-      <p className="mt-2 text-brand-500">
+      <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Learn</h1>
+      <p className="mt-2 text-brand-500 dark:text-brand-100">
         Nutrition and health articles, reviewed for accuracy — more are added over time.
       </p>
 
@@ -45,7 +45,7 @@ export function Articles() {
           <button
             onClick={() => setSearchParams({})}
             className={`rounded-full border px-4 py-1.5 text-sm ${
-              !categorySlug ? 'border-brand-500 bg-brand-500 text-white' : 'border-brand-100 text-brand-700'
+              !categorySlug ? 'border-brand-500 bg-brand-500 text-white' : 'border-brand-100 text-brand-700 dark:text-sand-100 dark:border-brand-700'
             }`}
           >
             All
@@ -57,7 +57,7 @@ export function Articles() {
               className={`rounded-full border px-4 py-1.5 text-sm ${
                 categorySlug === cat.slug
                   ? 'border-brand-500 bg-brand-500 text-white'
-                  : 'border-brand-100 text-brand-700'
+                  : 'border-brand-100 text-brand-700 dark:text-sand-100 dark:border-brand-700'
               }`}
             >
               {cat.name}
@@ -70,18 +70,18 @@ export function Articles() {
         {status === 'loading' && (
           <div className="space-y-3" aria-hidden="true">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-20 animate-pulse rounded-lg border border-brand-100 bg-white" />
+              <div key={i} className="h-20 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-brand-700 dark:bg-brand-900" />
             ))}
           </div>
         )}
 
         {status === 'error' && (
-          <p className="text-sm text-clay-500">Couldn't load articles right now.</p>
+          <p className="text-sm text-clay-500 dark:text-clay-400">Couldn't load articles right now.</p>
         )}
 
         {status === 'idle' && articles.length === 0 && (
-          <div className="rounded-lg border border-brand-100 p-8 text-center text-brand-500">
-            <p className="font-medium text-brand-700">No articles here yet</p>
+          <div className="rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-brand-700">
+            <p className="font-medium text-brand-700 dark:text-sand-100">No articles here yet</p>
             <p className="mt-1 text-sm">This section is still being built out.</p>
           </div>
         )}
@@ -92,10 +92,10 @@ export function Articles() {
               <li key={article.$id}>
                 <Link
                   to={`/learn/${article.slug}`}
-                  className="block rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500"
+                  className="block rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
                 >
-                  <p className="font-display text-lg text-brand-700">{article.title}</p>
-                  {article.summary && <p className="mt-1 text-sm text-brand-500">{article.summary}</p>}
+                  <p className="font-display text-lg text-brand-700 dark:text-sand-100">{article.title}</p>
+                  {article.summary && <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">{article.summary}</p>}
                 </Link>
               </li>
             ))}

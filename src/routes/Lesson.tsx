@@ -97,43 +97,43 @@ export function Lesson() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
       {course && (
-        <Link to={`/courses/${course.slug}`} className="text-sm text-brand-500 underline">
+        <Link to={`/courses/${course.slug}`} className="text-sm text-brand-500 underline dark:text-brand-100">
           ← Back to {course.title}
         </Link>
       )}
 
       {status === 'loading' && (
         <div className="mt-6 animate-pulse space-y-3" aria-hidden="true">
-          <div className="h-8 w-2/3 rounded bg-brand-100" />
-          <div className="h-24 rounded bg-brand-100" />
+          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-brand-700" />
+          <div className="h-24 rounded bg-brand-100 dark:bg-brand-700" />
         </div>
       )}
 
-      {status === 'error' && <p className="mt-6 text-sm text-clay-500">Couldn't load this lesson.</p>}
+      {status === 'error' && <p className="mt-6 text-sm text-clay-500 dark:text-clay-400">Couldn't load this lesson.</p>}
 
       {status === 'idle' && (!course || !lesson) && (
-        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500">
-          <p className="font-medium text-brand-700">Lesson not found</p>
+        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-brand-700">
+          <p className="font-medium text-brand-700 dark:text-sand-100">Lesson not found</p>
         </div>
       )}
 
       {status === 'idle' && course && lesson && (
         <>
-          <h1 className="mt-6 font-display text-3xl text-brand-700">{lesson.title}</h1>
+          <h1 className="mt-6 font-display text-3xl text-brand-700 dark:text-sand-100">{lesson.title}</h1>
 
-          <div className="prose prose-brand mt-6 max-w-none space-y-4 text-brand-900">
+          <div className="prose prose-brand mt-6 max-w-none space-y-4 text-brand-900 dark:text-sand-50">
             {lesson.content.split('\n\n').map((paragraph, i) => (
               <p key={i}>{paragraph}</p>
             ))}
           </div>
 
           {questions.length > 0 && (
-            <section className="mt-10 border-t border-brand-100 pt-6">
-              <h2 className="font-display text-lg text-brand-700">Quick check</h2>
+            <section className="mt-10 border-t border-brand-100 pt-6 dark:border-brand-700">
+              <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Quick check</h2>
               <div className="mt-4 space-y-6">
                 {questions.map((q) => (
                   <div key={q.$id}>
-                    <p className="font-medium text-brand-700">{q.text}</p>
+                    <p className="font-medium text-brand-700 dark:text-sand-100">{q.text}</p>
                     <div className="mt-2 space-y-2">
                       {q.answers.map((a) => {
                         const selected = selectedAnswers[q.$id] === a.$id;
@@ -148,12 +148,12 @@ export function Lesson() {
                             }
                             className={`block w-full rounded-md border px-4 py-2 text-left text-sm ${
                               showResult && isRight
-                                ? 'border-brand-500 bg-brand-50 text-brand-700'
+                                ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-sand-100 dark:bg-brand-700'
                                 : showResult && selected && !isRight
-                                  ? 'border-clay-500 bg-clay-400/10 text-clay-500'
+                                  ? 'border-clay-500 bg-clay-400/10 text-clay-500 dark:text-clay-400'
                                   : selected
-                                    ? 'border-brand-500 text-brand-700'
-                                    : 'border-brand-100 text-brand-700'
+                                    ? 'border-brand-500 text-brand-700 dark:text-sand-100'
+                                    : 'border-brand-100 text-brand-700 dark:text-sand-100 dark:border-brand-700'
                             }`}
                           >
                             {a.text}
@@ -172,23 +172,23 @@ export function Lesson() {
                 Check answers
               </button>
               {quizChecked && (
-                <p className="mt-3 text-sm font-medium text-brand-700">
+                <p className="mt-3 text-sm font-medium text-brand-700 dark:text-sand-100">
                   {allCorrect ? 'All correct!' : 'Review the highlighted answers above.'}
                 </p>
               )}
             </section>
           )}
 
-          <div className="mt-10 border-t border-brand-100 pt-6">
+          <div className="mt-10 border-t border-brand-100 pt-6 dark:border-brand-700">
             {!user ? (
-              <p className="text-sm text-brand-500">
+              <p className="text-sm text-brand-500 dark:text-brand-100">
                 <Link to="/login" className="underline">
                   Sign in
                 </Link>{' '}
                 to track completion of this lesson.
               </p>
             ) : alreadyComplete ? (
-              <p className="text-sm font-medium text-brand-700">✓ Lesson complete</p>
+              <p className="text-sm font-medium text-brand-700 dark:text-sand-100">✓ Lesson complete</p>
             ) : (
               <button
                 type="button"

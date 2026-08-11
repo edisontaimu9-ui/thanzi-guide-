@@ -18,8 +18,8 @@ export function Tools() {
   useDocumentTitle('Health Tools');
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="font-display text-3xl text-brand-700">Health Tools</h1>
-      <p className="mt-2 text-brand-500">
+      <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Health Tools</h1>
+      <p className="mt-2 text-brand-500 dark:text-brand-100">
         Quick estimates to help you understand your body and energy needs.
       </p>
 
@@ -28,10 +28,10 @@ export function Tools() {
           <li key={tool.to}>
             <Link
               to={tool.to}
-              className="block rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500"
+              className="block rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
             >
-              <p className="font-display text-lg text-brand-700">{tool.title}</p>
-              <p className="mt-1 text-sm text-brand-500">{tool.description}</p>
+              <p className="font-display text-lg text-brand-700 dark:text-sand-100">{tool.title}</p>
+              <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">{tool.description}</p>
             </Link>
           </li>
         ))}

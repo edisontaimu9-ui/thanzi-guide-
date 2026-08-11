@@ -44,7 +44,7 @@ export function Support() {
         </p>
         <a
           href="mailto:support@thanziguide.org"
-          className="mt-4 inline-block rounded-md bg-sand-50 px-4 py-2 text-sm font-medium text-brand-700 hover:bg-white"
+          className="mt-4 inline-block rounded-md bg-sand-50 px-4 py-2 text-sm font-medium text-brand-700 hover:bg-white dark:text-sand-100 dark:bg-brand-700"
         >
           support@thanziguide.org
         </a>

@@ -39,32 +39,32 @@ export function CourseDetail() {
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
-      <Link to="/courses" className="text-sm text-brand-500 underline">
+      <Link to="/courses" className="text-sm text-brand-500 underline dark:text-brand-100">
         ← Back to courses
       </Link>
 
       {status === 'loading' && (
         <div className="mt-6 animate-pulse space-y-3" aria-hidden="true">
-          <div className="h-8 w-2/3 rounded bg-brand-100" />
-          <div className="h-16 rounded bg-brand-100" />
+          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-brand-700" />
+          <div className="h-16 rounded bg-brand-100 dark:bg-brand-700" />
         </div>
       )}
 
-      {status === 'error' && <p className="mt-6 text-sm text-clay-500">Couldn't load this course.</p>}
+      {status === 'error' && <p className="mt-6 text-sm text-clay-500 dark:text-clay-400">Couldn't load this course.</p>}
 
       {status === 'idle' && !course && (
-        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500">
-          <p className="font-medium text-brand-700">Course not found</p>
+        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-brand-700">
+          <p className="font-medium text-brand-700 dark:text-sand-100">Course not found</p>
         </div>
       )}
 
       {status === 'idle' && course && (
         <>
-          <h1 className="mt-6 font-display text-3xl text-brand-700">{course.title}</h1>
-          {course.description && <p className="mt-2 text-brand-500">{course.description}</p>}
+          <h1 className="mt-6 font-display text-3xl text-brand-700 dark:text-sand-100">{course.title}</h1>
+          {course.description && <p className="mt-2 text-brand-500 dark:text-brand-100">{course.description}</p>}
 
           {user && lessons.length > 0 && (
-            <p className="mt-4 text-sm font-medium text-brand-500">
+            <p className="mt-4 text-sm font-medium text-brand-500 dark:text-brand-100">
               {completedCount} of {lessons.length} lessons complete
             </p>
           )}
@@ -74,14 +74,14 @@ export function CourseDetail() {
               <li key={lesson.$id}>
                 <Link
                   to={`/courses/${course.slug}/${lesson.slug}`}
-                  className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500"
+                  className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
                 >
-                  <span className="text-brand-700">
-                    <span className="mr-2 text-brand-300">{i + 1}.</span>
+                  <span className="text-brand-700 dark:text-sand-100">
+                    <span className="mr-2 text-brand-300 dark:text-brand-100">{i + 1}.</span>
                     {lesson.title}
                   </span>
                   {completedLessonIds.has(lesson.$id) && (
-                    <span className="text-sm font-medium text-brand-500">✓ Done</span>
+                    <span className="text-sm font-medium text-brand-500 dark:text-brand-100">✓ Done</span>
                   )}
                 </Link>
               </li>
@@ -89,11 +89,11 @@ export function CourseDetail() {
           </ol>
 
           {lessons.length === 0 && (
-            <p className="mt-6 text-sm text-brand-500">Lessons for this course are still being added.</p>
+            <p className="mt-6 text-sm text-brand-500 dark:text-brand-100">Lessons for this course are still being added.</p>
           )}
 
           {!user && lessons.length > 0 && (
-            <p className="mt-4 text-sm text-brand-500">
+            <p className="mt-4 text-sm text-brand-500 dark:text-brand-100">
               <Link to="/login" className="underline">
                 Sign in
               </Link>{' '}
