@@ -1,21 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
-
-// Placeholder data shape for when this is wired to a real `notifications`
-// Appwrite collection (keyed by user, with a `read` boolean). For now there's
-// no backend for it, so this always renders the empty state — the UI/UX is
-// built and ready, swapping in real data later is just replacing this array
-// with a query result.
-interface Notification {
-  id: string;
-  title: string;
-  body: string;
-  read: boolean;
-}
-
-const notifications: Notification[] = [];
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/lib/auth-context';
+import {
+  listNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+  NotificationDoc
+} from '@/lib/notifications';
 
 export function NotificationBell() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationDoc[]>([]);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const containerRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -28,6 +26,42 @@ export function NotificationBell() {
     if (open) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open]);
+
+  useEffect(() => {
+    if (!user) return;
+    listNotifications(user.$id)
+      .then((docs) => setNotifications(docs))
+      .catch(() => {});
+  }, [user]);
+
+  useEffect(() => {
+    if (!open || !user) return;
+    setStatus('loading');
+    listNotifications(user.$id)
+      .then((docs) => {
+        setNotifications(docs);
+        setStatus('idle');
+      })
+      .catch(() => setStatus('error'));
+  }, [open, user]);
+
+  async function handleSelect(n: NotificationDoc) {
+    if (!n.read) {
+      setNotifications((prev) => prev.map((x) => (x.$id === n.$id ? { ...x, read: true } : x)));
+      markNotificationRead(n.$id).catch(() => {});
+    }
+    if (n.link) {
+      setOpen(false);
+      navigate(n.link);
+    }
+  }
+
+  async function handleMarkAllRead() {
+    const unread = notifications.filter((n) => !n.read);
+    if (unread.length === 0) return;
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    markAllNotificationsRead(unread).catch(() => {});
+  }
 
   return (
     <div ref={containerRef} className="relative">
@@ -47,23 +81,51 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-72 rounded-lg border border-brand-100 bg-white p-2 shadow-lg dark:border-brand-700 dark:bg-brand-900">
-          <p className="px-2 py-1.5 text-sm font-medium text-brand-700 dark:text-sand-50">Notifications</p>
-          {notifications.length === 0 ? (
+        // Fixed to the viewport rather than absolute-to-the-button: the bell
+        // isn't always near the screen edge (it sits mid-row on mobile), so
+        // anchoring a wide panel to its local position pushed it off-screen.
+        // This keeps it pinned just under the header, right-aligned to the
+        // viewport, regardless of where the bell itself sits.
+        <div className="fixed right-3 top-16 z-50 w-72 max-w-[calc(100vw-1.5rem)] rounded-lg border border-brand-100 bg-white p-2 shadow-lg dark:border-brand-700 dark:bg-brand-900">
+          <div className="flex items-center justify-between px-2 py-1.5">
+            <p className="text-sm font-medium text-brand-700 dark:text-sand-50">Notifications</p>
+            {unreadCount > 0 && (
+              <button
+                type="button"
+                onClick={handleMarkAllRead}
+                className="text-xs font-medium text-brand-500 underline dark:text-brand-100"
+              >
+                Mark all read
+              </button>
+            )}
+          </div>
+
+          {status === 'loading' ? (
+            <p className="px-2 py-6 text-center text-sm text-brand-300 dark:text-brand-100">Loading…</p>
+          ) : status === 'error' ? (
+            <p className="px-2 py-6 text-center text-sm text-clay-500 dark:text-clay-400">
+              Couldn't load notifications.
+            </p>
+          ) : notifications.length === 0 ? (
             <p className="px-2 py-6 text-center text-sm text-brand-300 dark:text-brand-100">
               No notifications yet.
             </p>
           ) : (
             <ul className="max-h-80 space-y-1 overflow-y-auto">
               {notifications.map((n) => (
-                <li
-                  key={n.id}
-                  className={`rounded-md px-2 py-2 text-sm ${
-                    n.read ? 'text-brand-500 dark:text-brand-100' : 'bg-brand-50 text-brand-700 dark:bg-brand-700 dark:text-sand-50'
-                  }`}
-                >
-                  <p className="font-medium">{n.title}</p>
-                  <p className="mt-0.5 text-xs opacity-80">{n.body}</p>
+                <li key={n.$id}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelect(n)}
+                    className={`w-full rounded-md px-2 py-2 text-left text-sm ${
+                      n.read
+                        ? 'text-brand-500 dark:text-brand-100'
+                        : 'bg-brand-50 text-brand-700 dark:bg-brand-700 dark:text-sand-50'
+                    }`}
+                  >
+                    <p className="font-medium">{n.title}</p>
+                    {n.body && <p className="mt-0.5 text-xs opacity-80">{n.body}</p>}
+                  </button>
                 </li>
               ))}
             </ul>

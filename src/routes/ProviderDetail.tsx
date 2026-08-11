@@ -67,7 +67,15 @@ export function ProviderDetail() {
     setSubmitting(true);
     setBookingError(null);
     try {
-      await bookSlot(user.$id, provider.$id, selectedSlot.$id, patientName, reason);
+      await bookSlot(
+        user.$id,
+        provider.$id,
+        selectedSlot.$id,
+        patientName,
+        reason,
+        provider.name,
+        formatFull(selectedSlot.startTime)
+      );
       setBookedIds((prev) => new Set(prev).add(selectedSlot.$id));
       setConfirmed(true);
     } catch (err) {

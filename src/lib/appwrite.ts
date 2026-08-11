@@ -46,7 +46,8 @@ export const DB = {
     providers: 'providers',
     appointmentSlots: 'appointment_slots',
     appointments: 'appointments',
-    partnerInquiries: 'partner_inquiries'
+    partnerInquiries: 'partner_inquiries',
+    notifications: 'notifications'
   }
 } as const;
 

@@ -1,4 +1,5 @@
 import { databases, DB, ID, Query, Permission, Role } from '@/lib/appwrite';
+import { createNotification } from '@/lib/notifications';
 import type { Models } from 'appwrite';
 
 export interface ProviderDoc extends Models.Document {
@@ -73,15 +74,29 @@ export async function bookSlot(
   providerId: string,
   slotId: string,
   patientName: string,
-  reason: string
+  reason: string,
+  providerName: string,
+  slotTimeLabel: string
 ): Promise<AppointmentDoc> {
-  return databases.createDocument<AppointmentDoc>(
+  const appointment = await databases.createDocument<AppointmentDoc>(
     DB.databaseId,
     DB.collections.appointments,
     ID.unique(),
     { userId, providerId, slotId, patientName, reason },
     [Permission.read(Role.user(userId)), Permission.delete(Role.user(userId)), Permission.read(Role.label('admin'))]
   );
+  // Best-effort — a failed notification shouldn't undo a successful booking.
+  try {
+    await createNotification(
+      userId,
+      'Appointment booked',
+      `${slotTimeLabel} with ${providerName}`,
+      '/dashboard'
+    );
+  } catch {
+    // ignore
+  }
+  return appointment;
 }
 
 export async function getSlot(id: string): Promise<SlotDoc | null> {

@@ -1075,6 +1075,59 @@
         }
       ],
       "indexes": []
+    },
+    {
+      "$id": "notifications",
+      "$permissions": [
+        "read(\"users\")",
+        "create(\"users\")",
+        "update(\"users\")"
+      ],
+      "databaseId": "thanzi_guide",
+      "name": "Notifications",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "userId",
+          "type": "string",
+          "size": 36,
+          "required": true
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "size": 200,
+          "required": true
+        },
+        {
+          "key": "body",
+          "type": "string",
+          "size": 500,
+          "required": false
+        },
+        {
+          "key": "link",
+          "type": "string",
+          "size": 200,
+          "required": false
+        },
+        {
+          "key": "read",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "user_idx",
+          "type": "key",
+          "attributes": [
+            "userId"
+          ]
+        }
+      ]
     }
   ],
   "buckets": [
