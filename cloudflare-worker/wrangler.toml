@@ -14,5 +14,5 @@ crons = ["0 8 * * 1"]
 APPWRITE_ENDPOINT = "https://cloud.appwrite.io/v1"
 APPWRITE_PROJECT_ID = "your-project-id"
 APPWRITE_DATABASE_ID = "thanzi_guide"
-VAPID_PUBLIC_KEY = "PASTE_YOUR_PUBLIC_KEY_HERE"
+VAPID_PUBLIC_KEY = "BJ9j-rumGb37rfuBI_wc_T8klM1bSjE6hhll1gNTzF_zi-dzMySaNbVqA2gpzUr5G8LR6LpOifKXxiijwsMD2eg"
 VAPID_SUBJECT = "mailto:admin@thanziguide.example"
