@@ -43,7 +43,11 @@ export default defineConfig(({ mode }) => ({
         // precached (e.g. deep links like /foods/123) so the app still
         // loads offline — react-router then takes over client-side.
         navigateFallback: 'index.html',
-        navigateFallbackDenylist: [/^\/registerSW\.js$/, /^\/manifest\.webmanifest$/]
+        navigateFallbackDenylist: [/^\/registerSW\.js$/, /^\/manifest\.webmanifest$/],
+        // Adds Web Push (push / notificationclick) handling to the
+        // generated service worker without hand-rolling the whole thing —
+        // see public/push-sw.js.
+        importScripts: ['push-sw.js']
       }
     })
   ],

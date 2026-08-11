@@ -7,10 +7,12 @@ import {
   markNotificationRead,
   NotificationDoc
 } from '@/lib/notifications';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 export function NotificationBell() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const push = usePushNotifications();
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationDoc[]>([]);
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
@@ -99,6 +101,25 @@ export function NotificationBell() {
               </button>
             )}
           </div>
+
+          {push.supported && (
+            <div className="mb-1 flex items-center justify-between rounded-md bg-brand-50 px-2 py-2 dark:bg-brand-700">
+              <span className="text-xs text-brand-700 dark:text-sand-50">
+                {push.subscribed ? 'Push notifications on' : 'Get push notifications'}
+              </span>
+              <button
+                type="button"
+                onClick={push.subscribed ? push.disable : push.enable}
+                disabled={push.status === 'working'}
+                className="text-xs font-medium text-brand-500 underline disabled:opacity-50 dark:text-brand-100"
+              >
+                {push.status === 'working' ? '…' : push.subscribed ? 'Turn off' : 'Turn on'}
+              </button>
+            </div>
+          )}
+          {push.error && (
+            <p className="mb-1 px-2 text-xs text-clay-500 dark:text-clay-400">{push.error}</p>
+          )}
 
           {status === 'loading' ? (
             <p className="px-2 py-6 text-center text-sm text-brand-300 dark:text-brand-100">Loading…</p>

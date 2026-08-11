@@ -97,6 +97,13 @@ This is being built step by step:
 10. Admin dashboard
 11. Polish, empty/error states, SEO
 
+## Push notifications
+
+Web Push, designed to stay within the Appwrite Student plan's 2-Function
+limit by doing all server-side work in a Cloudflare Worker instead of an
+Appwrite Function. See `PUSH_NOTIFICATIONS.md` for the architecture and
+`cloudflare-worker/` for the Worker itself and deploy steps.
+
 ## Notes
 
 - No AI features are wired up yet. The plan is a swappable AI service

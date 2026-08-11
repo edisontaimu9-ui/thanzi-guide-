@@ -1,0 +1,20 @@
+{
+  "name": "thanzi-guide-push-worker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "secrets": "echo 'Run: wrangler secret put APPWRITE_API_KEY / APPWRITE_WEBHOOK_SECRET / VAPID_PRIVATE_KEY'"
+  },
+  "dependencies": {
+    "@pushforge/builder": "^2.0.5"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260811.1",
+    "typescript": "^5.5.4",
+    "wrangler": "^4.0.0"
+  }
+}
