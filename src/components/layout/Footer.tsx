@@ -14,9 +14,17 @@ export function Footer() {
           <p className="text-xs text-brand-300 dark:text-brand-100">
             © {new Date().getFullYear()} Thanzi Guide.
           </p>
-          <Link to="/support" className="text-xs text-brand-500 underline hover:text-brand-700 dark:text-brand-100 dark:hover:text-white">
-            Help &amp; Support
-          </Link>
+          <div className="flex gap-4">
+            <Link to="/care" className="text-xs text-brand-500 underline hover:text-brand-700 dark:text-brand-100 dark:hover:text-white">
+              Find a Dietitian
+            </Link>
+            <Link to="/partner" className="text-xs text-brand-500 underline hover:text-brand-700 dark:text-brand-100 dark:hover:text-white">
+              Partner with us
+            </Link>
+            <Link to="/support" className="text-xs text-brand-500 underline hover:text-brand-700 dark:text-brand-100 dark:hover:text-white">
+              Help &amp; Support
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

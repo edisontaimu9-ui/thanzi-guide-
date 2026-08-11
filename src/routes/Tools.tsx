@@ -11,6 +11,11 @@ const tools = [
     to: '/tools/energy',
     title: 'Energy Estimator',
     description: 'Estimate your daily energy (calorie) needs based on activity level.'
+  },
+  {
+    to: '/care',
+    title: 'Find a Dietitian or Doctor',
+    description: 'Book time with a real professional for guidance the tools and articles can\'t give you.'
   }
 ];
 

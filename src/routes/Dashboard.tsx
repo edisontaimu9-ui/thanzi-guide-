@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useFavorites } from '@/hooks/useFavorites';
 import { getFood, ChakudyaFood } from '@/lib/chakudya';
 import { listAllCompletedProgress } from '@/lib/courses';
+import { AppointmentDoc, cancelAppointment, getProvider, getSlot, listMyAppointments, ProviderDoc, SlotDoc } from '@/lib/providers';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const ROLE_LABEL: Record<string, string> = {
@@ -22,6 +23,11 @@ export function Dashboard() {
   const [foods, setFoods] = useState<ChakudyaFood[]>([]);
   const [foodsStatus, setFoodsStatus] = useState<'loading' | 'idle' | 'error'>('loading');
   const [completedCount, setCompletedCount] = useState<number | null>(null);
+  const [appointments, setAppointments] = useState<AppointmentDoc[]>([]);
+  const [providerById, setProviderById] = useState<Record<string, ProviderDoc>>({});
+  const [slotById, setSlotById] = useState<Record<string, SlotDoc>>({});
+  const [appointmentsStatus, setAppointmentsStatus] = useState<'loading' | 'idle' | 'error'>('loading');
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loaded) return;
@@ -45,6 +51,43 @@ export function Dashboard() {
       .then((docs) => setCompletedCount(docs.length))
       .catch(() => setCompletedCount(null));
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    setAppointmentsStatus('loading');
+    listMyAppointments(user.$id)
+      .then(async (docs) => {
+        setAppointments(docs);
+        const uniqueProviderIds = Array.from(new Set(docs.map((a) => a.providerId)));
+        const uniqueSlotIds = Array.from(new Set(docs.map((a) => a.slotId)));
+        const [providers, slots] = await Promise.all([
+          Promise.all(uniqueProviderIds.map((pid) => getProvider(pid))),
+          Promise.all(uniqueSlotIds.map((sid) => getSlot(sid)))
+        ]);
+        const pMap: Record<string, ProviderDoc> = {};
+        providers.forEach((p) => {
+          if (p) pMap[p.$id] = p;
+        });
+        const sMap: Record<string, SlotDoc> = {};
+        slots.forEach((s) => {
+          if (s) sMap[s.$id] = s;
+        });
+        setProviderById(pMap);
+        setSlotById(sMap);
+        setAppointmentsStatus('idle');
+      })
+      .catch(() => setAppointmentsStatus('error'));
+  }, [user]);
+
+  async function handleCancel(appointmentId: string) {
+    setCancellingId(appointmentId);
+    try {
+      await cancelAppointment(appointmentId);
+      setAppointments((prev) => prev.filter((a) => a.$id !== appointmentId));
+    } finally {
+      setCancellingId(null);
+    }
+  }
 
   const role = profile?.role ?? 'USER';
   const isContributor = CONTRIBUTOR_ROLES.includes(role);
@@ -96,6 +139,64 @@ export function Dashboard() {
             <span className="font-mono text-base font-semibold">Review queue</span>
             <span className="text-xs">Open admin console →</span>
           </Link>
+        )}
+      </section>
+
+      {/* Appointments */}
+      <section className="mt-10">
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Your appointments</h2>
+          <Link to="/care" className="text-sm font-medium text-brand-500 underline dark:text-brand-100">
+            Find a provider
+          </Link>
+        </div>
+
+        {appointmentsStatus === 'loading' ? (
+          <div className="mt-3 h-16 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-brand-700 dark:bg-brand-900" />
+        ) : appointmentsStatus === 'error' ? (
+          <p className="mt-3 text-sm text-clay-500 dark:text-clay-400">Couldn't load your appointments right now.</p>
+        ) : appointments.length === 0 ? (
+          <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-brand-700">
+            <p>No appointments booked yet.</p>
+            <Link to="/care" className="mt-2 inline-block text-sm font-medium text-brand-700 underline dark:text-sand-100">
+              Find a dietitian or doctor
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-3 space-y-3">
+            {appointments.map((appt) => {
+              const provider = providerById[appt.providerId];
+              const slot = slotById[appt.slotId];
+              return (
+                <div
+                  key={appt.$id}
+                  className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 dark:border-brand-700 dark:bg-brand-900"
+                >
+                  <div>
+                    <p className="font-medium text-brand-700 dark:text-sand-100">{provider?.name ?? 'Provider'}</p>
+                    <p className="text-xs text-brand-300 dark:text-brand-100">
+                      {slot
+                        ? new Intl.DateTimeFormat('en', {
+                            weekday: 'short',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit'
+                          }).format(new Date(slot.startTime))
+                        : 'Time unavailable'}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleCancel(appt.$id)}
+                    disabled={cancellingId === appt.$id}
+                    className="text-sm font-medium text-clay-500 underline hover:text-clay-400 disabled:opacity-60"
+                  >
+                    {cancellingId === appt.$id ? 'Cancelling…' : 'Cancel'}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         )}
       </section>
 
@@ -207,6 +308,20 @@ export function Dashboard() {
             </Link>
           </>
         )}
+      </section>
+
+      {/* Partner with us — organizations, not individual contributors */}
+      <section className="mt-6 rounded-lg border border-brand-100 p-6 dark:border-brand-700">
+        <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Run a clinic or organization?</h2>
+        <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">
+          Partner with Thanzi Guide to join the provider directory or collaborate on content.
+        </p>
+        <Link
+          to="/partner"
+          className="mt-3 inline-block text-sm font-medium text-brand-700 underline dark:text-sand-100"
+        >
+          Partner with us
+        </Link>
       </section>
     </main>
   );

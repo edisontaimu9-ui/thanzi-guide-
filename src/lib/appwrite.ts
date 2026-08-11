@@ -42,7 +42,11 @@ export const DB = {
     userProgress: 'user_progress',
     bookmarks: 'bookmarks',
     favorites: 'favorites',
-    references: 'references'
+    references: 'references',
+    providers: 'providers',
+    appointmentSlots: 'appointment_slots',
+    appointments: 'appointments',
+    partnerInquiries: 'partner_inquiries'
   }
 } as const;
 
