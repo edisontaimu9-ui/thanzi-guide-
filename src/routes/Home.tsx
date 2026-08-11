@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
+import { useAuth } from '@/lib/auth-context';
 
 const topics = [
   { label: 'Nutrition basics', slug: 'nutrition-basics' },
@@ -25,6 +26,8 @@ export function Home() {
 }
 
 function Hero() {
+  const { user, loading } = useAuth();
+
   return (
     <section className="mx-auto grid max-w-5xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[3fr_2fr] lg:items-center">
       <div>
@@ -62,10 +65,20 @@ function Hero() {
           </button>
         </form>
         <div className="mt-4 flex flex-wrap gap-3 text-sm">
-          <Link to="/signup" className="font-medium text-brand-700 underline dark:text-sand-50">
-            Create your free account
-          </Link>
-          <span className="text-brand-300 dark:text-brand-100">·</span>
+          {!loading && (
+            <>
+              {user ? (
+                <Link to="/dashboard" className="font-medium text-brand-700 underline dark:text-sand-50">
+                  Go to your dashboard
+                </Link>
+              ) : (
+                <Link to="/signup" className="font-medium text-brand-700 underline dark:text-sand-50">
+                  Create your free account
+                </Link>
+              )}
+              <span className="text-brand-300 dark:text-brand-100">·</span>
+            </>
+          )}
           <Link to="/foods" className="font-medium text-brand-700 underline dark:text-sand-50">
             Browse the food database
           </Link>
