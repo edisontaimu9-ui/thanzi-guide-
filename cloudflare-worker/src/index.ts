@@ -50,24 +50,37 @@ async function sendToSubscription(env: Env, sub: PushSubscriptionDoc, message: P
   }
 }
 
-async function sendToUser(env: Env, userId: string, message: PushMessage): Promise<void> {
+async function sendToUser(env: Env, userId: string, message: PushMessage): Promise<string[]> {
   const subs = await listSubscriptionsForUser(env, userId);
-  await Promise.allSettled(subs.map((sub) => sendToSubscription(env, sub, message)));
+  const results = await Promise.allSettled(subs.map((sub) => sendToSubscription(env, sub, message)));
+  return results
+    .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+    .map((r) => (r.reason instanceof Error ? `${r.reason.name}: ${r.reason.message}` : String(r.reason)));
 }
 
 // --- Route handlers -------------------------------------------------------
 
 async function handleAppwriteWebhook(req: Request, env: Env): Promise<Response> {
-  const rawBody = await req.text();
-  const signature = req.headers.get('x-appwrite-webhook-signature');
-  const ok = await verifyAppwriteWebhook(req.url, rawBody, signature, env.APPWRITE_WEBHOOK_SECRET);
-  if (!ok) return new Response('Invalid signature', { status: 401 });
+  try {
+    const rawBody = await req.text();
+    const signature = req.headers.get('x-appwrite-webhook-signature');
+    const ok = await verifyAppwriteWebhook(req.url, rawBody, signature, env.APPWRITE_WEBHOOK_SECRET);
+    if (!ok) return new Response('Invalid signature', { status: 401 });
 
-  const doc = JSON.parse(rawBody) as NotificationDoc;
-  if (!doc.userId || !doc.title) return new Response('Ignored: not a notification doc', { status: 200 });
+    const doc = JSON.parse(rawBody) as NotificationDoc;
+    if (!doc.userId || !doc.title) return new Response('Ignored: not a notification doc', { status: 200 });
 
-  await sendToUser(env, doc.userId, { title: doc.title, body: doc.body, url: doc.link, tag: doc.$id });
-  return new Response('ok', { status: 200 });
+    const errors = await sendToUser(env, doc.userId, { title: doc.title, body: doc.body, url: doc.link, tag: doc.$id });
+    if (errors.length > 0) {
+      return new Response(`Sent with per-subscription errors: ${errors.join(' | ')}`, { status: 500 });
+    }
+    return new Response('ok', { status: 200 });
+  } catch (err) {
+    // Surfaced in the response body so it's visible in Appwrite's webhook
+    // error dialog without needing to dig through Cloudflare's log UI.
+    const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+    return new Response(`Worker error: ${message}`, { status: 500 });
+  }
 }
 
 // Admin-triggered broadcast to many users at once. Called from the app's
