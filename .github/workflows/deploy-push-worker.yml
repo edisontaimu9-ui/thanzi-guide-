@@ -1,0 +1,32 @@
+name: Deploy Push Worker
+
+on:
+  push:
+    branches: [main]
+    paths: ["cloudflare-worker/**"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloudflare-worker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: cloudflare-worker
+          secrets: |
+            APPWRITE_API_KEY
+            VAPID_PRIVATE_KEY
+            APPWRITE_WEBHOOK_SECRET
+        env:
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          APPWRITE_WEBHOOK_SECRET: ${{ secrets.APPWRITE_WEBHOOK_SECRET }}
