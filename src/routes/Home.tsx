@@ -3,15 +3,38 @@ import { Link } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
 import { useAuth } from '@/lib/auth-context';
 
+// `highlight: true` topics show on the homepage by default; the rest are
+// tucked behind "Show more topics" so the section doesn't turn into a wall
+// of pills. All of them are still real links either way.
 const topics = [
-  { label: 'Nutrition basics', slug: 'nutrition-basics' },
-  { label: 'Maternal nutrition', slug: 'maternal-nutrition' },
-  { label: 'Child nutrition', slug: 'child-nutrition' },
-  { label: 'Malnutrition', slug: 'malnutrition' },
+  { label: 'Nutrition basics', slug: 'nutrition-basics', highlight: true },
+  { label: 'Maternal nutrition', slug: 'maternal-nutrition', highlight: true },
+  { label: 'Child nutrition', slug: 'child-nutrition', highlight: true },
+  { label: 'Breastfeeding & complementary feeding', slug: 'breastfeeding-complementary-feeding', highlight: true },
+  { label: 'Malnutrition', slug: 'malnutrition', highlight: true },
+  { label: 'Healthy eating', slug: 'healthy-eating', highlight: true },
+  { label: 'HIV & nutrition', slug: 'hiv-nutrition', highlight: true },
+  { label: 'Anaemia', slug: 'anaemia', highlight: true },
+  { label: 'Diabetes', slug: 'diabetes', highlight: true },
+  { label: 'High blood pressure', slug: 'high-blood-pressure', highlight: true },
   { label: 'Food safety', slug: 'food-safety' },
   { label: 'Physical activity', slug: 'physical-activity' },
   { label: 'Water, sanitation & hygiene', slug: 'wash' },
-  { label: 'Preventive health', slug: 'preventive-health' }
+  { label: 'Preventive health', slug: 'preventive-health' },
+  { label: 'Heart health', slug: 'heart-health' },
+  { label: 'Micronutrients', slug: 'micronutrients' },
+  { label: "Women's health", slug: 'womens-health' },
+  { label: "Men's health", slug: 'mens-health' },
+  { label: 'Mental health', slug: 'mental-health' },
+  { label: 'Sexual & reproductive health', slug: 'sexual-reproductive-health' },
+  { label: 'Infectious diseases', slug: 'infectious-diseases' },
+  { label: 'Adolescent health', slug: 'adolescent-health' },
+  { label: 'Healthy ageing', slug: 'healthy-ageing' },
+  { label: 'Oral health', slug: 'oral-health' },
+  { label: 'Eye health', slug: 'eye-health' },
+  { label: 'Environmental health', slug: 'environmental-health' },
+  { label: 'Emergency & first aid', slug: 'emergency-first-aid' },
+  { label: 'Food & nutrition myths', slug: 'food-nutrition-myths' }
 ];
 
 export function Home() {
@@ -176,6 +199,11 @@ function Stat({ label, value }: { label: string; value: string | number }) {
 }
 
 function TopicsPreview() {
+  const [showAll, setShowAll] = useState(false);
+  const highlighted = topics.filter((t) => t.highlight);
+  const rest = topics.filter((t) => !t.highlight);
+  const visible = showAll ? topics : highlighted;
+
   return (
     <section className="border-y border-brand-100 bg-sand-100 dark:border-ink-800 dark:bg-ink-950">
       <div className="mx-auto max-w-5xl px-6 py-12">
@@ -185,7 +213,7 @@ function TopicsPreview() {
           topics have articles now, others are still being written.
         </p>
         <ul className="mt-6 flex flex-wrap gap-2" aria-label="Topics">
-          {topics.map((topic) => (
+          {visible.map((topic) => (
             <li key={topic.slug}>
               <Link
                 to={`/learn?category=${topic.slug}`}
@@ -196,6 +224,15 @@ function TopicsPreview() {
             </li>
           ))}
         </ul>
+        {rest.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowAll((v) => !v)}
+            className="mt-4 text-sm font-medium text-brand-700 underline dark:text-sand-100"
+          >
+            {showAll ? 'Show fewer topics' : `Show ${rest.length} more topics`}
+          </button>
+        )}
       </div>
     </section>
   );
