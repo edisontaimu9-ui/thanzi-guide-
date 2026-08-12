@@ -8,7 +8,7 @@ const SITE_TITLE = 'Thanzi Guide';
 export function useDocumentTitle(title?: string) {
   useEffect(() => {
     const previous = document.title;
-    document.title = title ? `${title} — ${SITE_TITLE}` : `${SITE_TITLE} — Health & Nutrition Education for Malawi`;
+    document.title = title ? `${title} | ${SITE_TITLE}` : `${SITE_TITLE} | Health & Nutrition Education for Malawi`;
     return () => {
       document.title = previous;
     };

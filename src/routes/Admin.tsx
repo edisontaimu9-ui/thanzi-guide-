@@ -76,7 +76,7 @@ export function Admin() {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Content Review</h1>
       <p className="mt-2 text-brand-500 dark:text-brand-100">
-        Draft content awaiting publish. Editing still happens in the Appwrite console — this is for
+        Draft content awaiting publish. Editing still happens in the Appwrite console. This is for
         approving what's ready.
       </p>
 

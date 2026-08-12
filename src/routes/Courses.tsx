@@ -21,7 +21,7 @@ export function Courses() {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Courses</h1>
       <p className="mt-2 text-brand-500 dark:text-brand-100">
-        Short, structured lessons on nutrition and health — more are added over time.
+        Short, structured lessons on nutrition and health. More are added over time.
       </p>
 
       <div className="mt-8">

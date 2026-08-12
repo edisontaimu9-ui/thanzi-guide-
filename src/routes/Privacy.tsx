@@ -12,7 +12,7 @@ export function Privacy() {
           <h2 className="font-display text-lg">What we collect</h2>
           <p className="mt-2 text-sm text-brand-500 dark:text-brand-100">
             When you create an account: your name and email address. As you use the app: favorite foods,
-            course progress, and — if you book one — the details you provide for a provider appointment
+            course progress, and, if you book one, the details you provide for a provider appointment
             (name, reason for the visit) or a partner inquiry (name, organization, email, phone, message).
           </p>
         </section>
@@ -20,7 +20,7 @@ export function Privacy() {
         <section>
           <h2 className="font-display text-lg">How it's used</h2>
           <p className="mt-2 text-sm text-brand-500 dark:text-brand-100">
-            To run your account and the features you use — showing your favorites and progress, connecting
+            To run your account and the features you use: showing your favorites and progress, connecting
             you with a provider you've booked, and following up on partner inquiries. We don't sell your
             data or use it for advertising.
           </p>
@@ -38,7 +38,7 @@ export function Privacy() {
           <h2 className="font-display text-lg">Your choices</h2>
           <p className="mt-2 text-sm text-brand-500 dark:text-brand-100">
             You can remove favorites and cancel appointments yourself from your account at any time. To
-            request a copy of your data or have your account deleted, email us — see below.
+            request a copy of your data or have your account deleted, email us. See below.
           </p>
         </section>
 

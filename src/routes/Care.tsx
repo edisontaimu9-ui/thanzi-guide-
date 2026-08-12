@@ -21,8 +21,8 @@ export function Care() {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="font-display text-3xl text-brand-700 dark:text-sand-50">Find a dietitian or doctor</h1>
       <p className="mt-2 max-w-xl text-brand-500 dark:text-brand-100">
-        Book time with a real professional for guidance Thanzi Guide's articles and tools can't give you —
-        this is an estimate-and-education platform, not a substitute for individual medical advice.
+        Book time with a real professional for guidance Thanzi Guide's articles and tools can't give you.
+        This is an estimate-and-education platform, not a substitute for individual medical advice.
       </p>
 
       {status === 'loading' && (

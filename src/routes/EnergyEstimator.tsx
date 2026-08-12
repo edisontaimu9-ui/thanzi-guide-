@@ -152,7 +152,7 @@ export function EnergyEstimator() {
 
       <p className="mt-6 text-xs text-brand-500 dark:text-brand-100">
         This is an estimate, not a diagnosis. It uses a standard formula (Mifflin-St Jeor) and
-        won't be exact for everyone — pregnancy, illness, and other factors change energy needs.
+        won't be exact for everyone. Pregnancy, illness, and other factors change energy needs.
         Talk to a health worker or registered dietitian for guidance specific to you.
       </p>
     </main>

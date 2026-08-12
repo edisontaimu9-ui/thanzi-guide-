@@ -41,7 +41,7 @@ export function Terms() {
           <h2 className="font-display text-lg">4. Content accuracy</h2>
           <p className="mt-2 text-sm text-brand-500 dark:text-brand-100">
             Food and article content is reviewed by an editor or nutrition expert before publishing, but
-            errors can happen. If something looks wrong, please report it — see{' '}
+            errors can happen. If something looks wrong, please report it. See{' '}
             <a href="/support" className="underline">
               Help &amp; Support
             </a>
@@ -52,7 +52,7 @@ export function Terms() {
         <section>
           <h2 className="font-display text-lg">5. Acceptable use</h2>
           <p className="mt-2 text-sm text-brand-500 dark:text-brand-100">
-            Don't misuse the service — that includes attempting to disrupt it, scraping content at scale,
+            Don't misuse the service: that includes attempting to disrupt it, scraping content at scale,
             impersonating others, or submitting false information when booking a provider appointment or
             contacting us as a partner.
           </p>

@@ -251,7 +251,7 @@ export function Dashboard() {
         </div>
         <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-ink-800">
           {completedCount === null ? (
-            <p>Courses aren't built yet — this will show your progress once they are.</p>
+            <p>Courses aren't built yet. This will show your progress once they are.</p>
           ) : completedCount === 0 ? (
             <>
               <p>You haven't completed any lessons yet.</p>
@@ -272,7 +272,7 @@ export function Dashboard() {
       <section className="mt-10">
         <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Saved articles</h2>
         <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-ink-800">
-          <p>Articles aren't built yet — bookmarked ones will show here.</p>
+          <p>Articles aren't built yet. Bookmarked ones will show here.</p>
         </div>
       </section>
 

@@ -43,7 +43,7 @@ function Hero() {
         </h1>
         <p className="mt-5 max-w-md text-brand-500 dark:text-brand-100">
           Search real Malawian foods, read nutrition guidance you can trust,
-          and use simple tools built for local life — not imported medical
+          and use simple tools built for local life, not imported medical
           templates.
         </p>
         <form action="/search" className="mt-8 flex max-w-md gap-2">
@@ -181,7 +181,7 @@ function TopicsPreview() {
       <div className="mx-auto max-w-5xl px-6 py-12">
         <h2 className="font-display text-2xl text-brand-700 dark:text-sand-50">What you'll find here</h2>
         <p className="mt-2 max-w-xl text-brand-500 dark:text-brand-100">
-          Nutrition and health topics for Malawi. Coverage is growing — some
+          Nutrition and health topics for Malawi. Coverage is growing. Some
           topics have articles now, others are still being written.
         </p>
         <ul className="mt-6 flex flex-wrap gap-2" aria-label="Topics">
@@ -256,7 +256,7 @@ function ToolsPreview() {
       <div className="mx-auto max-w-5xl px-6 py-16 text-sand-50">
         <h2 className="font-display text-2xl">Tools, built for local use</h2>
         <p className="mt-2 max-w-xl text-brand-100">
-          A BMI calculator and a daily energy estimator — quick, clear
+          A BMI calculator and a daily energy estimator: quick, clear
           estimates, not diagnoses.
         </p>
         <Link

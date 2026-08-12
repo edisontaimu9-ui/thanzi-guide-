@@ -3,19 +3,19 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 const faqs = [
   {
     q: 'Is Thanzi Guide a substitute for seeing a doctor?',
-    a: 'No. Thanzi Guide provides educational information and estimates — it does not diagnose conditions. Always consult a qualified health professional for medical concerns.'
+    a: 'No. Thanzi Guide provides educational information and estimates. It does not diagnose conditions. Always consult a qualified health professional for medical concerns.'
   },
   {
     q: 'Where does the food and nutrition data come from?',
     a: "Food entries are reviewed by an editor or nutrition expert before publishing. If something looks wrong, please report it so it can be corrected."
   },
   {
-    q: 'I found incorrect information — how do I report it?',
+    q: 'I found incorrect information. How do I report it?',
     a: 'Email us using the address below with a link to the page and what looks off. Corrections to health and nutrition content are treated as a priority.'
   },
   {
     q: 'Can I use Thanzi Guide offline?',
-    a: "Yes — once you've installed it (Install banner, or your browser's \"Add to Home Screen\"), pages you've already visited stay available without a connection."
+    a: "Yes, once you've installed it (Install banner, or your browser's \"Add to Home Screen\"), pages you've already visited stay available without a connection."
   }
 ];
 

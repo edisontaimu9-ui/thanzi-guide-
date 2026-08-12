@@ -80,7 +80,7 @@ export function ProviderDetail() {
       setConfirmed(true);
     } catch (err) {
       setBookingError(
-        err instanceof Error ? err.message : 'Could not book that slot — it may have just been taken.'
+        err instanceof Error ? err.message : 'Could not book that slot. It may have just been taken.'
       );
     } finally {
       setSubmitting(false);
@@ -152,7 +152,7 @@ export function ProviderDetail() {
       <h2 className="mt-8 font-display text-lg text-brand-700 dark:text-sand-100">Available times</h2>
 
       {availableSlots.length === 0 ? (
-        <p className="mt-3 text-brand-500 dark:text-brand-100">No open slots right now — check back soon.</p>
+        <p className="mt-3 text-brand-500 dark:text-brand-100">No open slots right now. Check back soon.</p>
       ) : (
         <div className="mt-3 space-y-5">
           {grouped.map(([day, daySlots]) => (
@@ -232,7 +232,7 @@ export function ProviderDetail() {
 
       {confirmed && selectedSlot && (
         <div className="mt-6 rounded-lg border border-brand-500 bg-brand-50 p-5 text-brand-700 dark:bg-ink-900 dark:text-sand-50">
-          <p className="font-medium">Booked — {formatFull(selectedSlot.startTime)} with {provider.name}.</p>
+          <p className="font-medium">Booked: {formatFull(selectedSlot.startTime)} with {provider.name}.</p>
           <p className="mt-1 text-sm">
             You'll find this in your{' '}
             <Link to="/dashboard" className="underline">

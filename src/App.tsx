@@ -52,7 +52,7 @@ export default function App() {
                 element={
                   <ComingSoon
                     title="Ask"
-                    description="A place to ask health and nutrition questions and get answers grounded in Thanzi Guide's own content is on the way — once the food and article database has enough real content to ground it in."
+                    description="A place to ask health and nutrition questions and get answers grounded in Thanzi Guide's own content. It's on the way, once the food and article database has enough real content to ground it in."
                   />
                 }
               />

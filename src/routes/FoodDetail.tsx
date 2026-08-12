@@ -96,7 +96,7 @@ export function FoodDetail() {
           </dl>
           <p className="mt-4 text-xs text-brand-300 dark:text-brand-100">
             Values are per {food.measure} ({food.weight_g}g) from the Chakudya Nutrition
-            Registry — Malawi food composition data.
+            Registry, Malawi food composition data.
           </p>
         </>
       )}

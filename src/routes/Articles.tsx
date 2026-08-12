@@ -37,7 +37,7 @@ export function Articles() {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Learn</h1>
       <p className="mt-2 text-brand-500 dark:text-brand-100">
-        Nutrition and health articles, reviewed for accuracy — more are added over time.
+        Nutrition and health articles, reviewed for accuracy. More are added over time.
       </p>
 
       {categories.length > 0 && (
