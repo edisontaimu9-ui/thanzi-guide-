@@ -160,6 +160,14 @@ export function Settings() {
           Necessary storage (sign-in, theme) is always on. See the{' '}
           <Link to="/cookies" className="underline">
             Cookie Policy
+          </Link>
+          ,{' '}
+          <Link to="/terms" className="underline">
+            Terms of Use
+          </Link>
+          , and{' '}
+          <Link to="/privacy" className="underline">
+            Privacy Policy
           </Link>{' '}
           for details.
         </p>

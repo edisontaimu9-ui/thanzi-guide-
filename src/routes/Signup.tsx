@@ -82,6 +82,17 @@ export function Signup() {
         >
           {submitting ? 'Creating account…' : 'Sign up'}
         </button>
+        <p className="text-center text-xs text-brand-300 dark:text-brand-100">
+          By signing up, you agree to our{' '}
+          <Link to="/terms" className="underline">
+            Terms of Use
+          </Link>{' '}
+          and{' '}
+          <Link to="/privacy" className="underline">
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </form>
       <p className="mt-4 text-sm text-brand-500 dark:text-brand-100">
         Already have an account? <Link to="/login" className="underline">Log in</Link>
