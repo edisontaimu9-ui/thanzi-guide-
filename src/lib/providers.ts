@@ -83,7 +83,11 @@ export async function bookSlot(
     DB.collections.appointments,
     ID.unique(),
     { userId, providerId, slotId, patientName, reason },
-    [Permission.read(Role.user(userId)), Permission.delete(Role.user(userId)), Permission.read(Role.label('admin'))]
+    // Admin read access is granted at the collection level in Appwrite
+    // Console (Settings > Permissions > Label: admin > Read), not here —
+    // a regular user session isn't allowed to grant a label-based
+    // permission on a document it creates.
+    [Permission.read(Role.user(userId)), Permission.delete(Role.user(userId))]
   );
   // Best-effort — a failed notification shouldn't undo a successful booking.
   try {
