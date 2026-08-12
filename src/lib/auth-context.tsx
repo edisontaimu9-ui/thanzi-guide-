@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import type { Models } from 'appwrite';
 import { account, ID } from './appwrite';
-import { ensureProfile, ProfileDoc } from './profiles';
+import { ensureProfile, touchLastActive, ProfileDoc } from './profiles';
 
 type ThanziUser = Models.User<Models.Preferences>;
 
@@ -31,6 +31,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // pick one up automatically.
       const currentProfile = await ensureProfile(current.$id, current.name);
       setProfile(currentProfile);
+      // Fire-and-forget: powers the inactivity reminder cron. A failed
+      // write here just means that cron sees slightly stale data for this
+      // user next run -- not worth blocking the UI or surfacing an error.
+      touchLastActive(currentProfile.$id).catch(() => {});
     } catch {
       setUser(null);
       setProfile(null);

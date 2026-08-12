@@ -8,6 +8,7 @@ export interface ProfileDoc extends Models.Document {
   avatarUrl?: string;
   bio?: string;
   preferences?: string;
+  lastActiveAt?: string;
 }
 
 export async function getProfile(userId: string): Promise<ProfileDoc | null> {
@@ -34,4 +35,15 @@ export async function ensureProfile(userId: string, name: string): Promise<Profi
     { userId, name, role: 'USER' },
     [Permission.read(Role.user(userId)), Permission.update(Role.user(userId))]
   );
+}
+
+// Marks the profile as active right now. Powers the inactivity reminder
+// cron (cloudflare-worker), which pushes a "come back" notification to
+// users whose lastActiveAt falls behind a threshold. Fire-and-forget from
+// the caller -- a missed update just means the reminder fires a bit early
+// for that user, not worth blocking the UI over.
+export async function touchLastActive(profileDocId: string): Promise<void> {
+  await databases.updateDocument(DB.databaseId, DB.collections.profiles, profileDocId, {
+    lastActiveAt: new Date().toISOString()
+  });
 }

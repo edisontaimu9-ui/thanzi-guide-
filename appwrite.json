@@ -57,6 +57,11 @@
                     "type": "string",
                     "size": 5000,
                     "required": false
+                },
+                {
+                    "key": "lastActiveAt",
+                    "type": "datetime",
+                    "required": false
                 }
             ],
             "indexes": [
@@ -65,6 +70,13 @@
                     "type": "unique",
                     "attributes": [
                         "userId"
+                    ]
+                },
+                {
+                    "key": "lastActiveAt_idx",
+                    "type": "key",
+                    "attributes": [
+                        "lastActiveAt"
                     ]
                 }
             ]
