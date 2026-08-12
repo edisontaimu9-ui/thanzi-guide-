@@ -52,63 +52,82 @@ function Hero() {
   const { user, loading } = useAuth();
 
   return (
-    <section className="mx-auto grid max-w-5xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[3fr_2fr] lg:items-center">
-      <div>
-        <p className="text-sm font-medium uppercase tracking-wide text-clay-500 dark:text-clay-400">
-          Health &amp; nutrition, explained for Malawi
-        </p>
-        <h1 className="mt-3 font-display text-4xl leading-tight text-brand-700 dark:text-sand-50 sm:text-5xl">
-          Learn about your health.
-          <br />
-          Understand your food.
-          <br />
-          Make better choices.
-        </h1>
-        <p className="mt-5 max-w-md text-brand-500 dark:text-brand-100">
-          Search real Malawian foods, read nutrition guidance you can trust,
-          and use simple tools built for local life, not imported medical
-          templates.
-        </p>
-        <form action="/search" className="mt-8 flex max-w-md gap-2">
-          <label htmlFor="hero-search" className="sr-only">
-            Search foods
-          </label>
-          <input
-            id="hero-search"
-            name="q"
-            type="search"
-            placeholder="Search a food, e.g. groundnuts"
-            className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
-          />
-          <button
-            type="submit"
-            className="rounded-md bg-brand-500 px-4 py-2 font-medium text-white hover:bg-brand-700"
-          >
-            Search
-          </button>
-        </form>
-        <div className="mt-4 flex flex-wrap gap-3 text-sm">
-          {!loading && (
-            <>
-              {user ? (
-                <Link to="/dashboard" className="font-medium text-brand-700 underline dark:text-sand-50">
-                  Go to your dashboard
-                </Link>
-              ) : (
-                <Link to="/signup" className="font-medium text-brand-700 underline dark:text-sand-50">
-                  Create your free account
-                </Link>
-              )}
-              <span className="text-brand-300 dark:text-brand-100">·</span>
-            </>
-          )}
-          <Link to="/foods" className="font-medium text-brand-700 underline dark:text-sand-50">
-            Browse the food database
-          </Link>
+    <section className="relative overflow-hidden bg-gradient-to-br from-brand-900 via-brand-700 to-brand-500">
+      {/* Ambient glow accents — Lake Malawi teal warmed by a gold sunset glow */}
+      <div
+        className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-clay-400/25 blur-3xl"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -bottom-32 -left-16 h-72 w-72 rounded-full bg-brand-100/10 blur-3xl"
+        aria-hidden="true"
+      />
+
+      <div className="relative mx-auto grid max-w-5xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[3fr_2fr] lg:items-center">
+        <div>
+          <span className="inline-flex items-center rounded-full border border-clay-400/40 bg-clay-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-clay-400">
+            Health &amp; nutrition, explained for Malawi
+          </span>
+          <h1 className="mt-4 font-display text-4xl leading-tight text-sand-50 sm:text-5xl">
+            Learn about your health.
+            <br />
+            Understand your food.
+            <br />
+            <span className="text-clay-400">Make better choices.</span>
+          </h1>
+          <p className="mt-5 max-w-md text-brand-100">
+            Search real Malawian foods, read nutrition guidance you can trust,
+            and use simple tools built for local life, not imported medical
+            templates.
+          </p>
+          <form action="/search" className="mt-8 flex max-w-md gap-2">
+            <label htmlFor="hero-search" className="sr-only">
+              Search foods
+            </label>
+            <input
+              id="hero-search"
+              name="q"
+              type="search"
+              placeholder="Search a food, e.g. groundnuts"
+              className="flex-1 rounded-md border border-white/20 bg-white/95 px-3 py-2.5 text-brand-900 placeholder:text-brand-300 focus:border-clay-400 focus:outline-none focus:ring-2 focus:ring-clay-400/50"
+            />
+            <button
+              type="submit"
+              className="rounded-md bg-clay-400 px-5 py-2.5 font-semibold text-brand-900 transition hover:bg-clay-500"
+            >
+              Search
+            </button>
+          </form>
+          <div className="mt-5 flex flex-wrap items-center gap-4 text-sm">
+            {!loading && (
+              <Link
+                to={user ? '/dashboard' : '/signup'}
+                className="rounded-full bg-sand-50 px-4 py-2 font-semibold text-brand-700 transition hover:bg-white"
+              >
+                {user ? 'Go to your dashboard' : 'Create your free account'}
+              </Link>
+            )}
+            <Link
+              to="/foods"
+              className="font-medium text-sand-50 underline decoration-clay-400 underline-offset-4 hover:text-clay-400"
+            >
+              Browse the food database →
+            </Link>
+          </div>
         </div>
+
+        <FoodSnapshot />
       </div>
 
-      <FoodSnapshot />
+      {/* Shoreline divider into the page body */}
+      <svg
+        className="relative -mb-1 block h-12 w-full text-sand-50 dark:text-ink-950 sm:h-20"
+        viewBox="0 0 1440 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path fill="currentColor" d="M0,40 C240,90 480,0 720,30 C960,60 1200,10 1440,40 L1440,100 L0,100 Z" />
+      </svg>
     </section>
   );
 }
@@ -147,20 +166,20 @@ function FoodSnapshot() {
   const food = foods[index];
 
   return (
-    <div className="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-ink-800 dark:bg-ink-950">
-      <p className="text-xs font-medium uppercase tracking-wide text-brand-300 dark:text-brand-100">
+    <div className="rounded-2xl border border-clay-400/30 bg-sand-50/95 p-6 shadow-2xl shadow-brand-900/40 backdrop-blur-sm">
+      <p className="text-xs font-medium uppercase tracking-wide text-brand-300">
         From the food database
       </p>
 
       {status === 'loading' || !food ? (
         <div className="mt-3 animate-pulse space-y-3" aria-hidden="true">
-          <div className="h-5 w-2/3 rounded bg-brand-50 dark:bg-ink-900" />
-          <div className="h-16 rounded bg-brand-50 dark:bg-ink-900" />
+          <div className="h-5 w-2/3 rounded bg-brand-100" />
+          <div className="h-16 rounded bg-brand-100" />
         </div>
       ) : (
         <>
-          <p className="mt-2 font-display text-xl text-brand-700 dark:text-sand-50">{food.food_name}</p>
-          <p className="text-sm text-brand-300 dark:text-brand-100">
+          <p className="mt-2 font-display text-xl text-brand-700">{food.food_name}</p>
+          <p className="text-sm text-brand-300">
             {food.category} · {food.measure}
           </p>
           <dl className="mt-4 grid grid-cols-4 gap-2 text-center">
@@ -178,7 +197,7 @@ function FoodSnapshot() {
                   aria-selected={i === index}
                   aria-label={f.food_name}
                   onClick={() => setIndex(i)}
-                  className={`h-1.5 w-4 rounded-full ${i === index ? 'bg-brand-500' : 'bg-brand-100 dark:bg-ink-900'}`}
+                  className={`h-1.5 w-4 rounded-full ${i === index ? 'bg-clay-400' : 'bg-brand-100'}`}
                 />
               ))}
             </div>
@@ -192,8 +211,8 @@ function FoodSnapshot() {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <dt className="font-mono text-base font-semibold text-brand-700 dark:text-sand-50">{value}</dt>
-      <dd className="text-[11px] uppercase tracking-wide text-brand-300 dark:text-brand-100">{label}</dd>
+      <dt className="font-mono text-base font-semibold text-brand-700">{value}</dt>
+      <dd className="text-[11px] uppercase tracking-wide text-brand-300">{label}</dd>
     </div>
   );
 }
