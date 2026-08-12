@@ -23,6 +23,14 @@ export default {
         sand: {
           50: '#F2F1E6',
           100: '#E7E4D2'
+        },
+        // Neutral near-black surfaces for dark mode — deliberately separate
+        // from `brand`, since brand-700/900 also serve as teal accent/text
+        // colors in light mode and can't do double duty as dark backgrounds.
+        ink: {
+          800: '#262626',
+          900: '#161616',
+          950: '#0A0A0A'
         }
       },
       fontFamily: {

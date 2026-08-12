@@ -28,7 +28,7 @@ export function Care() {
       {status === 'loading' && (
         <div className="mt-8 grid gap-3 sm:grid-cols-2" aria-hidden="true">
           {Array.from({ length: 2 }).map((_, i) => (
-            <div key={i} className="h-28 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-brand-700 dark:bg-brand-900" />
+            <div key={i} className="h-28 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-ink-800 dark:bg-ink-950" />
           ))}
         </div>
       )}
@@ -38,7 +38,7 @@ export function Care() {
       )}
 
       {status === 'idle' && providers.length === 0 && (
-        <div className="mt-8 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-brand-700">
+        <div className="mt-8 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-ink-800">
           <p>No providers listed yet.</p>
         </div>
       )}
@@ -49,7 +49,7 @@ export function Care() {
             <Link
               key={provider.$id}
               to={`/care/${provider.$id}`}
-              className="rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
+              className="rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-lg text-white">

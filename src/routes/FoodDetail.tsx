@@ -52,9 +52,9 @@ export function FoodDetail() {
 
       {status === 'loading' && (
         <div className="mt-6 animate-pulse space-y-3" aria-hidden="true">
-          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-brand-700" />
-          <div className="h-4 w-1/3 rounded bg-brand-100 dark:bg-brand-700" />
-          <div className="h-24 rounded bg-brand-100 dark:bg-brand-700" />
+          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-ink-900" />
+          <div className="h-4 w-1/3 rounded bg-brand-100 dark:bg-ink-900" />
+          <div className="h-24 rounded bg-brand-100 dark:bg-ink-900" />
         </div>
       )}
 
@@ -81,7 +81,7 @@ export function FoodDetail() {
               className={`shrink-0 rounded-md border px-3 py-2 text-sm font-medium transition disabled:opacity-60 ${
                 isFavorite(food.id)
                   ? 'border-clay-500 bg-clay-400/10 text-clay-500 dark:text-clay-400'
-                  : 'border-brand-100 text-brand-500 hover:border-brand-500 dark:text-brand-100 dark:border-brand-700'
+                  : 'border-brand-100 text-brand-500 hover:border-brand-500 dark:text-brand-100 dark:border-ink-800'
               }`}
             >
               {isFavorite(food.id) ? '★ Favorited' : '☆ Favorite'}
@@ -106,7 +106,7 @@ export function FoodDetail() {
 
 function NutrientStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-brand-100 p-4 text-center dark:border-brand-700">
+    <div className="rounded-lg border border-brand-100 p-4 text-center dark:border-ink-800">
       <dt className="text-xs uppercase tracking-wide text-brand-300 dark:text-brand-100">{label}</dt>
       <dd className="mt-1 font-mono text-xl font-semibold text-brand-700 dark:text-sand-100">{value}</dd>
     </div>

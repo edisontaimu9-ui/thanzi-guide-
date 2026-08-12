@@ -33,7 +33,7 @@ export function Tools() {
           <li key={tool.to}>
             <Link
               to={tool.to}
-              className="block rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
+              className="block rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950"
             >
               <p className="font-display text-lg text-brand-700 dark:text-sand-100">{tool.title}</p>
               <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">{tool.description}</p>

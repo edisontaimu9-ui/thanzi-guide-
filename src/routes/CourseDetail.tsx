@@ -45,15 +45,15 @@ export function CourseDetail() {
 
       {status === 'loading' && (
         <div className="mt-6 animate-pulse space-y-3" aria-hidden="true">
-          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-brand-700" />
-          <div className="h-16 rounded bg-brand-100 dark:bg-brand-700" />
+          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-ink-900" />
+          <div className="h-16 rounded bg-brand-100 dark:bg-ink-900" />
         </div>
       )}
 
       {status === 'error' && <p className="mt-6 text-sm text-clay-500 dark:text-clay-400">Couldn't load this course.</p>}
 
       {status === 'idle' && !course && (
-        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-brand-700">
+        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-ink-800">
           <p className="font-medium text-brand-700 dark:text-sand-100">Course not found</p>
         </div>
       )}
@@ -74,7 +74,7 @@ export function CourseDetail() {
               <li key={lesson.$id}>
                 <Link
                   to={`/courses/${course.slug}/${lesson.slug}`}
-                  className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
+                  className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950"
                 >
                   <span className="text-brand-700 dark:text-sand-100">
                     <span className="mr-2 text-brand-300 dark:text-brand-100">{i + 1}.</span>

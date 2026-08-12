@@ -88,7 +88,7 @@ export function NotificationBell() {
         // anchoring a wide panel to its local position pushed it off-screen.
         // This keeps it pinned just under the header, right-aligned to the
         // viewport, regardless of where the bell itself sits.
-        <div className="fixed right-3 top-16 z-50 w-72 max-w-[calc(100vw-1.5rem)] rounded-lg border border-brand-100 bg-white p-2 shadow-lg dark:border-brand-700 dark:bg-brand-900">
+        <div className="fixed right-3 top-16 z-50 w-72 max-w-[calc(100vw-1.5rem)] rounded-lg border border-brand-100 bg-white p-2 shadow-lg dark:border-ink-800 dark:bg-ink-950">
           <div className="flex items-center justify-between px-2 py-1.5">
             <p className="text-sm font-medium text-brand-700 dark:text-sand-50">Notifications</p>
             {unreadCount > 0 && (
@@ -103,7 +103,7 @@ export function NotificationBell() {
           </div>
 
           {push.supported && (
-            <div className="mb-1 flex items-center justify-between rounded-md bg-brand-50 px-2 py-2 dark:bg-brand-700">
+            <div className="mb-1 flex items-center justify-between rounded-md bg-brand-50 px-2 py-2 dark:bg-ink-900">
               <span className="text-xs text-brand-700 dark:text-sand-50">
                 {push.subscribed ? 'Push notifications on' : 'Get push notifications'}
               </span>
@@ -141,7 +141,7 @@ export function NotificationBell() {
                     className={`w-full rounded-md px-2 py-2 text-left text-sm ${
                       n.read
                         ? 'text-brand-500 dark:text-brand-100'
-                        : 'bg-brand-50 text-brand-700 dark:bg-brand-700 dark:text-sand-50'
+                        : 'bg-brand-50 text-brand-700 dark:bg-ink-900 dark:text-sand-50'
                     }`}
                   >
                     <p className="font-medium">{n.title}</p>

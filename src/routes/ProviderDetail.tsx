@@ -166,7 +166,7 @@ export function ProviderDetail() {
                     className={`rounded-md border px-3 py-1.5 text-sm font-medium transition ${
                       selectedSlot?.$id === slot.$id
                         ? 'border-brand-500 bg-brand-500 text-white'
-                        : 'border-brand-100 text-brand-700 hover:border-brand-500 dark:border-brand-700 dark:text-sand-100'
+                        : 'border-brand-100 text-brand-700 hover:border-brand-500 dark:border-ink-800 dark:text-sand-100'
                     }`}
                   >
                     {formatTime(slot.startTime)}
@@ -181,7 +181,7 @@ export function ProviderDetail() {
       {selectedSlot && !confirmed && (
         <form
           onSubmit={handleConfirm}
-          className="mt-6 space-y-4 rounded-lg border border-brand-100 bg-white p-5 dark:border-brand-700 dark:bg-brand-900"
+          className="mt-6 space-y-4 rounded-lg border border-brand-100 bg-white p-5 dark:border-ink-800 dark:bg-ink-950"
         >
           <p className="text-sm text-brand-700 dark:text-sand-100">
             Booking <span className="font-semibold">{formatFull(selectedSlot.startTime)}</span> with {provider.name}
@@ -195,7 +195,7 @@ export function ProviderDetail() {
               required
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
-              className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+              className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
             />
           </div>
           <div>
@@ -207,7 +207,7 @@ export function ProviderDetail() {
               rows={3}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+              className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
             />
           </div>
           {bookingError && <p className="text-sm text-clay-500 dark:text-clay-400">{bookingError}</p>}
@@ -231,7 +231,7 @@ export function ProviderDetail() {
       )}
 
       {confirmed && selectedSlot && (
-        <div className="mt-6 rounded-lg border border-brand-500 bg-brand-50 p-5 text-brand-700 dark:bg-brand-700 dark:text-sand-50">
+        <div className="mt-6 rounded-lg border border-brand-500 bg-brand-50 p-5 text-brand-700 dark:bg-ink-900 dark:text-sand-50">
           <p className="font-medium">Booked — {formatFull(selectedSlot.startTime)} with {provider.name}.</p>
           <p className="mt-1 text-sm">
             You'll find this in your{' '}

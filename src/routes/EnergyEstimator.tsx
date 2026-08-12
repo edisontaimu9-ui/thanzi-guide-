@@ -64,7 +64,7 @@ export function EnergyEstimator() {
             min="1"
             value={age}
             onChange={(e) => setAge(e.target.value)}
-            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
             required
           />
         </div>
@@ -81,7 +81,7 @@ export function EnergyEstimator() {
             step="0.1"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
-            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
             required
           />
         </div>
@@ -98,7 +98,7 @@ export function EnergyEstimator() {
             step="0.1"
             value={height}
             onChange={(e) => setHeight(e.target.value)}
-            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
             required
           />
         </div>
@@ -111,7 +111,7 @@ export function EnergyEstimator() {
             id="activity"
             value={activity}
             onChange={(e) => setActivity(e.target.value as ActivityLevel)}
-            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 focus:border-brand-500 focus:outline-none dark:border-brand-700 dark:bg-brand-900"
+            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950"
           >
             {ACTIVITY_LEVELS.map((level) => (
               <option key={level.value} value={level.value}>
@@ -137,12 +137,12 @@ export function EnergyEstimator() {
 
       {result && (
         <div className="mt-6 grid grid-cols-2 gap-3">
-          <div className="rounded-lg border border-brand-100 bg-white p-5 dark:border-brand-700 dark:bg-brand-900">
+          <div className="rounded-lg border border-brand-100 bg-white p-5 dark:border-ink-800 dark:bg-ink-950">
             <p className="text-sm text-brand-500 dark:text-brand-100">Resting (BMR)</p>
             <p className="font-display text-2xl text-brand-700 dark:text-sand-100">{result.bmr}</p>
             <p className="text-xs text-brand-500 dark:text-brand-100">kcal/day</p>
           </div>
-          <div className="rounded-lg border border-brand-100 bg-white p-5 dark:border-brand-700 dark:bg-brand-900">
+          <div className="rounded-lg border border-brand-100 bg-white p-5 dark:border-ink-800 dark:bg-ink-950">
             <p className="text-sm text-brand-500 dark:text-brand-100">Daily needs (TDEE)</p>
             <p className="font-display text-2xl text-brand-700 dark:text-sand-100">{result.tdee}</p>
             <p className="text-xs text-brand-500 dark:text-brand-100">kcal/day</p>

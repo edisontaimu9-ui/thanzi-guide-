@@ -20,7 +20,7 @@ export function Header() {
   const links = canReview ? [...navLinks, { to: '/admin', label: 'Review' }] : navLinks;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-brand-100 bg-sand-50/95 backdrop-blur dark:border-brand-700 dark:bg-brand-900/95">
+    <header className="sticky top-0 z-40 border-b border-brand-100 bg-sand-50/95 backdrop-blur dark:border-ink-800 dark:bg-ink-950/95">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <Link to="/" className="font-display text-lg text-brand-700 dark:text-sand-50">
           Thanzi Guide <span aria-hidden="true">🇲🇼</span>
@@ -76,7 +76,7 @@ export function Header() {
       </div>
 
       {menuOpen && (
-        <nav id="mobile-nav" className="border-t border-brand-100 px-6 py-4 sm:hidden dark:border-brand-700" aria-label="Primary">
+        <nav id="mobile-nav" className="border-t border-brand-100 px-6 py-4 sm:hidden dark:border-ink-800" aria-label="Primary">
           <ul className="space-y-3">
             {links.map((link) => (
               <li key={link.to}>

@@ -55,7 +55,7 @@ function Hero() {
             name="q"
             type="search"
             placeholder="Search a food, e.g. groundnuts"
-            className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+            className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
           />
           <button
             type="submit"
@@ -124,15 +124,15 @@ function FoodSnapshot() {
   const food = foods[index];
 
   return (
-    <div className="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-brand-700 dark:bg-brand-900">
+    <div className="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-ink-800 dark:bg-ink-950">
       <p className="text-xs font-medium uppercase tracking-wide text-brand-300 dark:text-brand-100">
         From the food database
       </p>
 
       {status === 'loading' || !food ? (
         <div className="mt-3 animate-pulse space-y-3" aria-hidden="true">
-          <div className="h-5 w-2/3 rounded bg-brand-50 dark:bg-brand-700" />
-          <div className="h-16 rounded bg-brand-50 dark:bg-brand-700" />
+          <div className="h-5 w-2/3 rounded bg-brand-50 dark:bg-ink-900" />
+          <div className="h-16 rounded bg-brand-50 dark:bg-ink-900" />
         </div>
       ) : (
         <>
@@ -155,7 +155,7 @@ function FoodSnapshot() {
                   aria-selected={i === index}
                   aria-label={f.food_name}
                   onClick={() => setIndex(i)}
-                  className={`h-1.5 w-4 rounded-full ${i === index ? 'bg-brand-500' : 'bg-brand-100 dark:bg-brand-700'}`}
+                  className={`h-1.5 w-4 rounded-full ${i === index ? 'bg-brand-500' : 'bg-brand-100 dark:bg-ink-900'}`}
                 />
               ))}
             </div>
@@ -177,7 +177,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
 
 function TopicsPreview() {
   return (
-    <section className="border-y border-brand-100 bg-sand-100 dark:border-brand-700 dark:bg-brand-900">
+    <section className="border-y border-brand-100 bg-sand-100 dark:border-ink-800 dark:bg-ink-950">
       <div className="mx-auto max-w-5xl px-6 py-12">
         <h2 className="font-display text-2xl text-brand-700 dark:text-sand-50">What you'll find here</h2>
         <p className="mt-2 max-w-xl text-brand-500 dark:text-brand-100">
@@ -189,7 +189,7 @@ function TopicsPreview() {
             <li key={topic.slug}>
               <Link
                 to={`/learn?category=${topic.slug}`}
-                className="inline-block rounded-full border border-brand-100 bg-white px-4 py-1.5 text-sm text-brand-700 hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+                className="inline-block rounded-full border border-brand-100 bg-white px-4 py-1.5 text-sm text-brand-700 hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
               >
                 {topic.label}
               </Link>
@@ -231,13 +231,13 @@ function FoodsPreview() {
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {status === 'loading'
             ? Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-32 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-brand-700 dark:bg-brand-900" />
+                <div key={i} className="h-32 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-ink-800 dark:bg-ink-950" />
               ))
             : foods.map((food) => (
                 <Link
                   key={food.id}
                   to={`/foods/${food.id}`}
-                  className="rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
+                  className="rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950"
                 >
                   <p className="font-medium text-brand-700 dark:text-sand-50">{food.food_name}</p>
                   <p className="text-xs text-brand-300 dark:text-brand-100">{food.category}</p>
@@ -252,7 +252,7 @@ function FoodsPreview() {
 
 function ToolsPreview() {
   return (
-    <section className="border-t border-brand-100 bg-brand-700 dark:border-brand-700">
+    <section className="border-t border-brand-100 bg-brand-700 dark:border-ink-800">
       <div className="mx-auto max-w-5xl px-6 py-16 text-sand-50">
         <h2 className="font-display text-2xl">Tools, built for local use</h2>
         <p className="mt-2 max-w-xl text-brand-100">

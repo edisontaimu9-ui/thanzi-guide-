@@ -99,7 +99,7 @@ export function Dashboard() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       {/* Profile header */}
-      <section className="flex flex-col gap-5 rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-brand-700 dark:bg-brand-900 sm:flex-row sm:items-center sm:justify-between">
+      <section className="flex flex-col gap-5 rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-ink-800 dark:bg-ink-950 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-2xl text-white">
             {initial}
@@ -121,7 +121,7 @@ export function Dashboard() {
         </div>
         <button
           onClick={() => logout()}
-          className="self-start rounded-md border border-brand-100 px-4 py-1.5 text-sm font-medium text-brand-700 hover:border-clay-500 hover:text-clay-500 dark:border-brand-700 dark:text-sand-100 sm:self-center"
+          className="self-start rounded-md border border-brand-100 px-4 py-1.5 text-sm font-medium text-brand-700 hover:border-clay-500 hover:text-clay-500 dark:border-ink-800 dark:text-sand-100 sm:self-center"
         >
           Log out
         </button>
@@ -152,11 +152,11 @@ export function Dashboard() {
         </div>
 
         {appointmentsStatus === 'loading' ? (
-          <div className="mt-3 h-16 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-brand-700 dark:bg-brand-900" />
+          <div className="mt-3 h-16 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-ink-800 dark:bg-ink-950" />
         ) : appointmentsStatus === 'error' ? (
           <p className="mt-3 text-sm text-clay-500 dark:text-clay-400">Couldn't load your appointments right now.</p>
         ) : appointments.length === 0 ? (
-          <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-brand-700">
+          <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-ink-800">
             <p>No appointments booked yet.</p>
             <Link to="/care" className="mt-2 inline-block text-sm font-medium text-brand-700 underline dark:text-sand-100">
               Find a dietitian or doctor
@@ -170,7 +170,7 @@ export function Dashboard() {
               return (
                 <div
                   key={appt.$id}
-                  className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 dark:border-brand-700 dark:bg-brand-900"
+                  className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950"
                 >
                   <div>
                     <p className="font-medium text-brand-700 dark:text-sand-100">{provider?.name ?? 'Provider'}</p>
@@ -212,13 +212,13 @@ export function Dashboard() {
         {!loaded || foodsStatus === 'loading' ? (
           <div className="mt-3 grid gap-3 sm:grid-cols-2" aria-hidden="true">
             {Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="h-20 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-brand-700 dark:bg-brand-900" />
+              <div key={i} className="h-20 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-ink-800 dark:bg-ink-950" />
             ))}
           </div>
         ) : foodsStatus === 'error' ? (
           <p className="mt-3 text-sm text-clay-500 dark:text-clay-400">Couldn't load your favorites right now.</p>
         ) : foods.length === 0 ? (
-          <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-brand-700">
+          <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-ink-800">
             <p>No favorite foods yet.</p>
             <Link to="/foods" className="mt-2 inline-block text-sm font-medium text-brand-700 underline dark:text-sand-100">
               Browse foods to add some
@@ -230,7 +230,7 @@ export function Dashboard() {
               <Link
                 key={food.id}
                 to={`/foods/${food.id}`}
-                className="rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
+                className="rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950"
               >
                 <p className="font-medium text-brand-700 dark:text-sand-100">{food.food_name}</p>
                 <p className="text-xs text-brand-300 dark:text-brand-100">{food.category}</p>
@@ -249,7 +249,7 @@ export function Dashboard() {
             Browse courses
           </Link>
         </div>
-        <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-brand-700">
+        <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-ink-800">
           {completedCount === null ? (
             <p>Courses aren't built yet — this will show your progress once they are.</p>
           ) : completedCount === 0 ? (
@@ -271,13 +271,13 @@ export function Dashboard() {
       {/* Saved articles */}
       <section className="mt-10">
         <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Saved articles</h2>
-        <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-brand-700">
+        <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-ink-800">
           <p>Articles aren't built yet — bookmarked ones will show here.</p>
         </div>
       </section>
 
       {/* Grow with Thanzi Guide / contribute CTA */}
-      <section className="mt-10 rounded-lg border border-brand-100 bg-sand-100 p-6 dark:border-brand-700 dark:bg-brand-700">
+      <section className="mt-10 rounded-lg border border-brand-100 bg-sand-100 p-6 dark:border-ink-800 dark:bg-ink-900">
         {isContributor ? (
           <>
             <h2 className="font-display text-lg text-brand-700 dark:text-sand-50">
@@ -311,7 +311,7 @@ export function Dashboard() {
       </section>
 
       {/* Partner with us — organizations, not individual contributors */}
-      <section className="mt-6 rounded-lg border border-brand-100 p-6 dark:border-brand-700">
+      <section className="mt-6 rounded-lg border border-brand-100 p-6 dark:border-ink-800">
         <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Run a clinic or organization?</h2>
         <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">
           Partner with Thanzi Guide to join the provider directory or collaborate on content.
@@ -329,7 +329,7 @@ export function Dashboard() {
 
 function StatTile({ label, value }: { label: string; value: number | null }) {
   return (
-    <div className="rounded-lg border border-brand-100 bg-white p-4 dark:border-brand-700 dark:bg-brand-900">
+    <div className="rounded-lg border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950">
       <p className="font-mono text-2xl font-semibold text-brand-700 dark:text-sand-50">
         {value === null ? '—' : value}
       </p>

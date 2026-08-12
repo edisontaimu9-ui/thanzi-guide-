@@ -104,15 +104,15 @@ export function Lesson() {
 
       {status === 'loading' && (
         <div className="mt-6 animate-pulse space-y-3" aria-hidden="true">
-          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-brand-700" />
-          <div className="h-24 rounded bg-brand-100 dark:bg-brand-700" />
+          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-ink-900" />
+          <div className="h-24 rounded bg-brand-100 dark:bg-ink-900" />
         </div>
       )}
 
       {status === 'error' && <p className="mt-6 text-sm text-clay-500 dark:text-clay-400">Couldn't load this lesson.</p>}
 
       {status === 'idle' && (!course || !lesson) && (
-        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-brand-700">
+        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-ink-800">
           <p className="font-medium text-brand-700 dark:text-sand-100">Lesson not found</p>
         </div>
       )}
@@ -128,7 +128,7 @@ export function Lesson() {
           </div>
 
           {questions.length > 0 && (
-            <section className="mt-10 border-t border-brand-100 pt-6 dark:border-brand-700">
+            <section className="mt-10 border-t border-brand-100 pt-6 dark:border-ink-800">
               <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Quick check</h2>
               <div className="mt-4 space-y-6">
                 {questions.map((q) => (
@@ -148,12 +148,12 @@ export function Lesson() {
                             }
                             className={`block w-full rounded-md border px-4 py-2 text-left text-sm ${
                               showResult && isRight
-                                ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-sand-100 dark:bg-brand-700'
+                                ? 'border-brand-500 bg-brand-50 text-brand-700 dark:text-sand-100 dark:bg-ink-900'
                                 : showResult && selected && !isRight
                                   ? 'border-clay-500 bg-clay-400/10 text-clay-500 dark:text-clay-400'
                                   : selected
                                     ? 'border-brand-500 text-brand-700 dark:text-sand-100'
-                                    : 'border-brand-100 text-brand-700 dark:text-sand-100 dark:border-brand-700'
+                                    : 'border-brand-100 text-brand-700 dark:text-sand-100 dark:border-ink-800'
                             }`}
                           >
                             {a.text}
@@ -179,7 +179,7 @@ export function Lesson() {
             </section>
           )}
 
-          <div className="mt-10 border-t border-brand-100 pt-6 dark:border-brand-700">
+          <div className="mt-10 border-t border-brand-100 pt-6 dark:border-ink-800">
             {!user ? (
               <p className="text-sm text-brand-500 dark:text-brand-100">
                 <Link to="/login" className="underline">

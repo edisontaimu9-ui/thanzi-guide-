@@ -30,7 +30,7 @@ export function Support() {
 
       <div className="mt-8 space-y-6">
         {faqs.map((item) => (
-          <div key={item.q} className="rounded-lg border border-brand-100 bg-white p-5 dark:border-brand-700 dark:bg-brand-900">
+          <div key={item.q} className="rounded-lg border border-brand-100 bg-white p-5 dark:border-ink-800 dark:bg-ink-950">
             <p className="font-medium text-brand-700 dark:text-sand-50">{item.q}</p>
             <p className="mt-1.5 text-sm text-brand-500 dark:text-brand-100">{item.a}</p>
           </div>
@@ -44,7 +44,7 @@ export function Support() {
         </p>
         <a
           href="mailto:support@thanziguide.org"
-          className="mt-4 inline-block rounded-md bg-sand-50 px-4 py-2 text-sm font-medium text-brand-700 hover:bg-white dark:text-sand-100 dark:bg-brand-700"
+          className="mt-4 inline-block rounded-md bg-sand-50 px-4 py-2 text-sm font-medium text-brand-700 hover:bg-white dark:text-sand-100 dark:bg-ink-900"
         >
           support@thanziguide.org
         </a>

@@ -150,7 +150,7 @@ function ReviewSection({
           {items.map((item) => (
             <li
               key={item.id}
-              className="flex items-center justify-between gap-3 rounded-lg border border-brand-100 bg-white p-4 dark:border-brand-700 dark:bg-brand-900"
+              className="flex items-center justify-between gap-3 rounded-lg border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950"
             >
               {item.href ? (
                 <Link to={item.href} className="text-sm font-medium text-brand-700 underline dark:text-sand-100">

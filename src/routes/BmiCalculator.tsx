@@ -47,7 +47,7 @@ export function BmiCalculator() {
             step="0.1"
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
-            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
             required
           />
         </div>
@@ -64,7 +64,7 @@ export function BmiCalculator() {
             step="0.1"
             value={height}
             onChange={(e) => setHeight(e.target.value)}
-            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
             required
           />
         </div>
@@ -84,7 +84,7 @@ export function BmiCalculator() {
       </form>
 
       {result && (
-        <div className="mt-6 rounded-lg border border-brand-100 bg-white p-5 dark:border-brand-700 dark:bg-brand-900">
+        <div className="mt-6 rounded-lg border border-brand-100 bg-white p-5 dark:border-ink-800 dark:bg-ink-950">
           <p className="text-sm text-brand-500 dark:text-brand-100">Your BMI</p>
           <p className="font-display text-3xl text-brand-700 dark:text-sand-100">{result.bmi}</p>
           <p className="mt-1 text-sm font-medium text-brand-700 dark:text-sand-100">{result.category}</p>

@@ -55,7 +55,7 @@ export function Foods() {
           placeholder="Search foods, e.g. nsima, beans, groundnuts"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-brand-700 dark:bg-brand-900 dark:text-sand-50"
+          className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
         />
         <button
           type="submit"
@@ -82,7 +82,7 @@ export function Foods() {
         )}
 
         {status === 'idle' && foods.length === 0 && (
-          <div className="rounded-md border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-brand-700">
+          <div className="rounded-md border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-ink-800">
             <p className="font-medium text-brand-700 dark:text-sand-100">No foods matched "{query}"</p>
             <p className="mt-1 text-sm">Try a different name, or browse without a search term.</p>
           </div>
@@ -94,7 +94,7 @@ export function Foods() {
               <li key={food.id}>
                 <Link
                   to={`/foods/${food.id}`}
-                  className="block rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-brand-700 dark:bg-brand-900"
+                  className="block rounded-lg border border-brand-100 bg-white p-4 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950"
                 >
                   <p className="font-medium text-brand-700 dark:text-sand-100">{food.food_name}</p>
                   <p className="text-sm text-brand-300 dark:text-brand-100">{food.category} · {food.measure}</p>
@@ -130,10 +130,10 @@ function FoodListSkeleton() {
   return (
     <ul className="mt-2 grid gap-3 sm:grid-cols-2" aria-hidden="true">
       {Array.from({ length: 6 }).map((_, i) => (
-        <li key={i} className="animate-pulse rounded-lg border border-brand-100 bg-white p-4 dark:border-brand-700 dark:bg-brand-900">
-          <div className="h-4 w-2/3 rounded bg-brand-100 dark:bg-brand-700" />
-          <div className="mt-2 h-3 w-1/3 rounded bg-brand-100 dark:bg-brand-700" />
-          <div className="mt-4 h-8 rounded bg-brand-100 dark:bg-brand-700" />
+        <li key={i} className="animate-pulse rounded-lg border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950">
+          <div className="h-4 w-2/3 rounded bg-brand-100 dark:bg-ink-900" />
+          <div className="mt-2 h-3 w-1/3 rounded bg-brand-100 dark:bg-ink-900" />
+          <div className="mt-4 h-8 rounded bg-brand-100 dark:bg-ink-900" />
         </li>
       ))}
     </ul>

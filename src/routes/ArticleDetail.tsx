@@ -28,9 +28,9 @@ export function ArticleDetail() {
 
       {status === 'loading' && (
         <div className="mt-6 animate-pulse space-y-3" aria-hidden="true">
-          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-brand-700" />
-          <div className="h-4 w-full rounded bg-brand-100 dark:bg-brand-700" />
-          <div className="h-4 w-full rounded bg-brand-100 dark:bg-brand-700" />
+          <div className="h-8 w-2/3 rounded bg-brand-100 dark:bg-ink-900" />
+          <div className="h-4 w-full rounded bg-brand-100 dark:bg-ink-900" />
+          <div className="h-4 w-full rounded bg-brand-100 dark:bg-ink-900" />
         </div>
       )}
 
@@ -39,7 +39,7 @@ export function ArticleDetail() {
       )}
 
       {status === 'idle' && !article && (
-        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-brand-700">
+        <div className="mt-6 rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-ink-800">
           <p className="font-medium text-brand-700 dark:text-sand-100">Article not found</p>
         </div>
       )}
@@ -56,7 +56,7 @@ export function ArticleDetail() {
           </div>
 
           {article.sources && article.sources.length > 0 && (
-            <div className="mt-8 border-t border-brand-100 pt-4 dark:border-brand-700">
+            <div className="mt-8 border-t border-brand-100 pt-4 dark:border-ink-800">
               <p className="text-xs font-medium uppercase tracking-wide text-brand-300 dark:text-brand-100">Sources</p>
               <ul className="mt-2 space-y-1 text-sm text-brand-500 dark:text-brand-100">
                 {article.sources.map((source, i) => (
