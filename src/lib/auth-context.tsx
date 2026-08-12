@@ -22,25 +22,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<ProfileDoc | null>(null);
   const [loading, setLoading] = useState(true);
 
-  async function refresh() {
+  async function refreshInternal(rethrow: boolean) {
     try {
       const current = await account.get();
       setUser(current);
-      // Self-healing: creates the profile doc (role: USER) the first time
-      // it's missing, so existing accounts from before this feature still
-      // pick one up automatically.
       const currentProfile = await ensureProfile(current.$id, current.name);
       setProfile(currentProfile);
-      // Fire-and-forget: powers the inactivity reminder cron. A failed
-      // write here just means that cron sees slightly stale data for this
-      // user next run -- not worth blocking the UI or surfacing an error.
       touchLastActive(currentProfile.$id).catch(() => {});
-    } catch {
+    } catch (err) {
       setUser(null);
       setProfile(null);
+      if (rethrow) throw err;
     } finally {
       setLoading(false);
     }
+  }
+
+  async function refresh() {
+    await refreshInternal(false);
   }
 
   useEffect(() => {
@@ -49,13 +48,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     await account.createEmailPasswordSession(email, password);
-    await refresh();
+    await refreshInternal(true);
   }
 
   async function signup(email: string, password: string, name: string) {
     await account.create(ID.unique(), email, password, name);
-    await login(email, password);
-    // Fire off verification email; caller decides how to surface this in the UI.
+    await account.createEmailPasswordSession(email, password);
+    await refreshInternal(true);
     await account.createVerification(`${window.location.origin}/verify`);
   }
 
