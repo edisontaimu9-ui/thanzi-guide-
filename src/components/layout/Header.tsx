@@ -45,6 +45,13 @@ export function Header() {
           </Link>
           <NotificationBell />
           <ThemeToggle />
+          <Link
+            to="/settings"
+            aria-label="Settings"
+            className="text-brand-500 hover:text-brand-700 dark:text-brand-100 dark:hover:text-white"
+          >
+            <SettingsIcon />
+          </Link>
           {!loading && (
             <Link
               to={user ? '/dashboard' : '/login'}
@@ -91,6 +98,15 @@ export function Header() {
             ))}
             <li>
               <NavLink
+                to="/settings"
+                onClick={() => setMenuOpen(false)}
+                className="block text-sm font-medium text-brand-700 dark:text-sand-50"
+              >
+                Settings
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to="/support"
                 onClick={() => setMenuOpen(false)}
                 className="block text-sm font-medium text-brand-700 dark:text-sand-50"
@@ -113,6 +129,20 @@ export function Header() {
         </nav>
       )}
     </header>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M19.4 13a7.97 7.97 0 000-2l2.1-1.6-2-3.4-2.5 1a8 8 0 00-1.7-1L14.8 3H9.2l-.5 2.6a8 8 0 00-1.7 1l-2.5-1-2 3.4L4.6 11a7.97 7.97 0 000 2l-2.1 1.6 2 3.4 2.5-1a8 8 0 001.7 1l.5 2.6h5.6l.5-2.6a8 8 0 001.7-1l2.5 1 2-3.4L19.4 13z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 

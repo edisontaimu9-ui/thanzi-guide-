@@ -119,12 +119,20 @@ export function Dashboard() {
             )}
           </div>
         </div>
-        <button
-          onClick={() => logout()}
-          className="self-start rounded-md border border-brand-100 px-4 py-1.5 text-sm font-medium text-brand-700 hover:border-clay-500 hover:text-clay-500 dark:border-ink-800 dark:text-sand-100 sm:self-center"
-        >
-          Log out
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-center">
+          <Link
+            to="/settings"
+            className="rounded-md border border-brand-100 px-4 py-1.5 text-sm font-medium text-brand-700 hover:border-brand-500 dark:border-ink-800 dark:text-sand-100"
+          >
+            Settings
+          </Link>
+          <button
+            onClick={() => logout()}
+            className="rounded-md border border-brand-100 px-4 py-1.5 text-sm font-medium text-brand-700 hover:border-clay-500 hover:text-clay-500 dark:border-ink-800 dark:text-sand-100"
+          >
+            Log out
+          </button>
+        </div>
       </section>
 
       {/* Quick stats */}

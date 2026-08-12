@@ -8,6 +8,7 @@ import { Home } from '@/routes/Home';
 import { Login } from '@/routes/Login';
 import { Signup } from '@/routes/Signup';
 import { Dashboard } from '@/routes/Dashboard';
+import { Settings } from '@/routes/Settings';
 import { Foods } from '@/routes/Foods';
 import { FoodDetail } from '@/routes/FoodDetail';
 import { Articles } from '@/routes/Articles';
@@ -65,6 +66,7 @@ export default function App() {
               <Route path="/partner" element={<Partner />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/settings" element={<Settings />} />
               <Route
                 path="/dashboard"
                 element={
