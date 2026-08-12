@@ -24,6 +24,9 @@ export function Footer() {
             <Link to="/privacy" className="text-xs text-brand-500 underline hover:text-brand-700 dark:text-brand-100 dark:hover:text-white">
               Privacy Policy
             </Link>
+            <Link to="/cookies" className="text-xs text-brand-500 underline hover:text-brand-700 dark:text-brand-100 dark:hover:text-white">
+              Cookie Policy
+            </Link>
           </div>
         </div>
       </div>

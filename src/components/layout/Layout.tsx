@@ -3,6 +3,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { BottomNav } from './BottomNav';
 import { InstallPrompt } from './InstallPrompt';
+import { CookieBanner } from './CookieBanner';
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <Footer />
       <BottomNav />
       <InstallPrompt />
+      <CookieBanner />
     </div>
   );
 }

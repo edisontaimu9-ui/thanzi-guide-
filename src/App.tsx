@@ -25,6 +25,7 @@ import { ProviderDetail } from '@/routes/ProviderDetail';
 import { Partner } from '@/routes/Partner';
 import { Terms } from '@/routes/Terms';
 import { Privacy } from '@/routes/Privacy';
+import { CookiePolicy } from '@/routes/CookiePolicy';
 import { BmiCalculator } from '@/routes/BmiCalculator';
 import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { Admin } from '@/routes/Admin';
@@ -66,6 +67,7 @@ export default function App() {
               <Route path="/partner" element={<Partner />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/cookies" element={<CookiePolicy />} />
               <Route path="/settings" element={<Settings />} />
               <Route
                 path="/dashboard"

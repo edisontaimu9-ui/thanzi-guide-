@@ -1,10 +1,11 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
 import { useTheme, ThemePreference } from '@/lib/theme';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { account, databases, DB } from '@/lib/appwrite';
+import { getConsent, setConsent, onConsentChange } from '@/lib/consent';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string; hint: string }[] = [
   { value: 'system', label: 'System', hint: 'Match your device' },
@@ -18,6 +19,10 @@ export function Settings() {
   const navigate = useNavigate();
   const { preference, setPreference } = useTheme();
   const push = usePushNotifications();
+
+  const [consent, setConsentState] = useState(() => getConsent());
+  useEffect(() => onConsentChange(() => setConsentState(getConsent())), []);
+  const analyticsEnabled = consent?.value === 'all';
 
   const [name, setName] = useState(user?.name ?? '');
   const [nameStatus, setNameStatus] = useState<'idle' | 'working' | 'done' | 'error'>('idle');
@@ -146,6 +151,41 @@ export function Settings() {
           </p>
         )}
         {push.error && <p className="mt-2 text-sm text-clay-500 dark:text-clay-400">{push.error}</p>}
+      </section>
+
+      {/* Privacy / Cookies */}
+      <section className="mt-6 rounded-2xl border border-brand-100 bg-white p-6 dark:border-ink-800 dark:bg-ink-950">
+        <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Privacy</h2>
+        <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">
+          Necessary storage (sign-in, theme) is always on. See the{' '}
+          <Link to="/cookies" className="underline">
+            Cookie Policy
+          </Link>{' '}
+          for details.
+        </p>
+
+        <div className="mt-4 flex items-center justify-between rounded-lg border border-brand-100 p-4 dark:border-ink-800">
+          <div>
+            <p className="text-sm font-medium text-brand-700 dark:text-sand-100">Analytics cookies</p>
+            <p className="text-xs text-brand-300 dark:text-brand-100">
+              {analyticsEnabled ? 'Enabled — helps us understand usage.' : 'Off.'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setConsent(analyticsEnabled ? 'necessary' : 'all')}
+            aria-pressed={analyticsEnabled}
+            className={`relative h-7 w-12 shrink-0 rounded-full transition ${
+              analyticsEnabled ? 'bg-brand-500' : 'bg-brand-100 dark:bg-ink-800'
+            }`}
+          >
+            <span
+              className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${
+                analyticsEnabled ? 'left-6' : 'left-1'
+              }`}
+            />
+          </button>
+        </div>
       </section>
 
       {user ? (
