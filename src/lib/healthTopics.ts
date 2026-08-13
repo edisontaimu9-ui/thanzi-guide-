@@ -18,6 +18,7 @@ export interface HealthTopicViewDoc extends Models.Document {
 
 export async function listHealthTopics(): Promise<HealthTopicDoc[]> {
   const res = await databases.listDocuments<HealthTopicDoc>(DB.databaseId, DB.collections.healthTopics, [
+    Query.equal('status', 'published'),
     Query.orderAsc('order'),
     Query.limit(50)
   ]);

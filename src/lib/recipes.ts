@@ -26,6 +26,7 @@ export interface RecipeDoc extends Models.Document {
 
 export async function listRecipeCategories(): Promise<RecipeCategoryDoc[]> {
   const res = await databases.listDocuments<RecipeCategoryDoc>(DB.databaseId, DB.collections.recipeCategories, [
+    Query.equal('status', 'published'),
     Query.orderAsc('order'),
     Query.limit(50)
   ]);
@@ -35,6 +36,7 @@ export async function listRecipeCategories(): Promise<RecipeCategoryDoc[]> {
 export async function listRecipesForCategory(categorySlug: string): Promise<RecipeDoc[]> {
   const res = await databases.listDocuments<RecipeDoc>(DB.databaseId, DB.collections.recipes, [
     Query.equal('categorySlug', categorySlug),
+    Query.equal('status', 'published'),
     Query.orderAsc('order'),
     Query.limit(50)
   ]);
@@ -44,6 +46,7 @@ export async function listRecipesForCategory(categorySlug: string): Promise<Reci
 export async function getRecipeBySlug(slug: string): Promise<RecipeDoc | null> {
   const res = await databases.listDocuments<RecipeDoc>(DB.databaseId, DB.collections.recipes, [
     Query.equal('slug', slug),
+    Query.equal('status', 'published'),
     Query.limit(1)
   ]);
   return res.documents[0] ?? null;

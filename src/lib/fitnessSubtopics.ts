@@ -15,6 +15,7 @@ export interface FitnessSubtopicDoc extends Models.Document {
 export async function listSubtopicsForFitnessTopic(parentSlug: string): Promise<FitnessSubtopicDoc[]> {
   const res = await databases.listDocuments<FitnessSubtopicDoc>(DB.databaseId, DB.collections.fitnessSubtopics, [
     Query.equal('parentSlug', parentSlug),
+    Query.equal('status', 'published'),
     Query.orderAsc('order'),
     Query.limit(50)
   ]);
@@ -24,6 +25,7 @@ export async function listSubtopicsForFitnessTopic(parentSlug: string): Promise<
 export async function getFitnessSubtopicBySlug(slug: string): Promise<FitnessSubtopicDoc | null> {
   const res = await databases.listDocuments<FitnessSubtopicDoc>(DB.databaseId, DB.collections.fitnessSubtopics, [
     Query.equal('slug', slug),
+    Query.equal('status', 'published'),
     Query.limit(1)
   ]);
   return res.documents[0] ?? null;

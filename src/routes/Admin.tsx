@@ -76,9 +76,16 @@ export function Admin() {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Content Review</h1>
       <p className="mt-2 text-brand-500 dark:text-brand-100">
-        Draft content awaiting publish. Editing still happens in the Appwrite console. This is for
-        approving what's ready.
+        Draft content awaiting publish. Use the Content Manager to create or edit content directly
+        — this page is for approving what's ready.
       </p>
+
+      <Link
+        to="/admin/content"
+        className="mt-4 inline-block rounded-md bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+      >
+        Open Content Manager
+      </Link>
 
       {status === 'loading' && <p className="mt-8 text-brand-500 dark:text-brand-100">Loading…</p>}
       {status === 'error' && (

@@ -13,6 +13,7 @@ export interface LifeStagePageDoc extends Models.Document {
 export async function getLifeStagePage(slug: string): Promise<LifeStagePageDoc | null> {
   const res = await databases.listDocuments<LifeStagePageDoc>(DB.databaseId, DB.collections.lifeStagePages, [
     Query.equal('slug', slug),
+    Query.equal('status', 'published'),
     Query.limit(1)
   ]);
   return res.documents[0] ?? null;

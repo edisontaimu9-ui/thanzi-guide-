@@ -14,6 +14,7 @@ export interface KidsStageDoc extends Models.Document {
 
 export async function listKidsStages(): Promise<KidsStageDoc[]> {
   const res = await databases.listDocuments<KidsStageDoc>(DB.databaseId, DB.collections.kidsStages, [
+    Query.equal('status', 'published'),
     Query.orderAsc('order'),
     Query.limit(50)
   ]);

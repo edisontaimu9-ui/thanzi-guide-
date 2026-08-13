@@ -41,6 +41,9 @@ import { CookiePolicy } from '@/routes/CookiePolicy';
 import { BmiCalculator } from '@/routes/BmiCalculator';
 import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { Admin } from '@/routes/Admin';
+import { ContentManager } from '@/routes/ContentManager';
+import { ContentTypeList } from '@/routes/ContentTypeList';
+import { ContentForm } from '@/routes/ContentForm';
 import { NotFound } from '@/routes/NotFound';
 
 export default function App() {
@@ -117,6 +120,30 @@ export default function App() {
                 element={
                   <AdminRoute>
                     <Admin />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/content"
+                element={
+                  <AdminRoute>
+                    <ContentManager />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/content/:typeKey"
+                element={
+                  <AdminRoute>
+                    <ContentTypeList />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/content/:typeKey/:id"
+                element={
+                  <AdminRoute>
+                    <ContentForm />
                   </AdminRoute>
                 }
               />

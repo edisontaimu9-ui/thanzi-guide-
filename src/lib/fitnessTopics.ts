@@ -12,6 +12,7 @@ export interface FitnessTopicDoc extends Models.Document {
 
 export async function listFitnessTopics(): Promise<FitnessTopicDoc[]> {
   const res = await databases.listDocuments<FitnessTopicDoc>(DB.databaseId, DB.collections.fitnessTopics, [
+    Query.equal('status', 'published'),
     Query.orderAsc('order'),
     Query.limit(50)
   ]);
