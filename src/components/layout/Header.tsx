@@ -6,6 +6,7 @@ import { NotificationBell } from './NotificationBell';
 
 const navLinks = [
   { to: '/foods', label: 'Foods' },
+  { to: '/health', label: 'Health' },
   { to: '/recipes', label: 'Recipes' },
   { to: '/learn', label: 'Learn' },
   { to: '/courses', label: 'Courses' },
