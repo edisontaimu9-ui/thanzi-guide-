@@ -55,7 +55,8 @@ export const DB = {
     fitnessTopics: 'fitness_topics',
     fitnessSubtopics: 'fitness_subtopics',
     recipeCategories: 'recipe_categories',
-    recipes: 'recipes'
+    recipes: 'recipes',
+    kidsStages: 'kids_stages'
   }
 } as const;
 

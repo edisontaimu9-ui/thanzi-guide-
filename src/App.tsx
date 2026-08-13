@@ -19,6 +19,8 @@ import { FitnessSubtopicDetail } from '@/routes/FitnessSubtopicDetail';
 import { Recipes } from '@/routes/Recipes';
 import { RecipeCategoryDetail } from '@/routes/RecipeCategoryDetail';
 import { RecipeDetail } from '@/routes/RecipeDetail';
+import { Kids } from '@/routes/Kids';
+import { KidsStageDetail } from '@/routes/KidsStageDetail';
 import { FoodDetail } from '@/routes/FoodDetail';
 import { Articles } from '@/routes/Articles';
 import { ArticleDetail } from '@/routes/ArticleDetail';
@@ -94,15 +96,8 @@ export default function App() {
                   />
                 }
               />
-              <Route
-                path="/kids"
-                element={
-                  <ComingSoon
-                    title="For Kids"
-                    description="Feeding guidance for infants, children, and growing families, gathered in one place as more articles are reviewed."
-                  />
-                }
-              />
+              <Route path="/kids" element={<Kids />} />
+              <Route path="/kids/:stageSlug" element={<KidsStageDetail />} />
               <Route
                 path="/seniors"
                 element={
