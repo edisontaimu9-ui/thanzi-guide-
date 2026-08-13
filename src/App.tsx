@@ -21,6 +21,7 @@ import { RecipeCategoryDetail } from '@/routes/RecipeCategoryDetail';
 import { RecipeDetail } from '@/routes/RecipeDetail';
 import { Kids } from '@/routes/Kids';
 import { KidsStageDetail } from '@/routes/KidsStageDetail';
+import { Seniors } from '@/routes/Seniors';
 import { FoodDetail } from '@/routes/FoodDetail';
 import { Articles } from '@/routes/Articles';
 import { ArticleDetail } from '@/routes/ArticleDetail';
@@ -98,15 +99,7 @@ export default function App() {
               />
               <Route path="/kids" element={<Kids />} />
               <Route path="/kids/:stageSlug" element={<KidsStageDetail />} />
-              <Route
-                path="/seniors"
-                element={
-                  <ComingSoon
-                    title="For Seniors"
-                    description="Nutrition guidance for healthy ageing, gathered in one place as more articles are reviewed."
-                  />
-                }
-              />
+              <Route path="/seniors" element={<Seniors />} />
               <Route
                 path="/about"
                 element={

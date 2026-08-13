@@ -1789,6 +1789,61 @@
                     ]
                 }
             ]
+        },
+        {
+            "$id": "life_stage_pages",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Life Stage Pages",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "intro",
+                    "type": "string",
+                    "size": 1000,
+                    "required": true
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "articleIds",
+                    "type": "string",
+                    "size": 36,
+                    "required": false,
+                    "array": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                }
+            ]
         }
     ],
     "buckets": [
