@@ -21,7 +21,7 @@ import { RecipeCategoryDetail } from '@/routes/RecipeCategoryDetail';
 import { RecipeDetail } from '@/routes/RecipeDetail';
 import { Kids } from '@/routes/Kids';
 import { KidsStageDetail } from '@/routes/KidsStageDetail';
-import { Seniors } from '@/routes/Seniors';
+import { LifeStagePage } from '@/routes/LifeStagePage';
 import { FoodDetail } from '@/routes/FoodDetail';
 import { Articles } from '@/routes/Articles';
 import { ArticleDetail } from '@/routes/ArticleDetail';
@@ -88,18 +88,10 @@ export default function App() {
                   />
                 }
               />
-              <Route
-                path="/men"
-                element={
-                  <ComingSoon
-                    title="For Men"
-                    description="Nutrition and health topics for men, gathered in one place as more articles are reviewed."
-                  />
-                }
-              />
+              <Route path="/men" element={<LifeStagePage slug="men" fallbackTitle="For Men" />} />
               <Route path="/kids" element={<Kids />} />
               <Route path="/kids/:stageSlug" element={<KidsStageDetail />} />
-              <Route path="/seniors" element={<Seniors />} />
+              <Route path="/seniors" element={<LifeStagePage slug="seniors" fallbackTitle="For Seniors" />} />
               <Route
                 path="/about"
                 element={

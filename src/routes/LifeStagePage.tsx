@@ -6,14 +6,19 @@ import type { ArticleDoc } from '@/lib/articles';
 
 type Status = 'loading' | 'idle' | 'error';
 
-export function Seniors() {
-  useDocumentTitle('For Seniors');
+interface LifeStagePageProps {
+  slug: string;
+  fallbackTitle: string;
+}
+
+export function LifeStagePage({ slug, fallbackTitle }: LifeStagePageProps) {
+  useDocumentTitle(fallbackTitle);
   const [page, setPage] = useState<LifeStagePageDoc | null | undefined>(undefined);
   const [articles, setArticles] = useState<ArticleDoc[]>([]);
   const [status, setStatus] = useState<Status>('loading');
 
   useEffect(() => {
-    getLifeStagePage('seniors')
+    getLifeStagePage(slug)
       .then(async (result) => {
         setPage(result);
         if (result) {
@@ -23,7 +28,7 @@ export function Seniors() {
         setStatus('idle');
       })
       .catch(() => setStatus('error'));
-  }, []);
+  }, [slug]);
 
   return (
     <main>
