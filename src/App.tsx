@@ -79,15 +79,7 @@ export default function App() {
               <Route path="/fitness" element={<Fitness />} />
               <Route path="/fitness/:topicSlug" element={<FitnessTopicDetail />} />
               <Route path="/fitness/:topicSlug/:subtopicSlug" element={<FitnessSubtopicDetail />} />
-              <Route
-                path="/women"
-                element={
-                  <ComingSoon
-                    title="For Women"
-                    description="Nutrition and health guidance through pregnancy, breastfeeding, and beyond, gathered in one place as more articles are reviewed."
-                  />
-                }
-              />
+              <Route path="/women" element={<LifeStagePage slug="women" fallbackTitle="For Women" />} />
               <Route path="/men" element={<LifeStagePage slug="men" fallbackTitle="For Men" />} />
               <Route path="/kids" element={<Kids />} />
               <Route path="/kids/:stageSlug" element={<KidsStageDetail />} />
