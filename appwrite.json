@@ -1310,6 +1310,92 @@
                     ]
                 }
             ]
+        },
+        {
+            "$id": "health_subtopics",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Health Subtopics",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "parentSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "size": 500,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 2000,
+                    "required": false
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "articleSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "parent_idx",
+                    "type": "key",
+                    "attributes": [
+                        "parentSlug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                }
+            ]
         }
     ],
     "buckets": [

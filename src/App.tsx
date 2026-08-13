@@ -11,6 +11,8 @@ import { Dashboard } from '@/routes/Dashboard';
 import { Settings } from '@/routes/Settings';
 import { Foods } from '@/routes/Foods';
 import { Health } from '@/routes/Health';
+import { HealthTopicDetail } from '@/routes/HealthTopicDetail';
+import { HealthSubtopicDetail } from '@/routes/HealthSubtopicDetail';
 import { FoodDetail } from '@/routes/FoodDetail';
 import { Articles } from '@/routes/Articles';
 import { ArticleDetail } from '@/routes/ArticleDetail';
@@ -45,6 +47,8 @@ export default function App() {
               <Route path="/foods" element={<Foods />} />
               <Route path="/foods/:id" element={<FoodDetail />} />
               <Route path="/health" element={<Health />} />
+              <Route path="/health/:topicSlug" element={<HealthTopicDetail />} />
+              <Route path="/health/:topicSlug/:subtopicSlug" element={<HealthSubtopicDetail />} />
               <Route path="/learn" element={<Articles />} />
               <Route path="/learn/:slug" element={<ArticleDetail />} />
               <Route path="/courses" element={<Courses />} />

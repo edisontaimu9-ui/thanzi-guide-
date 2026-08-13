@@ -50,7 +50,8 @@ export const DB = {
     notifications: 'notifications',
     pushSubscriptions: 'push_subscriptions',
     healthTopics: 'health_topics',
-    healthTopicViews: 'health_topic_views'
+    healthTopicViews: 'health_topic_views',
+    healthSubtopics: 'health_subtopics'
   }
 } as const;
 

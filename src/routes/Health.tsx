@@ -148,6 +148,14 @@ export function Health() {
                           ))}
                         </ul>
                       )}
+
+                      <Link
+                        to={`/health/${topic.slug}`}
+                        className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-500 hover:text-brand-700 dark:text-brand-100 dark:hover:text-white"
+                      >
+                        View {topic.title}
+                        <span aria-hidden="true">›</span>
+                      </Link>
                     </div>
                   )}
                 </li>
