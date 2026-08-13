@@ -3,6 +3,81 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
+type FoodTopic = {
+  title: string;
+  body: string;
+};
+
+const FOOD_TOPICS: FoodTopic[] = [
+  {
+    title: 'Food Groups',
+    body: 'Get to know the main food groups — staples like nsima and rice, proteins such as beans and fish, vegetables, fruits, and fats — and how balancing them supports everyday health.',
+  },
+  {
+    title: 'Home Food Safety',
+    body: 'Simple habits for keeping food safe at home: washing hands and produce, cooking meat and fish thoroughly, storing leftovers properly, and avoiding cross-contamination in the kitchen.',
+  },
+  {
+    title: 'Planning',
+    body: 'Tips for planning meals ahead of time — building a shopping list around what is in season and affordable, and putting together balanced meals for the week.',
+  },
+  {
+    title: 'Food Preparation',
+    body: 'Guidance on preparing meals in ways that keep more of their nutrients — from choosing gentle cooking methods to cutting down on added oil, salt, and sugar.',
+  },
+  {
+    title: 'Cultural Cuisines and Traditions',
+    body: 'Food carries culture and history. Explore how traditional Malawian dishes and ingredients fit into a balanced, nutritious diet.',
+  },
+];
+
+function FoodTopicAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <section className="mt-10 rounded-lg border border-brand-100 bg-sand-50 p-6 dark:border-ink-800 dark:bg-ink-900/40">
+      <h2 className="font-display text-xl text-brand-700 dark:text-sand-100">Food</h2>
+      <p className="mt-2 text-brand-500 dark:text-brand-100">
+        Food is at the heart of daily life — it nourishes us and shapes our culture and traditions.
+        Learn about the role each food group plays, and how to plan, prepare, and store meals and
+        snacks safely.
+      </p>
+
+      <ul className="mt-5 divide-y divide-brand-100 dark:divide-ink-800">
+        {FOOD_TOPICS.map((topic, index) => {
+          const isOpen = openIndex === index;
+          return (
+            <li key={topic.title}>
+              <button
+                type="button"
+                onClick={() => setOpenIndex(isOpen ? null : index)}
+                aria-expanded={isOpen}
+                className="flex w-full items-center justify-between gap-4 py-4 text-left"
+              >
+                <span className="font-semibold uppercase tracking-wide text-brand-700 dark:text-sand-100">
+                  {topic.title}
+                </span>
+                <svg
+                  className={`h-5 w-5 flex-shrink-0 text-brand-500 transition-transform dark:text-brand-100 ${isOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isOpen && (
+                <p className="pb-4 text-sm text-brand-500 dark:text-brand-100">{topic.body}</p>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
 export function Foods() {
   useDocumentTitle('Foods');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,6 +119,8 @@ export function Foods() {
       <p className="mt-2 text-brand-500 dark:text-brand-100">
         Search foods to see calories, protein, carbs, and fat per typical serving.
       </p>
+
+      <FoodTopicAccordion />
 
       <form onSubmit={handleSubmit} className="mt-6 flex gap-2">
         <label htmlFor="food-search" className="sr-only">
