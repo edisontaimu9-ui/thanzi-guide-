@@ -16,6 +16,9 @@ import { HealthSubtopicDetail } from '@/routes/HealthSubtopicDetail';
 import { Fitness } from '@/routes/Fitness';
 import { FitnessTopicDetail } from '@/routes/FitnessTopicDetail';
 import { FitnessSubtopicDetail } from '@/routes/FitnessSubtopicDetail';
+import { Recipes } from '@/routes/Recipes';
+import { RecipeCategoryDetail } from '@/routes/RecipeCategoryDetail';
+import { RecipeDetail } from '@/routes/RecipeDetail';
 import { FoodDetail } from '@/routes/FoodDetail';
 import { Articles } from '@/routes/Articles';
 import { ArticleDetail } from '@/routes/ArticleDetail';
@@ -67,15 +70,9 @@ export default function App() {
                   />
                 }
               />
-              <Route
-                path="/recipes"
-                element={
-                  <ComingSoon
-                    title="Recipes"
-                    description="Malawian recipes built from the food database, with the same nutrition breakdown you see on food pages. Coming once we have enough dishes written and reviewed."
-                  />
-                }
-              />
+              <Route path="/recipes" element={<Recipes />} />
+              <Route path="/recipes/:categorySlug" element={<RecipeCategoryDetail />} />
+              <Route path="/recipes/:categorySlug/:recipeSlug" element={<RecipeDetail />} />
               <Route path="/fitness" element={<Fitness />} />
               <Route path="/fitness/:topicSlug" element={<FitnessTopicDetail />} />
               <Route path="/fitness/:topicSlug/:subtopicSlug" element={<FitnessSubtopicDetail />} />

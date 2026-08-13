@@ -53,7 +53,9 @@ export const DB = {
     healthTopicViews: 'health_topic_views',
     healthSubtopics: 'health_subtopics',
     fitnessTopics: 'fitness_topics',
-    fitnessSubtopics: 'fitness_subtopics'
+    fitnessSubtopics: 'fitness_subtopics',
+    recipeCategories: 'recipe_categories',
+    recipes: 'recipes'
   }
 } as const;
 

@@ -1544,6 +1544,177 @@
                     ]
                 }
             ]
+        },
+        {
+            "$id": "recipe_categories",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Recipe Categories",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "size": 500,
+                    "required": true
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "recipes",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Recipes",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "categorySlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "size": 500,
+                    "required": true
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "servings",
+                    "type": "integer",
+                    "required": false,
+                    "default": 4
+                },
+                {
+                    "key": "prepMinutes",
+                    "type": "integer",
+                    "required": false
+                },
+                {
+                    "key": "cookMinutes",
+                    "type": "integer",
+                    "required": false
+                },
+                {
+                    "key": "ingredients",
+                    "type": "string",
+                    "size": 300,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "steps",
+                    "type": "string",
+                    "size": 1000,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "articleSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "category_idx",
+                    "type": "key",
+                    "attributes": [
+                        "categorySlug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                }
+            ]
         }
     ],
     "buckets": [
