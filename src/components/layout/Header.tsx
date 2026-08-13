@@ -6,9 +6,11 @@ import { NotificationBell } from './NotificationBell';
 
 const navLinks = [
   { to: '/foods', label: 'Foods' },
+  { to: '/recipes', label: 'Recipes' },
   { to: '/learn', label: 'Learn' },
   { to: '/courses', label: 'Courses' },
-  { to: '/tools', label: 'Tools' }
+  { to: '/tools', label: 'Tools' },
+  { to: '/fitness', label: 'Fitness' }
 ];
 
 const ADMIN_ROLES = ['EDITOR', 'NUTRITION_EXPERT', 'ADMIN'];
@@ -26,7 +28,7 @@ export function Header() {
           Thanzi Guide <span aria-hidden="true">🇲🇼</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 sm:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-5 lg:flex" aria-label="Primary">
           {links.map((link) => (
             <NavLink
               key={link.to}
@@ -62,7 +64,7 @@ export function Header() {
           )}
         </nav>
 
-        <div className="flex items-center gap-4 sm:hidden">
+        <div className="flex items-center gap-4 lg:hidden">
           <NotificationBell />
           <ThemeToggle />
           <Link to="/search" aria-label="Search" className="text-brand-700 dark:text-sand-50">
@@ -83,7 +85,7 @@ export function Header() {
       </div>
 
       {menuOpen && (
-        <nav id="mobile-nav" className="border-t border-brand-100 px-6 py-4 sm:hidden dark:border-ink-800" aria-label="Primary">
+        <nav id="mobile-nav" className="border-t border-brand-100 px-6 py-4 lg:hidden dark:border-ink-800" aria-label="Primary">
           <ul className="space-y-3">
             {links.map((link) => (
               <li key={link.to}>

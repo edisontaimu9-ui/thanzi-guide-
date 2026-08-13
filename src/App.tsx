@@ -58,6 +58,69 @@ export default function App() {
                   />
                 }
               />
+              <Route
+                path="/recipes"
+                element={
+                  <ComingSoon
+                    title="Recipes"
+                    description="Malawian recipes built from the food database, with the same nutrition breakdown you see on food pages. Coming once we have enough dishes written and reviewed."
+                  />
+                }
+              />
+              <Route
+                path="/fitness"
+                element={
+                  <ComingSoon
+                    title="Fitness"
+                    description="Activity and exercise guidance to go with the BMI and energy tools — walking, home workouts, and safe activity levels for common conditions."
+                  />
+                }
+              />
+              <Route
+                path="/women"
+                element={
+                  <ComingSoon
+                    title="For Women"
+                    description="Nutrition and health guidance through pregnancy, breastfeeding, and beyond, gathered in one place as more articles are reviewed."
+                  />
+                }
+              />
+              <Route
+                path="/men"
+                element={
+                  <ComingSoon
+                    title="For Men"
+                    description="Nutrition and health topics for men, gathered in one place as more articles are reviewed."
+                  />
+                }
+              />
+              <Route
+                path="/kids"
+                element={
+                  <ComingSoon
+                    title="For Kids"
+                    description="Feeding guidance for infants, children, and growing families, gathered in one place as more articles are reviewed."
+                  />
+                }
+              />
+              <Route
+                path="/seniors"
+                element={
+                  <ComingSoon
+                    title="For Seniors"
+                    description="Nutrition guidance for healthy ageing, gathered in one place as more articles are reviewed."
+                  />
+                }
+              />
+              <Route
+                path="/about"
+                element={
+                  <ComingSoon
+                    title="About Thanzi Guide"
+                    description="Who's behind Thanzi Guide, and how the content is written and reviewed. This page is on the way."
+                  />
+                }
+              />
               <Route path="/tools" element={<Tools />} />
               <Route path="/tools/bmi" element={<BmiCalculator />} />
               <Route path="/tools/energy" element={<EnergyEstimator />} />
