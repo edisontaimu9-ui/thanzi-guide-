@@ -1201,6 +1201,115 @@
                     ]
                 }
             ]
+        },
+        {
+            "$id": "health_topics",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Health Topics",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 2000,
+                    "required": true
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "articleIds",
+                    "type": "string",
+                    "size": 36,
+                    "required": false,
+                    "array": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "health_topic_views",
+            "$permissions": [
+                "read(\"users\")",
+                "create(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Health Topic Views",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "topicSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "viewedAt",
+                    "type": "datetime",
+                    "required": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "user_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "user_topic_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "userId",
+                        "topicSlug"
+                    ]
+                }
+            ]
         }
     ],
     "buckets": [

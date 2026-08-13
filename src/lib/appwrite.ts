@@ -48,7 +48,9 @@ export const DB = {
     appointments: 'appointments',
     partnerInquiries: 'partner_inquiries',
     notifications: 'notifications',
-    pushSubscriptions: 'push_subscriptions'
+    pushSubscriptions: 'push_subscriptions',
+    healthTopics: 'health_topics',
+    healthTopicViews: 'health_topic_views'
   }
 } as const;
 
