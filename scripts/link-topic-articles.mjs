@@ -4,7 +4,8 @@
 // Usage:
 //   APPWRITE_API_KEY=your_key node scripts/link-topic-articles.mjs <section> <topic-slug> <article-slug> [article-slug ...]
 //
-// <section> is "health", "fitness", or "kids".
+// <section> is "health", "fitness", "kids", or "lifestage" (for
+// Women/Men/Seniors pages in life_stage_pages).
 //
 // Example:
 //   APPWRITE_API_KEY=xxxx node scripts/link-topic-articles.mjs health pregnancy nutrition-during-pregnancy-basics
@@ -20,7 +21,8 @@ const DATABASE_ID = 'thanzi_guide';
 const SECTION_COLLECTIONS = {
   health: 'health_topics',
   fitness: 'fitness_topics',
-  kids: 'kids_stages'
+  kids: 'kids_stages',
+  lifestage: 'life_stage_pages'
 };
 
 const apiKey = process.env.APPWRITE_API_KEY;
@@ -32,7 +34,7 @@ if (!apiKey) {
 const [section, topicSlug, ...articleSlugs] = process.argv.slice(2);
 const topicCollectionId = SECTION_COLLECTIONS[section];
 if (!topicCollectionId || !topicSlug || articleSlugs.length === 0) {
-  console.error('Usage: node scripts/link-topic-articles.mjs <health|fitness|kids> <topic-slug> <article-slug> [article-slug ...]');
+  console.error('Usage: node scripts/link-topic-articles.mjs <health|fitness|kids|lifestage> <topic-slug> <article-slug> [article-slug ...]');
   process.exit(1);
 }
 
