@@ -42,6 +42,7 @@ export function Home() {
     <>
       <Hero />
       <TopicsPreview />
+      <QuoteBanner />
       <FoodsPreview />
       <ToolsPreview />
     </>
@@ -251,6 +252,65 @@ function TopicsPreview() {
           >
             {showAll ? 'Show fewer topics' : `Show ${rest.length} more topics`}
           </button>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// Two enduring lines from Hippocrates on food and medicine — a natural
+// fit for a nutrition-education app. Rotates like FoodSnapshot does, so the
+// homepage keeps a consistent "quietly alive" feel between sections.
+const quotes = [
+  {
+    text: 'Wherever the art of medicine is loved, there is also a love of humanity.',
+    author: 'Hippocrates'
+  },
+  {
+    text: 'Our food should be our medicine, and our medicine should be our food.',
+    author: 'Hippocrates'
+  }
+];
+
+function QuoteBanner() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (quotes.length < 2) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+    const timer = setInterval(() => {
+      setIndex((i) => (i + 1) % quotes.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const quote = quotes[index];
+
+  return (
+    <section className="border-y border-brand-100 bg-sand-100 dark:border-ink-800 dark:bg-ink-900">
+      <div className="mx-auto max-w-3xl px-6 py-16 text-center">
+        <p className="font-display text-2xl italic leading-snug text-brand-700 dark:text-sand-50 sm:text-3xl">
+          &ldquo;{quote.text}&rdquo;
+        </p>
+        <div className="mx-auto mt-6 h-0.5 w-10 bg-clay-400" aria-hidden="true" />
+        <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-clay-500 dark:text-clay-400">
+          {quote.author}
+        </p>
+        {quotes.length > 1 && (
+          <div className="mt-6 flex justify-center gap-1.5" role="tablist" aria-label="Quotes">
+            {quotes.map((q, i) => (
+              <button
+                key={q.text}
+                type="button"
+                role="tab"
+                aria-selected={i === index}
+                aria-label={`Quote ${i + 1}`}
+                onClick={() => setIndex(i)}
+                className={`h-1.5 w-4 rounded-full ${i === index ? 'bg-clay-400' : 'bg-brand-100 dark:bg-ink-800'}`}
+              />
+            ))}
+          </div>
         )}
       </div>
     </section>
