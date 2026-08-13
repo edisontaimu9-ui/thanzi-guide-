@@ -13,6 +13,9 @@ import { Foods } from '@/routes/Foods';
 import { Health } from '@/routes/Health';
 import { HealthTopicDetail } from '@/routes/HealthTopicDetail';
 import { HealthSubtopicDetail } from '@/routes/HealthSubtopicDetail';
+import { Fitness } from '@/routes/Fitness';
+import { FitnessTopicDetail } from '@/routes/FitnessTopicDetail';
+import { FitnessSubtopicDetail } from '@/routes/FitnessSubtopicDetail';
 import { FoodDetail } from '@/routes/FoodDetail';
 import { Articles } from '@/routes/Articles';
 import { ArticleDetail } from '@/routes/ArticleDetail';
@@ -73,15 +76,9 @@ export default function App() {
                   />
                 }
               />
-              <Route
-                path="/fitness"
-                element={
-                  <ComingSoon
-                    title="Fitness"
-                    description="Activity and exercise guidance to go with the BMI and energy tools — walking, home workouts, and safe activity levels for common conditions."
-                  />
-                }
-              />
+              <Route path="/fitness" element={<Fitness />} />
+              <Route path="/fitness/:topicSlug" element={<FitnessTopicDetail />} />
+              <Route path="/fitness/:topicSlug/:subtopicSlug" element={<FitnessSubtopicDetail />} />
               <Route
                 path="/women"
                 element={

@@ -51,7 +51,9 @@ export const DB = {
     pushSubscriptions: 'push_subscriptions',
     healthTopics: 'health_topics',
     healthTopicViews: 'health_topic_views',
-    healthSubtopics: 'health_subtopics'
+    healthSubtopics: 'health_subtopics',
+    fitnessTopics: 'fitness_topics',
+    fitnessSubtopics: 'fitness_subtopics'
   }
 } as const;
 
