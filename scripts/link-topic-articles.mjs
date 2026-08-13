@@ -1,25 +1,25 @@
-// Links a subtopic card (in health_subtopics or fitness_subtopics) to one
-// article, powering the "Read the full article" button on that card's
-// detail page. Replaces the old health-only link-subtopic-article.mjs.
+// Links a topic (in health_topics or fitness_topics) to one or more
+// articles by slug. Replaces the old health-only link-topic-articles.mjs.
 //
 // Usage:
-//   APPWRITE_API_KEY=your_key node scripts/link-subtopic-article.mjs <section> <subtopic-slug> <article-slug>
+//   APPWRITE_API_KEY=your_key node scripts/link-topic-articles.mjs <section> <topic-slug> <article-slug> [article-slug ...]
 //
 // <section> is "health" or "fitness".
 //
 // Example:
-//   APPWRITE_API_KEY=xxxx node scripts/link-subtopic-article.mjs health protein understanding-macronutrients
-//   APPWRITE_API_KEY=xxxx node scripts/link-subtopic-article.mjs fitness workout-ideas some-article-slug
+//   APPWRITE_API_KEY=xxxx node scripts/link-topic-articles.mjs health pregnancy nutrition-during-pregnancy-basics
+//   APPWRITE_API_KEY=xxxx node scripts/link-topic-articles.mjs fitness physical-activity some-article-slug
 //
-// Delete the API key from the console afterwards.
+// This REPLACES the topic's articleIds with the ones given. Delete the API
+// key from the console afterwards.
 
 const ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
 const PROJECT_ID = '6a7967cf000f28e73c22';
 const DATABASE_ID = 'thanzi_guide';
 
 const SECTION_COLLECTIONS = {
-  health: 'health_subtopics',
-  fitness: 'fitness_subtopics'
+  health: 'health_topics',
+  fitness: 'fitness_topics'
 };
 
 const apiKey = process.env.APPWRITE_API_KEY;
@@ -28,10 +28,10 @@ if (!apiKey) {
   process.exit(1);
 }
 
-const [section, subtopicSlug, articleSlug] = process.argv.slice(2);
-const subtopicCollectionId = SECTION_COLLECTIONS[section];
-if (!subtopicCollectionId || !subtopicSlug || !articleSlug) {
-  console.error('Usage: node scripts/link-subtopic-article.mjs <health|fitness> <subtopic-slug> <article-slug>');
+const [section, topicSlug, ...articleSlugs] = process.argv.slice(2);
+const topicCollectionId = SECTION_COLLECTIONS[section];
+if (!topicCollectionId || !topicSlug || articleSlugs.length === 0) {
+  console.error('Usage: node scripts/link-topic-articles.mjs <health|fitness> <topic-slug> <article-slug> [article-slug ...]');
   process.exit(1);
 }
 
@@ -68,8 +68,15 @@ async function updateDocument(collectionId, documentId, data) {
   return json;
 }
 
-const subtopic = await findDocumentBySlug(subtopicCollectionId, subtopicSlug);
-const article = await findDocumentBySlug('articles', articleSlug);
+const topic = await findDocumentBySlug(topicCollectionId, topicSlug);
+console.log(`Found ${section} topic "${topic.title}" (${topic.$id}).`);
 
-await updateDocument(subtopicCollectionId, subtopic.$id, { articleSlug: article.slug });
-console.log(`Linked "${subtopic.title}" -> "${article.title}".`);
+const articleIds = [];
+for (const slug of articleSlugs) {
+  const article = await findDocumentBySlug('articles', slug);
+  console.log(`  + "${article.title}" (${article.$id})`);
+  articleIds.push(article.$id);
+}
+
+await updateDocument(topicCollectionId, topic.$id, { articleIds });
+console.log(`Linked ${articleIds.length} article(s) to "${topicSlug}".`);
