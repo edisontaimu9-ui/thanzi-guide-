@@ -15,7 +15,7 @@ function docToFormValues(fields: FieldSchema[], doc: GenericDoc | null): FormVal
     if (field.type === 'lines') {
       values[field.key] = Array.isArray(raw) ? raw.join('\n') : '';
     } else if (raw === undefined || raw === null) {
-      values[field.key] = '';
+      values[field.key] = doc === null ? (field.defaultValue ?? '') : '';
     } else {
       values[field.key] = String(raw);
     }
@@ -120,7 +120,7 @@ export function ContentForm() {
         {isNew ? `New ${schema.label.replace(/s$/, '')}` : `Edit ${schema.label.replace(/s$/, '')}`}
       </h1>
 
-      {!isNew && (
+      {!isNew && !schema.manageOwnStatus && (
         <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">
           Current status: <span className="font-medium">{docStatus}</span>
         </p>
@@ -158,6 +158,22 @@ export function ContentForm() {
                   rows={field.type === 'lines' ? 4 : 6}
                   className="mt-1 w-full rounded-md border border-brand-100 bg-white p-2 text-sm text-brand-900 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
                 />
+              ) : field.type === 'select' ? (
+                <select
+                  value={values[field.key] ?? ''}
+                  onChange={(e) => handleChange(field.key, e.target.value)}
+                  required={field.required}
+                  className="mt-1 w-full rounded-md border border-brand-100 bg-white p-2 text-sm text-brand-900 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
+                >
+                  <option value="" disabled>
+                    Select…
+                  </option>
+                  {field.options?.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 <input
                   type={field.type === 'number' ? 'number' : 'text'}
@@ -182,9 +198,9 @@ export function ContentForm() {
               disabled={saving}
               className="rounded-md bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
             >
-              {saving ? 'Saving…' : 'Save as Draft'}
+              {saving ? 'Saving…' : schema.manageOwnStatus ? 'Save' : 'Save as Draft'}
             </button>
-            {isAdmin && (
+            {isAdmin && !schema.manageOwnStatus && (
               <button
                 type="button"
                 onClick={() => handleSave(true)}

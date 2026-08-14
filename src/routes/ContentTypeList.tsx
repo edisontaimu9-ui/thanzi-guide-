@@ -136,7 +136,7 @@ export function ContentTypeList() {
                   >
                     Edit
                   </Link>
-                  {isAdmin && isDraft && (
+                  {isAdmin && !schema.manageOwnStatus && isDraft && (
                     <button
                       onClick={() => handlePublish(item.$id)}
                       disabled={isPending}
@@ -145,7 +145,7 @@ export function ContentTypeList() {
                       Publish
                     </button>
                   )}
-                  {isAdmin && !isDraft && (
+                  {isAdmin && !schema.manageOwnStatus && !isDraft && (
                     <button
                       onClick={() => handleUnpublish(item.$id)}
                       disabled={isPending}

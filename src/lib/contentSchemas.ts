@@ -3,7 +3,7 @@
 // hand-building a page per type. Add a new content type here and it shows
 // up in the panel automatically — no new components needed.
 
-export type FieldType = 'text' | 'textarea' | 'number' | 'lines';
+export type FieldType = 'text' | 'textarea' | 'number' | 'lines' | 'select';
 
 export interface FieldSchema {
   key: string;
@@ -11,6 +11,8 @@ export interface FieldSchema {
   type: FieldType;
   required?: boolean;
   helpText?: string;
+  options?: string[];
+  defaultValue?: string;
 }
 
 export interface ContentSchema {
@@ -19,6 +21,11 @@ export interface ContentSchema {
   collectionId: string;
   titleField: string;
   fields: FieldSchema[];
+  // Set for content types that already use their own `status` field with
+  // different meaning (e.g. providers: active/inactive, not draft/
+  // published). When true, the generic draft/publish workflow is skipped
+  // entirely — status becomes a normal editable field instead.
+  manageOwnStatus?: boolean;
 }
 
 export const CONTENT_SCHEMAS: ContentSchema[] = [
@@ -177,6 +184,38 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
       { key: 'imageUrl', label: 'Image URL', type: 'text' },
       { key: 'articleIds', label: 'Article IDs', type: 'lines', helpText: 'One article $id per line' },
       { key: 'order', label: 'Order', type: 'number' }
+    ]
+  },
+  {
+    key: 'providers',
+    label: 'Providers',
+    collectionId: 'providers',
+    titleField: 'name',
+    manageOwnStatus: true,
+    fields: [
+      { key: 'name', label: 'Name', type: 'text', required: true },
+      { key: 'title', label: 'Title', type: 'text', required: true, helpText: 'e.g. Registered Dietitian' },
+      { key: 'specialty', label: 'Specialty', type: 'text' },
+      { key: 'bio', label: 'Bio', type: 'textarea' },
+      { key: 'photoUrl', label: 'Photo URL', type: 'text' },
+      { key: 'location', label: 'Location', type: 'text' },
+      { key: 'phone', label: 'Phone', type: 'text' },
+      { key: 'whatsapp', label: 'WhatsApp', type: 'text' },
+      {
+        key: 'status',
+        label: 'Status',
+        type: 'select',
+        required: true,
+        options: ['active', 'inactive'],
+        defaultValue: 'active',
+        helpText: 'Only "active" providers are bookable and visible to patients'
+      },
+      {
+        key: 'userId',
+        label: 'Linked login (User ID)',
+        type: 'text',
+        helpText: 'Set once this provider has signed up, so they can access their inbox at /provider'
+      }
     ]
   },
   {

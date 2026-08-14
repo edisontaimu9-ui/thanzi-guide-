@@ -19,7 +19,7 @@ export async function getContentById(schema: ContentSchema, id: string): Promise
 export async function createContent(schema: ContentSchema, data: Record<string, unknown>): Promise<GenericDoc> {
   return databases.createDocument<GenericDoc>(DB.databaseId, schema.collectionId, ID.unique(), {
     ...data,
-    status: 'draft'
+    ...(schema.manageOwnStatus ? {} : { status: 'draft' })
   });
 }
 
