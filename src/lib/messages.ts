@@ -33,14 +33,15 @@ export async function sendMessage(params: {
 }): Promise<MessageDoc> {
   const { appointmentId, senderId, senderRole, body, patientUserId, providerUserId } = params;
 
-  const permissions = [
-    Permission.read(Role.user(patientUserId)),
-    Permission.read(Role.user(providerUserId)),
-    Permission.update(Role.user(patientUserId)),
-    Permission.update(Role.user(providerUserId)),
-    Permission.delete(Role.user(patientUserId)),
-    Permission.delete(Role.user(providerUserId))
-  ];
+  // De-duplicated in case the same account is booking with themselves
+  // while testing — Appwrite rejects a permissions array with the same
+  // role string listed twice.
+  const userIds = Array.from(new Set([patientUserId, providerUserId]));
+  const permissions = userIds.flatMap((uid) => [
+    Permission.read(Role.user(uid)),
+    Permission.update(Role.user(uid)),
+    Permission.delete(Role.user(uid))
+  ]);
 
   return databases.createDocument<MessageDoc>(
     DB.databaseId,

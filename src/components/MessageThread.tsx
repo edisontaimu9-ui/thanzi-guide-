@@ -26,6 +26,7 @@ export function MessageThread({
   const [status, setStatus] = useState<Status>('loading');
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   async function load() {
@@ -53,6 +54,7 @@ export function MessageThread({
     const body = draft.trim();
     if (!body || sending) return;
     setSending(true);
+    setSendError(null);
     try {
       await sendMessage({
         appointmentId,
@@ -64,6 +66,8 @@ export function MessageThread({
       });
       setDraft('');
       await load();
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : 'Message failed to send. Try again.');
     } finally {
       setSending(false);
     }
@@ -106,22 +110,29 @@ export function MessageThread({
           {closedReason ?? 'This conversation is closed.'}
         </p>
       ) : (
-        <form onSubmit={handleSend} className="flex gap-2 border-t border-brand-100 p-3 dark:border-ink-800">
-          <input
-            type="text"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder="Type a message…"
-            className="flex-1 rounded-md border border-brand-100 bg-white p-2 text-sm text-brand-900 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
-          />
-          <button
-            type="submit"
-            disabled={sending || !draft.trim()}
-            className="shrink-0 rounded-md bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
-          >
-            Send
-          </button>
-        </form>
+        <div className="border-t border-brand-100 dark:border-ink-800">
+          {sendError && (
+            <p role="alert" className="px-3 pt-2 text-xs text-clay-500 dark:text-clay-400">
+              {sendError}
+            </p>
+          )}
+          <form onSubmit={handleSend} className="flex gap-2 p-3">
+            <input
+              type="text"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder="Type a message…"
+              className="flex-1 rounded-md border border-brand-100 bg-white p-2 text-sm text-brand-900 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
+            />
+            <button
+              type="submit"
+              disabled={sending || !draft.trim()}
+              className="shrink-0 rounded-md bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+            >
+              Send
+            </button>
+          </form>
+        </div>
       )}
     </div>
   );
