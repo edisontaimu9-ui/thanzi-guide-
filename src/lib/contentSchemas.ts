@@ -3,7 +3,7 @@
 // hand-building a page per type. Add a new content type here and it shows
 // up in the panel automatically — no new components needed.
 
-export type FieldType = 'text' | 'textarea' | 'number' | 'lines' | 'select';
+export type FieldType = 'text' | 'textarea' | 'number' | 'lines' | 'select' | 'image';
 
 export interface FieldSchema {
   key: string;
@@ -13,6 +13,7 @@ export interface FieldSchema {
   helpText?: string;
   options?: string[];
   defaultValue?: string;
+  bucketId?: string;
 }
 
 export interface ContentSchema {
@@ -197,7 +198,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
       { key: 'title', label: 'Title', type: 'text', required: true, helpText: 'e.g. Registered Dietitian' },
       { key: 'specialty', label: 'Specialty', type: 'text' },
       { key: 'bio', label: 'Bio', type: 'textarea' },
-      { key: 'photoUrl', label: 'Photo URL', type: 'text' },
+      { key: 'photoUrl', label: 'Photo', type: 'image', bucketId: 'avatars' },
       { key: 'location', label: 'Location', type: 'text' },
       { key: 'phone', label: 'Phone', type: 'text' },
       { key: 'whatsapp', label: 'WhatsApp', type: 'text' },

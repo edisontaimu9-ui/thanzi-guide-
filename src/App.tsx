@@ -43,6 +43,7 @@ import { BmiCalculator } from '@/routes/BmiCalculator';
 import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { Admin } from '@/routes/Admin';
 import { ProviderInbox } from '@/routes/ProviderInbox';
+import { ProviderProfile } from '@/routes/ProviderProfile';
 import { AppointmentThread } from '@/routes/AppointmentThread';
 import { ContentManager } from '@/routes/ContentManager';
 import { ContentTypeList } from '@/routes/ContentTypeList';
@@ -129,6 +130,10 @@ export default function App() {
               <Route
                 path="/provider"
                 element={<ProviderRoute>{(provider) => <ProviderInbox provider={provider} />}</ProviderRoute>}
+              />
+              <Route
+                path="/provider/profile"
+                element={<ProviderRoute>{(provider) => <ProviderProfile provider={provider} />}</ProviderRoute>}
               />
               <Route
                 path="/admin"

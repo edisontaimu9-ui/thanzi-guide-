@@ -38,6 +38,9 @@ export function ProviderInbox({ provider }: { provider: ProviderDoc }) {
     <main className="mx-auto max-w-2xl px-6 py-12">
       <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Your Appointments</h1>
       <p className="mt-2 text-brand-500 dark:text-brand-100">Messages from patients you're booked with.</p>
+      <Link to="/provider/profile" className="mt-2 inline-block text-sm text-brand-500 underline dark:text-brand-100">
+        Edit your profile
+      </Link>
 
       {status === 'loading' && <p className="mt-8 text-brand-500 dark:text-brand-100">Loading…</p>}
       {status === 'error' && (

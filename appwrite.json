@@ -863,7 +863,7 @@
             "databaseId": "thanzi_guide",
             "name": "Providers",
             "enabled": true,
-            "documentSecurity": false,
+            "documentSecurity": true,
             "attributes": [
                 {
                     "key": "name",

@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { getContentSchema, FieldSchema } from '@/lib/contentSchemas';
 import { getContentById, createContent, updateContent, publishContent, GenericDoc } from '@/lib/genericContent';
+import { uploadImage } from '@/lib/storage';
 
 type Status = 'loading' | 'idle' | 'error';
 type FormValues = Record<string, string>;
@@ -55,6 +56,7 @@ export function ContentForm() {
   const [status, setStatus] = useState<Status>(isNew ? 'idle' : 'loading');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
 
   useEffect(() => {
     if (!schema) return;
@@ -84,6 +86,19 @@ export function ContentForm() {
 
   function handleChange(key: string, value: string) {
     setValues((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleImageUpload(field: FieldSchema, file: File) {
+    setUploadingField(field.key);
+    setError(null);
+    try {
+      const url = await uploadImage(field.bucketId ?? 'avatars', file);
+      handleChange(field.key, url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Image upload failed.');
+    } finally {
+      setUploadingField(null);
+    }
   }
 
   async function handleSave(publishAfter: boolean) {
@@ -174,6 +189,31 @@ export function ContentForm() {
                     </option>
                   ))}
                 </select>
+              ) : field.type === 'image' ? (
+                <div className="mt-1 flex items-center gap-4">
+                  {values[field.key] && (
+                    <img
+                      src={values[field.key]}
+                      alt=""
+                      className="h-16 w-16 rounded-full border border-brand-100 object-cover dark:border-ink-800"
+                    />
+                  )}
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(field, file);
+                      }}
+                      disabled={uploadingField === field.key}
+                      className="text-sm text-brand-500 dark:text-brand-100"
+                    />
+                    {uploadingField === field.key && (
+                      <p className="text-xs text-brand-300 dark:text-brand-100">Uploading…</p>
+                    )}
+                  </div>
+                </div>
               ) : (
                 <input
                   type={field.type === 'number' ? 'number' : 'text'}
@@ -195,7 +235,7 @@ export function ContentForm() {
           <div className="flex flex-wrap gap-3 pt-2">
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || !!uploadingField}
               className="rounded-md bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
             >
               {saving ? 'Saving…' : schema.manageOwnStatus ? 'Save' : 'Save as Draft'}
@@ -204,7 +244,7 @@ export function ContentForm() {
               <button
                 type="button"
                 onClick={() => handleSave(true)}
-                disabled={saving}
+                disabled={saving || !!uploadingField}
                 className="rounded-md border border-brand-500 px-4 py-2 text-sm font-medium text-brand-500 hover:bg-sand-50 disabled:opacity-50 dark:text-brand-100"
               >
                 Save & Publish
