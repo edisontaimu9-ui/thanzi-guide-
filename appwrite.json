@@ -1973,7 +1973,8 @@
         {
             "$id": "messages",
             "$permissions": [
-                "create(\"users\")"
+                "create(\"users\")",
+                "read(\"users\")"
             ],
             "databaseId": "thanzi_guide",
             "name": "Messages",

@@ -19,29 +19,23 @@ export async function listMessages(appointmentId: string): Promise<MessageDoc[]>
   return res.documents;
 }
 
-// Grants read/write on the message to exactly the two participants (the
-// patient and the provider's linked account), nobody else — including
-// other providers or plain users — can see it, even though the messages
-// collection allows any signed-in user to create a document.
+// Grants update/delete on the message to the sender only — a message can't
+// grant read/write to some other specific user's ID from a regular client
+// session (Appwrite only lets a session grant permissions for roles it
+// actually holds, e.g. itself). Read access instead comes from the
+// messages collection's own read("users") permission, the same pattern
+// the appointments collection already uses. Privacy for who *sees* a
+// thread is enforced by the app only ever querying by a specific
+// appointmentId the viewer is a participant in (see AppointmentThread).
 export async function sendMessage(params: {
   appointmentId: string;
   senderId: string;
   senderRole: SenderRole;
   body: string;
-  patientUserId: string;
-  providerUserId: string;
 }): Promise<MessageDoc> {
-  const { appointmentId, senderId, senderRole, body, patientUserId, providerUserId } = params;
+  const { appointmentId, senderId, senderRole, body } = params;
 
-  // De-duplicated in case the same account is booking with themselves
-  // while testing — Appwrite rejects a permissions array with the same
-  // role string listed twice.
-  const userIds = Array.from(new Set([patientUserId, providerUserId]));
-  const permissions = userIds.flatMap((uid) => [
-    Permission.read(Role.user(uid)),
-    Permission.update(Role.user(uid)),
-    Permission.delete(Role.user(uid))
-  ]);
+  const permissions = [Permission.update(Role.user(senderId)), Permission.delete(Role.user(senderId))];
 
   return databases.createDocument<MessageDoc>(
     DB.databaseId,

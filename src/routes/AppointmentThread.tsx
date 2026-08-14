@@ -98,8 +98,6 @@ export function AppointmentThread() {
               appointmentId={appointment.$id}
               currentUserId={user!.$id}
               currentRole={myRole}
-              patientUserId={appointment.userId}
-              providerUserId={provider.userId!}
               isClosed={isThreadClosed(slot)}
               closedReason="This appointment has passed, the conversation is now closed."
             />

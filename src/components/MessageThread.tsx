@@ -7,8 +7,6 @@ interface MessageThreadProps {
   appointmentId: string;
   currentUserId: string;
   currentRole: SenderRole;
-  patientUserId: string;
-  providerUserId: string;
   isClosed: boolean;
   closedReason?: string;
 }
@@ -17,8 +15,6 @@ export function MessageThread({
   appointmentId,
   currentUserId,
   currentRole,
-  patientUserId,
-  providerUserId,
   isClosed,
   closedReason
 }: MessageThreadProps) {
@@ -60,9 +56,7 @@ export function MessageThread({
         appointmentId,
         senderId: currentUserId,
         senderRole: currentRole,
-        body,
-        patientUserId,
-        providerUserId
+        body
       });
       setDraft('');
       await load();
