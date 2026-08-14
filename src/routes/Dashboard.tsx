@@ -194,13 +194,21 @@ export function Dashboard() {
                         : 'Time unavailable'}
                     </p>
                   </div>
-                  <button
-                    onClick={() => handleCancel(appt.$id)}
-                    disabled={cancellingId === appt.$id}
-                    className="text-sm font-medium text-clay-500 underline hover:text-clay-400 disabled:opacity-60"
-                  >
-                    {cancellingId === appt.$id ? 'Cancelling…' : 'Cancel'}
-                  </button>
+                  <div className="flex shrink-0 items-center gap-4">
+                    <Link
+                      to={`/appointments/${appt.$id}/messages`}
+                      className="text-sm font-medium text-brand-500 underline dark:text-brand-100"
+                    >
+                      Message
+                    </Link>
+                    <button
+                      onClick={() => handleCancel(appt.$id)}
+                      disabled={cancellingId === appt.$id}
+                      className="text-sm font-medium text-clay-500 underline hover:text-clay-400 disabled:opacity-60"
+                    >
+                      {cancellingId === appt.$id ? 'Cancelling…' : 'Cancel'}
+                    </button>
+                  </div>
                 </div>
               );
             })}

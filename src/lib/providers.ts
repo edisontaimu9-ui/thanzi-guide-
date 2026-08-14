@@ -12,6 +12,7 @@ export interface ProviderDoc extends Models.Document {
   phone?: string;
   whatsapp?: string;
   status: string;
+  userId?: string;
 }
 
 export interface SlotDoc extends Models.Document {
@@ -43,6 +44,18 @@ export async function getProvider(id: string): Promise<ProviderDoc | null> {
   } catch {
     return null;
   }
+}
+
+// Finds the provider record linked to a logged-in account, so a provider's
+// own inbox knows which appointments belong to them. Returns null if this
+// account isn't linked to a provider (an admin sets providers.userId to
+// link one up).
+export async function getProviderByUserId(userId: string): Promise<ProviderDoc | null> {
+  const res = await databases.listDocuments<ProviderDoc>(DB.databaseId, DB.collections.providers, [
+    Query.equal('userId', userId),
+    Query.limit(1)
+  ]);
+  return res.documents[0] ?? null;
 }
 
 // All future slots for a provider, booked or not — callers filter out
@@ -117,6 +130,26 @@ export async function listMyAppointments(userId: string): Promise<AppointmentDoc
     Query.limit(50)
   ]);
   return res.documents;
+}
+
+// For a provider's own inbox — appointments booked with them, across all
+// patients. Relies on the appointments collection's current read("users")
+// permission (any signed-in user can list appointments); this isn't
+// document-scoped to the provider specifically, worth tightening later.
+export async function listAppointmentsForProvider(providerId: string): Promise<AppointmentDoc[]> {
+  const res = await databases.listDocuments<AppointmentDoc>(DB.databaseId, DB.collections.appointments, [
+    Query.equal('providerId', providerId),
+    Query.limit(100)
+  ]);
+  return res.documents;
+}
+
+export async function getAppointment(id: string): Promise<AppointmentDoc | null> {
+  try {
+    return await databases.getDocument<AppointmentDoc>(DB.databaseId, DB.collections.appointments, id);
+  } catch {
+    return null;
+  }
 }
 
 export async function cancelAppointment(appointmentId: string): Promise<void> {

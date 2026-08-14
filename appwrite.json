@@ -919,6 +919,12 @@
                     "size": 16,
                     "required": false,
                     "default": "active"
+                },
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
                 }
             ],
             "indexes": [
@@ -927,6 +933,13 @@
                     "type": "key",
                     "attributes": [
                         "status"
+                    ]
+                },
+                {
+                    "key": "userId_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
                     ]
                 }
             ]
@@ -1953,6 +1966,51 @@
                     "type": "key",
                     "attributes": [
                         "status"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "messages",
+            "$permissions": [
+                "create(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Messages",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "appointmentId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "senderId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "senderRole",
+                    "type": "string",
+                    "size": 20,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 2000,
+                    "required": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "appointment_idx",
+                    "type": "key",
+                    "attributes": [
+                        "appointmentId"
                     ]
                 }
             ]

@@ -3,6 +3,7 @@ import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/lib/theme';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
 import { AdminRoute } from '@/components/layout/AdminRoute';
+import { ProviderRoute } from '@/components/layout/ProviderRoute';
 import { Layout } from '@/components/layout/Layout';
 import { Home } from '@/routes/Home';
 import { Login } from '@/routes/Login';
@@ -41,6 +42,8 @@ import { CookiePolicy } from '@/routes/CookiePolicy';
 import { BmiCalculator } from '@/routes/BmiCalculator';
 import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { Admin } from '@/routes/Admin';
+import { ProviderInbox } from '@/routes/ProviderInbox';
+import { AppointmentThread } from '@/routes/AppointmentThread';
 import { ContentManager } from '@/routes/ContentManager';
 import { ContentTypeList } from '@/routes/ContentTypeList';
 import { ContentForm } from '@/routes/ContentForm';
@@ -114,6 +117,18 @@ export default function App() {
                     <Dashboard />
                   </ProtectedRoute>
                 }
+              />
+              <Route
+                path="/appointments/:id/messages"
+                element={
+                  <ProtectedRoute>
+                    <AppointmentThread />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/provider"
+                element={<ProviderRoute>{(provider) => <ProviderInbox provider={provider} />}</ProviderRoute>}
               />
               <Route
                 path="/admin"
