@@ -212,10 +212,16 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
         helpText: 'Only "active" providers are bookable and visible to patients'
       },
       {
+        key: 'claimEmail',
+        label: 'Claim email',
+        type: 'text',
+        helpText: 'The email this provider will sign up with — lets them auto-link via "Claim your profile" instead of you setting the User ID manually'
+      },
+      {
         key: 'userId',
         label: 'Linked login (User ID)',
         type: 'text',
-        helpText: 'Set once this provider has signed up, so they can access their inbox at /provider'
+        helpText: 'Set automatically once claimed. Only edit this by hand if you need to override it.'
       }
     ]
   },

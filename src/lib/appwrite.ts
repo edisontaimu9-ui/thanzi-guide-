@@ -1,4 +1,4 @@
-import { Client, Account, Databases, Storage, Teams, ID, Query, Permission, Role } from 'appwrite';
+import { Client, Account, Databases, Storage, Teams, Functions, ID, Query, Permission, Role } from 'appwrite';
 
 const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT as string;
 const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID as string;
@@ -21,6 +21,7 @@ export const account = new Account(client);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
 export const teams = new Teams(client);
+export const functions = new Functions(client);
 
 export { ID, Query, Permission, Role };
 
@@ -66,6 +67,10 @@ export const BUCKETS = {
   foodImages: 'food_images',
   articleImages: 'article_images',
   avatars: 'avatars'
+} as const;
+
+export const FUNCTIONS = {
+  claimProviderProfile: 'claim-provider-profile'
 } as const;
 
 // App roles — mirrored on each profile document's `role` attribute, and
