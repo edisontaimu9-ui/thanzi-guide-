@@ -113,6 +113,19 @@ export async function bookSlot(
   } catch {
     // ignore
   }
+  try {
+    const provider = await getProvider(providerId);
+    if (provider?.userId) {
+      await createNotification(
+        provider.userId,
+        'New appointment booked',
+        `${patientName} booked ${slotTimeLabel}`,
+        '/provider'
+      );
+    }
+  } catch {
+    // ignore
+  }
   return appointment;
 }
 
@@ -187,5 +200,46 @@ export async function getAppointment(id: string): Promise<AppointmentDoc | null>
 }
 
 export async function cancelAppointment(appointmentId: string): Promise<void> {
+  // Gather what we need to notify the provider before the document is gone.
+  let notifyContext: { providerUserId: string; patientName: string; slotLabel: string } | null = null;
+  try {
+    const appointment = await databases.getDocument<AppointmentDoc>(
+      DB.databaseId,
+      DB.collections.appointments,
+      appointmentId
+    );
+    const [provider, slot] = await Promise.all([getProvider(appointment.providerId), getSlot(appointment.slotId)]);
+    if (provider?.userId) {
+      notifyContext = {
+        providerUserId: provider.userId,
+        patientName: appointment.patientName,
+        slotLabel: slot
+          ? new Intl.DateTimeFormat('en', {
+              weekday: 'short',
+              month: 'short',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit'
+            }).format(new Date(slot.startTime))
+          : 'their appointment'
+      };
+    }
+  } catch {
+    // ignore — proceed with cancellation regardless
+  }
+
   await databases.deleteDocument(DB.databaseId, DB.collections.appointments, appointmentId);
+
+  if (notifyContext) {
+    try {
+      await createNotification(
+        notifyContext.providerUserId,
+        'Appointment cancelled',
+        `${notifyContext.patientName} cancelled ${notifyContext.slotLabel}`,
+        '/provider'
+      );
+    } catch {
+      // ignore
+    }
+  }
 }

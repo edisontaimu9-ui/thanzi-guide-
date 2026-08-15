@@ -1,4 +1,5 @@
 import { databases, DB, ID, Query, Permission, Role } from '@/lib/appwrite';
+import { createNotification } from '@/lib/notifications';
 import type { Models } from 'appwrite';
 
 export type SenderRole = 'patient' | 'provider';
@@ -32,16 +33,32 @@ export async function sendMessage(params: {
   senderId: string;
   senderRole: SenderRole;
   body: string;
+  recipientUserId?: string;
 }): Promise<MessageDoc> {
-  const { appointmentId, senderId, senderRole, body } = params;
+  const { appointmentId, senderId, senderRole, body, recipientUserId } = params;
 
   const permissions = [Permission.update(Role.user(senderId)), Permission.delete(Role.user(senderId))];
 
-  return databases.createDocument<MessageDoc>(
+  const message = await databases.createDocument<MessageDoc>(
     DB.databaseId,
     DB.collections.messages,
     ID.unique(),
     { appointmentId, senderId, senderRole, body },
     permissions
   );
+
+  if (recipientUserId) {
+    try {
+      await createNotification(
+        recipientUserId,
+        'New message',
+        body.length > 80 ? `${body.slice(0, 80)}…` : body,
+        `/appointments/${appointmentId}/messages`
+      );
+    } catch {
+      // ignore — a failed notification shouldn't fail the send
+    }
+  }
+
+  return message;
 }
