@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
+import { listArticles, ArticleDoc } from '@/lib/articles';
 import { useAuth } from '@/lib/auth-context';
 
 // `highlight: true` topics show on the homepage by default; the rest are
@@ -42,8 +43,10 @@ export function Home() {
     <>
       <Hero />
       <TopicsPreview />
+      <FeaturedArticles />
       <QuoteBanner />
       <FoodsPreview />
+      <ExploreSection />
       <ToolsPreview />
     </>
   );
@@ -362,6 +365,88 @@ function FoodsPreview() {
               ))}
         </div>
       )}
+    </section>
+  );
+}
+
+function FeaturedArticles() {
+  const [articles, setArticles] = useState<ArticleDoc[]>([]);
+  const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
+
+  useEffect(() => {
+    listArticles()
+      .then((results) => {
+        const sorted = [...results].sort((a, b) =>
+          (b.publishedAt ?? b.$createdAt).localeCompare(a.publishedAt ?? a.$createdAt)
+        );
+        setArticles(sorted.slice(0, 3));
+        setStatus('idle');
+      })
+      .catch(() => setStatus('error'));
+  }, []);
+
+  if (status === 'error') return null;
+  if (status === 'idle' && articles.length === 0) return null;
+
+  return (
+    <section className="mx-auto max-w-5xl px-6 py-16">
+      <div className="flex items-baseline justify-between">
+        <h2 className="font-display text-2xl text-brand-700 dark:text-sand-50">Featured articles</h2>
+        <Link to="/learn" className="text-sm font-medium text-brand-500 underline dark:text-brand-100">
+          See all
+        </Link>
+      </div>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        {status === 'loading'
+          ? Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-40 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-ink-800 dark:bg-ink-950"
+              />
+            ))
+          : articles.map((article) => (
+              <Link
+                key={article.$id}
+                to={`/learn/${article.slug}`}
+                className="rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950"
+              >
+                <p className="font-display text-lg text-brand-700 dark:text-sand-50">{article.title}</p>
+                {article.summary && (
+                  <p className="mt-2 line-clamp-3 text-sm text-brand-500 dark:text-brand-100">{article.summary}</p>
+                )}
+              </Link>
+            ))}
+      </div>
+    </section>
+  );
+}
+
+function ExploreSection() {
+  const items = [
+    { label: 'Health', description: 'Guidance by topic and life stage', to: '/health' },
+    { label: 'Fitness', description: 'Activity and exercise nutrition', to: '/fitness' },
+    { label: 'Recipes', description: 'Malawian dishes, category by category', to: '/recipes' },
+    { label: 'For Kids', description: 'Nutrition by age and stage', to: '/kids' }
+  ];
+
+  return (
+    <section className="border-y border-brand-100 bg-sand-100 dark:border-ink-800 dark:bg-ink-950">
+      <div className="mx-auto max-w-5xl px-6 py-16">
+        <h2 className="font-display text-2xl text-brand-700 dark:text-sand-50">Explore more</h2>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-900"
+            >
+              <p className="font-display text-lg text-brand-700 dark:text-sand-50">{item.label}</p>
+              <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">{item.description}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
