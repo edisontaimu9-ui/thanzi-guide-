@@ -70,7 +70,7 @@ export const BUCKETS = {
 } as const;
 
 export const FUNCTIONS = {
-  claimProviderProfile: 'claim-provider-profile'
+  claimProviderProfile: '6a8002d5001d7e482faa'
 } as const;
 
 // App roles — mirrored on each profile document's `role` attribute, and
