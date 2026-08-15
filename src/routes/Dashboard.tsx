@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useFavorites } from '@/hooks/useFavorites';
 import { getFood, ChakudyaFood } from '@/lib/chakudya';
 import { listAllCompletedProgress } from '@/lib/courses';
-import { AppointmentDoc, cancelAppointment, getProvider, getSlot, listMyAppointments, ProviderDoc, SlotDoc } from '@/lib/providers';
+import { AppointmentDoc, cancelAppointment, getProvider, getProviderByUserId, getSlot, listMyAppointments, ProviderDoc, SlotDoc } from '@/lib/providers';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const ROLE_LABEL: Record<string, string> = {
@@ -28,6 +28,12 @@ export function Dashboard() {
   const [slotById, setSlotById] = useState<Record<string, SlotDoc>>({});
   const [appointmentsStatus, setAppointmentsStatus] = useState<'loading' | 'idle' | 'error'>('loading');
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [myProvider, setMyProvider] = useState<ProviderDoc | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    getProviderByUserId(user.$id).then(setMyProvider);
+  }, [user]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -112,6 +118,11 @@ export function Dashboard() {
                   {ROLE_LABEL[role] ?? role}
                 </span>
               )}
+              {myProvider && (
+                <span className="rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-medium uppercase tracking-wide text-brand-700 dark:bg-ink-800 dark:text-brand-100">
+                  Provider
+                </span>
+              )}
             </div>
             <p className="mt-0.5 text-sm text-brand-500 dark:text-brand-100">{user?.email}</p>
             {memberSince && (
@@ -144,7 +155,7 @@ export function Dashboard() {
           className="flex flex-col justify-center rounded-lg border border-brand-100 bg-sand-50 p-4 text-brand-700 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-900/40 dark:text-sand-100"
         >
           <span className="font-mono text-base font-semibold">Provider</span>
-          <span className="text-xs">Manage your practice →</span>
+          <span className="text-xs">{myProvider ? 'Manage your practice →' : 'Claim your profile →'}</span>
         </Link>
         {isContributor && (
           <Link
