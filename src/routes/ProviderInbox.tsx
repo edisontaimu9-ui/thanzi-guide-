@@ -41,6 +41,9 @@ export function ProviderInbox({ provider }: { provider: ProviderDoc }) {
       <Link to="/provider/profile" className="mt-2 inline-block text-sm text-brand-500 underline dark:text-brand-100">
         Edit your profile
       </Link>
+      <Link to="/provider/slots" className="mt-2 block text-sm text-brand-500 underline dark:text-brand-100">
+        Manage your availability
+      </Link>
 
       {status === 'loading' && <p className="mt-8 text-brand-500 dark:text-brand-100">Loading…</p>}
       {status === 'error' && (

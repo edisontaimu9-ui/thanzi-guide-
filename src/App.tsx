@@ -44,6 +44,7 @@ import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { Admin } from '@/routes/Admin';
 import { ProviderInbox } from '@/routes/ProviderInbox';
 import { ProviderProfile } from '@/routes/ProviderProfile';
+import { ProviderSlots } from '@/routes/ProviderSlots';
 import { AppointmentThread } from '@/routes/AppointmentThread';
 import { ContentManager } from '@/routes/ContentManager';
 import { ContentTypeList } from '@/routes/ContentTypeList';
@@ -134,6 +135,10 @@ export default function App() {
               <Route
                 path="/provider/profile"
                 element={<ProviderRoute>{(provider) => <ProviderProfile provider={provider} />}</ProviderRoute>}
+              />
+              <Route
+                path="/provider/slots"
+                element={<ProviderRoute>{(provider) => <ProviderSlots provider={provider} />}</ProviderRoute>}
               />
               <Route
                 path="/admin"

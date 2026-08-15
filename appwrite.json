@@ -963,12 +963,13 @@
                 "read(\"any\")",
                 "create(\"label:admin\")",
                 "update(\"label:admin\")",
-                "delete(\"label:admin\")"
+                "delete(\"label:admin\")",
+                "create(\"users\")"
             ],
             "databaseId": "thanzi_guide",
             "name": "Appointment Slots",
             "enabled": true,
-            "documentSecurity": false,
+            "documentSecurity": true,
             "attributes": [
                 {
                     "key": "providerId",

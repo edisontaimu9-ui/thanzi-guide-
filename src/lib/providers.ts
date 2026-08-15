@@ -124,6 +124,40 @@ export async function getSlot(id: string): Promise<SlotDoc | null> {
   }
 }
 
+// Providers add their own slots. Grants themselves update/delete on it —
+// safe to self-grant since it's their own identity, no admin step needed.
+export async function createSlot(params: {
+  providerId: string;
+  createdByUserId: string;
+  startTime: string;
+  durationMinutes: number;
+  notes?: string;
+}): Promise<SlotDoc> {
+  const { providerId, createdByUserId, startTime, durationMinutes, notes } = params;
+  return databases.createDocument<SlotDoc>(
+    DB.databaseId,
+    DB.collections.appointmentSlots,
+    ID.unique(),
+    { providerId, startTime, durationMinutes, notes: notes ?? '' },
+    [Permission.update(Role.user(createdByUserId)), Permission.delete(Role.user(createdByUserId))]
+  );
+}
+
+export async function deleteSlot(id: string): Promise<void> {
+  await databases.deleteDocument(DB.databaseId, DB.collections.appointmentSlots, id);
+}
+
+// Checks whether a slot has an appointment booked against it, so the
+// provider UI can warn before deleting (or block it) rather than silently
+// orphaning a patient's booking.
+export async function isSlotBooked(slotId: string): Promise<boolean> {
+  const res = await databases.listDocuments<AppointmentDoc>(DB.databaseId, DB.collections.appointments, [
+    Query.equal('slotId', slotId),
+    Query.limit(1)
+  ]);
+  return res.documents.length > 0;
+}
+
 export async function listMyAppointments(userId: string): Promise<AppointmentDoc[]> {
   const res = await databases.listDocuments<AppointmentDoc>(DB.databaseId, DB.collections.appointments, [
     Query.equal('userId', userId),
