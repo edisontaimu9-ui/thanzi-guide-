@@ -127,6 +127,17 @@ export function ContentTypeList() {
                     {item.status ? String(item.status) : 'published'}
                   </span>
                   <span className="text-sm font-medium text-brand-700 dark:text-sand-100">{title}</span>
+                  {schema.key === 'providers' && (
+                    <span
+                      className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
+                        item.userId
+                          ? 'bg-brand-100 text-brand-700 dark:bg-ink-800 dark:text-brand-100'
+                          : 'bg-clay-400/20 text-clay-500 dark:text-clay-400'
+                      }`}
+                    >
+                      {item.userId ? 'Linked' : 'Unclaimed'}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex shrink-0 gap-2">

@@ -139,6 +139,13 @@ export function Dashboard() {
       <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <StatTile label="Favorite foods" value={loaded ? favorites.length : null} />
         <StatTile label="Lessons completed" value={completedCount} />
+        <Link
+          to="/provider"
+          className="flex flex-col justify-center rounded-lg border border-brand-100 bg-sand-50 p-4 text-brand-700 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-900/40 dark:text-sand-100"
+        >
+          <span className="font-mono text-base font-semibold">Provider</span>
+          <span className="text-xs">Manage your practice →</span>
+        </Link>
         {isContributor && (
           <Link
             to="/admin"
