@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, FormEvent } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
+import { Link, useSearchParams } from 'react-router-dom';import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 type FoodTopic = {
@@ -121,6 +120,15 @@ export function Foods() {
       </p>
 
       <FoodTopicAccordion />
+
+      <div className="mt-6 flex justify-end">
+        <Link
+          to="/references"
+          className="text-sm font-medium text-brand-500 underline hover:text-brand-700 dark:text-brand-100"
+        >
+          View source references →
+        </Link>
+      </div>
 
       <form onSubmit={handleSubmit} className="mt-6 flex gap-2">
         <label htmlFor="food-search" className="sr-only">
