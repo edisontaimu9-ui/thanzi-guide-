@@ -59,14 +59,17 @@ export const DB = {
     recipes: 'recipes',
     kidsStages: 'kids_stages',
     lifeStagePages: 'life_stage_pages',
-    messages: 'messages'
+    messages: 'messages',
+    userReferences: 'user_references',
+    referenceChunks: 'reference_chunks'
   }
 } as const;
 
 export const BUCKETS = {
   foodImages: 'food_images',
   articleImages: 'article_images',
-  avatars: 'avatars'
+  avatars: 'avatars',
+  referenceFiles: 'reference_files'
 } as const;
 
 export const FUNCTIONS = {

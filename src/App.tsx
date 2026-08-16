@@ -42,6 +42,7 @@ import { CookiePolicy } from '@/routes/CookiePolicy';
 import { BmiCalculator } from '@/routes/BmiCalculator';
 import { EnergyEstimator } from '@/routes/EnergyEstimator';
 import { Admin } from '@/routes/Admin';
+import { Ask } from '@/routes/Ask';
 import { ProviderInbox } from '@/routes/ProviderInbox';
 import { ProviderProfile } from '@/routes/ProviderProfile';
 import { ProviderSlots } from '@/routes/ProviderSlots';
@@ -73,15 +74,7 @@ export default function App() {
               <Route path="/courses/:slug" element={<CourseDetail />} />
               <Route path="/courses/:courseSlug/:lessonSlug" element={<Lesson />} />
               <Route path="/search" element={<Search />} />
-              <Route
-                path="/ask"
-                element={
-                  <ComingSoon
-                    title="Ask"
-                    description="A place to ask health and nutrition questions and get answers grounded in Thanzi Guide's own content. It's on the way, once the food and article database has enough real content to ground it in."
-                  />
-                }
-              />
+              <Route path="/ask" element={<Ask />} />
               <Route path="/recipes" element={<Recipes />} />
               <Route path="/recipes/:categorySlug" element={<RecipeCategoryDetail />} />
               <Route path="/recipes/:categorySlug/:recipeSlug" element={<RecipeDetail />} />
