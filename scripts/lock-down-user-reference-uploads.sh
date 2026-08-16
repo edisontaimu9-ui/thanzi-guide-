@@ -20,10 +20,12 @@ H_PROJECT="X-Appwrite-Project: $PROJECT_ID"
 H_KEY="X-Appwrite-Key: $APPWRITE_API_KEY"
 H_JSON="Content-Type: application/json"
 
-echo "Locking down reference_files bucket (create: label:admin only)..."
-curl -s -X PUT "$ENDPOINT/storage/buckets/reference_files" \
+echo "Creating reference_files bucket (admin-only — the personal self-upload"
+echo "feature that originally needed 'users' access has been removed, so this"
+echo "bucket now exists purely to back admin-uploaded CMS reference documents)..."
+curl -s -X POST "$ENDPOINT/storage/buckets" \
   -H "$H_PROJECT" -H "$H_KEY" -H "$H_JSON" \
-  -d '{"name":"Reference Files","permissions":["create(\"label:admin\")"],"fileSecurity":true,"enabled":true,"maximumFileSize":15000000,"allowedFileExtensions":["pdf","docx","txt","csv","jpg","jpeg","png","webp"]}'
+  -d '{"bucketId":"reference_files","name":"Reference Files","fileSecurity":true,"enabled":true,"maximumFileSize":15000000,"allowedFileExtensions":["pdf","docx","txt","csv","jpg","jpeg","png","webp"],"permissions":["create(\"label:admin\")"]}'
 echo
 sleep 1
 
