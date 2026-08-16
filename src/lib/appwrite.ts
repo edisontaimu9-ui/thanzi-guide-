@@ -65,11 +65,15 @@ export const DB = {
   }
 } as const;
 
+// The Appwrite plan on this project allows exactly one storage bucket.
+// "food_images" is that bucket (it's the one that happened to get created
+// first) — it's now used for everything: food/article images, avatars,
+// and admin-uploaded reference documents, separated by allowed file
+// extensions and per-role create permissions rather than by bucket.
+// Keep this single-key shape; do not add more bucket ids here, since
+// creating a second bucket will fail on this plan.
 export const BUCKETS = {
-  foodImages: 'food_images',
-  articleImages: 'article_images',
-  avatars: 'avatars',
-  referenceFiles: 'reference_files'
+  media: 'food_images'
 } as const;
 
 export const FUNCTIONS = {

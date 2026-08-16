@@ -208,7 +208,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
       { key: 'title', label: 'Title', type: 'text', required: true, helpText: 'e.g. Registered Dietitian' },
       { key: 'specialty', label: 'Specialty', type: 'text' },
       { key: 'bio', label: 'Bio', type: 'textarea' },
-      { key: 'photoUrl', label: 'Photo', type: 'image', bucketId: 'avatars' },
+      { key: 'photoUrl', label: 'Photo', type: 'image', bucketId: 'food_images' },
       { key: 'location', label: 'Location', type: 'text' },
       { key: 'phone', label: 'Phone', type: 'text' },
       { key: 'whatsapp', label: 'WhatsApp', type: 'text' },
@@ -313,7 +313,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
         key: 'fileId',
         label: 'Attached file',
         type: 'file',
-        bucketId: 'reference_files',
+        bucketId: 'food_images',
         pairedNameKey: 'fileName',
         helpText: 'PDF, DOCX, TXT, or CSV, up to 15MB — visible to all users to view and download. Admin only.'
       },

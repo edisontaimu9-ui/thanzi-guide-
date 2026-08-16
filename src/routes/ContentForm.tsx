@@ -111,7 +111,7 @@ export function ContentForm() {
     setUploadingField(field.key);
     setError(null);
     try {
-      const url = await uploadImage(field.bucketId ?? 'avatars', file);
+      const url = await uploadImage(field.bucketId ?? 'food_images', file);
       handleChange(field.key, url);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Image upload failed.');
@@ -128,7 +128,7 @@ export function ContentForm() {
       // permission (personal uploads there stay private to their owner).
       // Admin CMS uploads need to be publicly readable, so grant that
       // explicitly on just this file rather than opening up the bucket.
-      const fileId = await uploadFile(field.bucketId ?? 'reference_files', file, [Permission.read(Role.any())]);
+      const fileId = await uploadFile(field.bucketId ?? 'food_images', file, [Permission.read(Role.any())]);
       setValues((prev) => {
         const next = { ...prev, [field.key]: fileId };
         if (field.pairedNameKey) next[field.pairedNameKey] = file.name;
@@ -258,7 +258,7 @@ export function ContentForm() {
                 <div className="mt-1 flex items-center gap-4">
                   {values[field.key] && (
                     <a
-                      href={getFileViewUrl(field.bucketId ?? 'reference_files', values[field.key])}
+                      href={getFileViewUrl(field.bucketId ?? 'food_images', values[field.key])}
                       target="_blank"
                       rel="noreferrer"
                       className="text-sm text-brand-500 underline dark:text-brand-100"

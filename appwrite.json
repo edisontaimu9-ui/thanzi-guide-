@@ -2174,73 +2174,27 @@
   "buckets": [
     {
       "$id": "food_images",
-      "name": "Food Images",
+      "name": "Media",
       "$permissions": [
         "read(\"any\")",
-        "create(\"label:editor\")"
+        "create(\"label:editor\")",
+        "create(\"users\")",
+        "create(\"label:admin\")",
+        "update(\"label:admin\")",
+        "delete(\"label:admin\")"
       ],
       "fileSecurity": false,
-      "enabled": true,
-      "maximumFileSize": 5000000,
-      "allowedFileExtensions": [
-        "jpg",
-        "jpeg",
-        "png",
-        "webp"
-      ]
-    },
-    {
-      "$id": "article_images",
-      "name": "Article Images",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")"
-      ],
-      "fileSecurity": false,
-      "enabled": true,
-      "maximumFileSize": 5000000,
-      "allowedFileExtensions": [
-        "jpg",
-        "jpeg",
-        "png",
-        "webp"
-      ]
-    },
-    {
-      "$id": "avatars",
-      "name": "Avatars",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"users\")"
-      ],
-      "fileSecurity": true,
-      "enabled": true,
-      "maximumFileSize": 2000000,
-      "allowedFileExtensions": [
-        "jpg",
-        "jpeg",
-        "png",
-        "webp"
-      ]
-    },
-    {
-      "$id": "reference_files",
-      "name": "Reference Files",
-      "$permissions": [
-        "create(\"label:admin\")"
-      ],
-      "fileSecurity": true,
       "enabled": true,
       "maximumFileSize": 15000000,
       "allowedFileExtensions": [
-        "pdf",
-        "docx",
-        "txt",
-        "csv",
         "jpg",
         "jpeg",
         "png",
-        "webp"
+        "webp",
+        "pdf",
+        "docx",
+        "txt",
+        "csv"
       ]
     }
   ],

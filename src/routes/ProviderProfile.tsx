@@ -33,7 +33,7 @@ export function ProviderProfile({ provider }: { provider: ProviderDoc }) {
     setUploading(true);
     setError(null);
     try {
-      const url = await uploadImage('avatars', file);
+      const url = await uploadImage('food_images', file);
       setPhotoUrl(url);
       setSaved(false);
     } catch (err) {
