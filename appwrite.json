@@ -2185,7 +2185,7 @@
       ],
       "fileSecurity": false,
       "enabled": true,
-      "maximumFileSize": 15000000,
+      "maximumFileSize": 100000000,
       "allowedFileExtensions": [
         "jpg",
         "jpeg",
@@ -2194,7 +2194,13 @@
         "pdf",
         "docx",
         "txt",
-        "csv"
+        "csv",
+        "mp4",
+        "mov",
+        "webm",
+        "m4v",
+        "avi",
+        "mkv"
       ]
     }
   ],

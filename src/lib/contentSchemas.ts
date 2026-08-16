@@ -315,7 +315,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
         type: 'file',
         bucketId: 'food_images',
         pairedNameKey: 'fileName',
-        helpText: 'PDF, DOCX, TXT, or CSV, up to 15MB — visible to all users to view and download. Admin only.'
+        helpText: 'PDF, DOCX, TXT, CSV, image, or video, up to 100MB — visible to all users to view and download. Admin only.'
       },
       { key: 'fileName', label: 'File name', type: 'text', helpText: 'Auto-filled from the uploaded file' },
       { key: 'publisher', label: 'Publisher', type: 'text' },

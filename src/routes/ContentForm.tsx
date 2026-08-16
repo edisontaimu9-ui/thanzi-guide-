@@ -269,7 +269,7 @@ export function ContentForm() {
                   <div>
                     <input
                       type="file"
-                      accept=".pdf,.docx,.txt,.csv"
+                      accept=".pdf,.docx,.txt,.csv,image/*,video/*"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) handleFileUpload(field, file);
