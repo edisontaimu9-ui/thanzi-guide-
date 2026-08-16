@@ -52,7 +52,7 @@ export function References() {
                 {ref.fileId && (
                   <>
                     <a
-                      href={getFileViewUrl(BUCKETS.referenceDocuments, ref.fileId)}
+                      href={getFileViewUrl(BUCKETS.referenceFiles, ref.fileId)}
                       target="_blank"
                       rel="noreferrer"
                       className="font-medium text-brand-500 underline hover:text-brand-700 dark:text-brand-100"
@@ -60,7 +60,7 @@ export function References() {
                       View{ref.fileName ? ` "${ref.fileName}"` : ' file'}
                     </a>
                     <a
-                      href={getFileDownloadUrl(BUCKETS.referenceDocuments, ref.fileId)}
+                      href={getFileDownloadUrl(BUCKETS.referenceFiles, ref.fileId)}
                       className="font-medium text-brand-500 underline hover:text-brand-700 dark:text-brand-100"
                     >
                       Download

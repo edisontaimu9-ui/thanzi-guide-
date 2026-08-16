@@ -313,9 +313,9 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
         key: 'fileId',
         label: 'Attached file',
         type: 'file',
-        bucketId: 'reference_documents',
+        bucketId: 'reference_files',
         pairedNameKey: 'fileName',
-        helpText: 'PDF, DOCX, TXT, or CSV — visible to all users to view and download. Admin only.'
+        helpText: 'PDF, DOCX, TXT, or CSV, up to 15MB — visible to all users to view and download. Admin only.'
       },
       { key: 'fileName', label: 'File name', type: 'text', helpText: 'Auto-filled from the uploaded file' },
       { key: 'publisher', label: 'Publisher', type: 'text' },

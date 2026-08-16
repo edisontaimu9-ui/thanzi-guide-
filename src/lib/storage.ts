@@ -11,8 +11,14 @@ export async function uploadImage(bucketId: string, file: File): Promise<string>
 // Uploads any file (PDF, DOCX, etc.) to the given bucket. Returns the raw
 // storage file $id — callers store the id (not a URL) so they can later
 // build a view link, a download link, or delete the file.
-export async function uploadFile(bucketId: string, file: File): Promise<string> {
-  const uploaded = await storage.createFile(bucketId, ID.unique(), file);
+//
+// `permissions` matters for buckets with fileSecurity enabled (like
+// reference_files, which is shared between private per-user uploads and
+// public admin-uploaded CMS documents): pass e.g.
+// [Permission.read(Role.any())] to make a specific file publicly
+// readable without changing the bucket's own permissions.
+export async function uploadFile(bucketId: string, file: File, permissions?: string[]): Promise<string> {
+  const uploaded = await storage.createFile(bucketId, ID.unique(), file, permissions);
   return uploaded.$id;
 }
 

@@ -2242,29 +2242,6 @@
         "png",
         "webp"
       ]
-    },
-    {
-      "$id": "reference_documents",
-      "name": "Reference Documents",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")"
-      ],
-      "fileSecurity": false,
-      "enabled": true,
-      "maximumFileSize": 20000000,
-      "allowedFileExtensions": [
-        "pdf",
-        "docx",
-        "txt",
-        "csv",
-        "jpg",
-        "jpeg",
-        "png",
-        "webp"
-      ]
     }
   ],
   "functions": [
