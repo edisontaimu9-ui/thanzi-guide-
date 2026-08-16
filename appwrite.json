@@ -852,6 +852,13 @@
           "type": "string",
           "size": 300,
           "required": false
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "size": 16,
+          "required": false,
+          "default": "draft"
         }
       ],
       "indexes": [
