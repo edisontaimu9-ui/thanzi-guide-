@@ -2047,7 +2047,7 @@
     {
       "$id": "user_references",
       "$permissions": [
-        "create(\"users\")"
+        "create(\"label:admin\")"
       ],
       "databaseId": "thanzi_guide",
       "name": "User References",
@@ -2111,7 +2111,7 @@
     {
       "$id": "reference_chunks",
       "$permissions": [
-        "create(\"users\")"
+        "create(\"label:admin\")"
       ],
       "databaseId": "thanzi_guide",
       "name": "Reference Chunks",
@@ -2227,7 +2227,7 @@
       "$id": "reference_files",
       "name": "Reference Files",
       "$permissions": [
-        "create(\"users\")"
+        "create(\"label:admin\")"
       ],
       "fileSecurity": true,
       "enabled": true,
