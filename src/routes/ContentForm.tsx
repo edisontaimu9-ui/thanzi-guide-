@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { getContentSchema, FieldSchema } from '@/lib/contentSchemas';
 import { getContentById, createContent, updateContent, publishContent, GenericDoc } from '@/lib/genericContent';
-import { uploadImage } from '@/lib/storage';
+import { uploadImage, uploadFile, getFileViewUrl } from '@/lib/storage';
 
 type Status = 'loading' | 'idle' | 'error';
 type FormValues = Record<string, string>;
@@ -88,6 +88,20 @@ export function ContentForm() {
     );
   }
 
+  if (schema.adminOnly && !isAdmin) {
+    return (
+      <main className="mx-auto max-w-2xl px-6 py-12">
+        <Link to={`/admin/content/${schema.key}`} className="text-sm text-brand-500 underline dark:text-brand-100">
+          ← {schema.label}
+        </Link>
+        <h1 className="mt-4 font-display text-2xl text-brand-700 dark:text-sand-100">Admin only</h1>
+        <p className="mt-2 text-brand-500 dark:text-brand-100">
+          Only admins can create or edit {schema.label.toLowerCase()}, including uploading files.
+        </p>
+      </main>
+    );
+  }
+
   function handleChange(key: string, value: string) {
     setValues((prev) => ({ ...prev, [key]: value }));
   }
@@ -100,6 +114,23 @@ export function ContentForm() {
       handleChange(field.key, url);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Image upload failed.');
+    } finally {
+      setUploadingField(null);
+    }
+  }
+
+  async function handleFileUpload(field: FieldSchema, file: File) {
+    setUploadingField(field.key);
+    setError(null);
+    try {
+      const fileId = await uploadFile(field.bucketId ?? 'reference_documents', file);
+      setValues((prev) => {
+        const next = { ...prev, [field.key]: fileId };
+        if (field.pairedNameKey) next[field.pairedNameKey] = file.name;
+        return next;
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'File upload failed.');
     } finally {
       setUploadingField(null);
     }
@@ -209,6 +240,34 @@ export function ContentForm() {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) handleImageUpload(field, file);
+                      }}
+                      disabled={uploadingField === field.key}
+                      className="text-sm text-brand-500 dark:text-brand-100"
+                    />
+                    {uploadingField === field.key && (
+                      <p className="text-xs text-brand-300 dark:text-brand-100">Uploading…</p>
+                    )}
+                  </div>
+                </div>
+              ) : field.type === 'file' ? (
+                <div className="mt-1 flex items-center gap-4">
+                  {values[field.key] && (
+                    <a
+                      href={getFileViewUrl(field.bucketId ?? 'reference_documents', values[field.key])}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm text-brand-500 underline dark:text-brand-100"
+                    >
+                      View current file
+                    </a>
+                  )}
+                  <div>
+                    <input
+                      type="file"
+                      accept=".pdf,.docx,.txt,.csv"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleFileUpload(field, file);
                       }}
                       disabled={uploadingField === field.key}
                       className="text-sm text-brand-500 dark:text-brand-100"

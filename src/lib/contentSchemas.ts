@@ -3,7 +3,7 @@
 // hand-building a page per type. Add a new content type here and it shows
 // up in the panel automatically — no new components needed.
 
-export type FieldType = 'text' | 'textarea' | 'number' | 'lines' | 'select' | 'image' | 'boolean';
+export type FieldType = 'text' | 'textarea' | 'number' | 'lines' | 'select' | 'image' | 'file' | 'boolean';
 
 export interface FieldSchema {
   key: string;
@@ -14,6 +14,10 @@ export interface FieldSchema {
   options?: string[];
   defaultValue?: string;
   bucketId?: string;
+  // For 'file' fields: the key of a sibling text field to auto-fill with
+  // the uploaded file's original name (so it can be shown/downloaded with
+  // a readable name instead of just the storage file id).
+  pairedNameKey?: string;
 }
 
 export interface ContentSchema {
@@ -27,6 +31,12 @@ export interface ContentSchema {
   // published). When true, the generic draft/publish workflow is skipped
   // entirely — status becomes a normal editable field instead.
   manageOwnStatus?: boolean;
+  // Set when create/update on the underlying collection is restricted to
+  // label:admin in Appwrite (rather than the usual label:editor). The
+  // Content Manager still lists this type for editors/nutrition experts,
+  // but the create/edit form is hidden for non-admins to avoid a
+  // confusing permission error from the API.
+  adminOnly?: boolean;
 }
 
 export const CONTENT_SCHEMAS: ContentSchema[] = [
@@ -295,9 +305,19 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
     label: 'References',
     collectionId: 'references',
     titleField: 'title',
+    adminOnly: true,
     fields: [
       { key: 'title', label: 'Title', type: 'text', required: true },
-      { key: 'url', label: 'URL', type: 'text' },
+      { key: 'url', label: 'URL', type: 'text', helpText: 'External link, if this reference points off-site' },
+      {
+        key: 'fileId',
+        label: 'Attached file',
+        type: 'file',
+        bucketId: 'reference_documents',
+        pairedNameKey: 'fileName',
+        helpText: 'PDF, DOCX, TXT, or CSV — visible to all users to view and download. Admin only.'
+      },
+      { key: 'fileName', label: 'File name', type: 'text', helpText: 'Auto-filled from the uploaded file' },
       { key: 'publisher', label: 'Publisher', type: 'text' },
       { key: 'year', label: 'Year', type: 'number' },
       { key: 'relatedType', label: 'Related content type', type: 'text', helpText: 'e.g. "article" or "food"' },

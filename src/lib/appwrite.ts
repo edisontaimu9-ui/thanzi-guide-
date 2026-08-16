@@ -69,7 +69,8 @@ export const BUCKETS = {
   foodImages: 'food_images',
   articleImages: 'article_images',
   avatars: 'avatars',
-  referenceFiles: 'reference_files'
+  referenceFiles: 'reference_files',
+  referenceDocuments: 'reference_documents'
 } as const;
 
 export const FUNCTIONS = {

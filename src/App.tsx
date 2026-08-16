@@ -33,6 +33,7 @@ import { Search } from '@/routes/Search';
 import { Tools } from '@/routes/Tools';
 import { ComingSoon } from '@/routes/ComingSoon';
 import { Support } from '@/routes/Support';
+import { References } from '@/routes/References';
 import { Care } from '@/routes/Care';
 import { ProviderDetail } from '@/routes/ProviderDetail';
 import { Partner } from '@/routes/Partner';
@@ -99,6 +100,7 @@ export default function App() {
               <Route path="/tools/bmi" element={<BmiCalculator />} />
               <Route path="/tools/energy" element={<EnergyEstimator />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/references" element={<References />} />
               <Route path="/care" element={<Care />} />
               <Route path="/care/:id" element={<ProviderDetail />} />
               <Route path="/partner" element={<Partner />} />
