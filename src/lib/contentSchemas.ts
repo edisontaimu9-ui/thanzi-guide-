@@ -3,7 +3,7 @@
 // hand-building a page per type. Add a new content type here and it shows
 // up in the panel automatically — no new components needed.
 
-export type FieldType = 'text' | 'textarea' | 'number' | 'lines' | 'select' | 'image';
+export type FieldType = 'text' | 'textarea' | 'number' | 'lines' | 'select' | 'image' | 'boolean';
 
 export interface FieldSchema {
   key: string;
@@ -223,6 +223,85 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
         type: 'text',
         helpText: 'Set automatically once claimed. Only edit this by hand if you need to override it.'
       }
+    ]
+  },
+  {
+    key: 'categories',
+    label: 'Categories',
+    collectionId: 'categories',
+    titleField: 'name',
+    fields: [
+      { key: 'name', label: 'Name', type: 'text', required: true },
+      { key: 'slug', label: 'Slug', type: 'text', required: true },
+      {
+        key: 'type',
+        label: 'Type',
+        type: 'select',
+        required: true,
+        options: ['article', 'food', 'course'],
+        helpText: 'Which content type this category is used for'
+      },
+      { key: 'description', label: 'Description', type: 'textarea' }
+    ]
+  },
+  {
+    key: 'lessons',
+    label: 'Lessons',
+    collectionId: 'lessons',
+    titleField: 'title',
+    fields: [
+      { key: 'courseId', label: 'Course ID', type: 'text', required: true },
+      { key: 'title', label: 'Title', type: 'text', required: true },
+      { key: 'slug', label: 'Slug', type: 'text', required: true },
+      { key: 'content', label: 'Content', type: 'textarea', required: true },
+      { key: 'order', label: 'Order', type: 'number' }
+    ]
+  },
+  {
+    key: 'quizzes',
+    label: 'Quizzes',
+    collectionId: 'quizzes',
+    titleField: 'title',
+    fields: [
+      { key: 'lessonId', label: 'Lesson ID', type: 'text', required: true },
+      { key: 'title', label: 'Title', type: 'text' }
+    ]
+  },
+  {
+    key: 'questions',
+    label: 'Quiz Questions',
+    collectionId: 'questions',
+    titleField: 'text',
+    fields: [
+      { key: 'quizId', label: 'Quiz ID', type: 'text', required: true },
+      { key: 'text', label: 'Question text', type: 'textarea', required: true },
+      { key: 'order', label: 'Order', type: 'number' }
+    ]
+  },
+  {
+    key: 'answers',
+    label: 'Quiz Answers',
+    collectionId: 'answers',
+    titleField: 'text',
+    fields: [
+      { key: 'questionId', label: 'Question ID', type: 'text', required: true },
+      { key: 'text', label: 'Answer text', type: 'text', required: true },
+      { key: 'isCorrect', label: 'Correct answer', type: 'boolean' },
+      { key: 'order', label: 'Order', type: 'number' }
+    ]
+  },
+  {
+    key: 'references',
+    label: 'References',
+    collectionId: 'references',
+    titleField: 'title',
+    fields: [
+      { key: 'title', label: 'Title', type: 'text', required: true },
+      { key: 'url', label: 'URL', type: 'text' },
+      { key: 'publisher', label: 'Publisher', type: 'text' },
+      { key: 'year', label: 'Year', type: 'number' },
+      { key: 'relatedType', label: 'Related content type', type: 'text', helpText: 'e.g. "article" or "food"' },
+      { key: 'relatedId', label: 'Related content ID', type: 'text' }
     ]
   },
   {

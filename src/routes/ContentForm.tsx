@@ -15,6 +15,8 @@ function docToFormValues(fields: FieldSchema[], doc: GenericDoc | null): FormVal
     const raw = doc?.[field.key];
     if (field.type === 'lines') {
       values[field.key] = Array.isArray(raw) ? raw.join('\n') : '';
+    } else if (field.type === 'boolean') {
+      values[field.key] = raw === true ? 'true' : 'false';
     } else if (raw === undefined || raw === null) {
       values[field.key] = doc === null ? (field.defaultValue ?? '') : '';
     } else {
@@ -35,6 +37,8 @@ function formValuesToData(fields: FieldSchema[], values: FormValues): Record<str
         .split('\n')
         .map((line) => line.trim())
         .filter(Boolean);
+    } else if (field.type === 'boolean') {
+      data[field.key] = raw === 'true';
     } else {
       data[field.key] = raw;
     }
@@ -214,6 +218,16 @@ export function ContentForm() {
                     )}
                   </div>
                 </div>
+              ) : field.type === 'boolean' ? (
+                <label className="mt-2 flex items-center gap-2 text-sm text-brand-900 dark:text-sand-50">
+                  <input
+                    type="checkbox"
+                    checked={values[field.key] === 'true'}
+                    onChange={(e) => handleChange(field.key, e.target.checked ? 'true' : 'false')}
+                    className="h-4 w-4 rounded border-brand-100 dark:border-ink-800"
+                  />
+                  Yes
+                </label>
               ) : (
                 <input
                   type={field.type === 'number' ? 'number' : 'text'}

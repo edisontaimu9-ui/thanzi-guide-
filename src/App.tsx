@@ -49,6 +49,7 @@ import { AppointmentThread } from '@/routes/AppointmentThread';
 import { ContentManager } from '@/routes/ContentManager';
 import { ContentTypeList } from '@/routes/ContentTypeList';
 import { ContentForm } from '@/routes/ContentForm';
+import { PartnerInquiries } from '@/routes/PartnerInquiries';
 import { NotFound } from '@/routes/NotFound';
 
 export default function App() {
@@ -169,6 +170,14 @@ export default function App() {
                 element={
                   <AdminRoute>
                     <ContentForm />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="/admin/partner-inquiries"
+                element={
+                  <AdminRoute>
+                    <PartnerInquiries />
                   </AdminRoute>
                 }
               />
