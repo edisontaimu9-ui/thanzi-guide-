@@ -223,63 +223,78 @@ function ReferenceShelfList({ references, emptyLabel }: { references: ReferenceD
   }
 
   return (
-    <ul className="mt-6 divide-y divide-brand-100 overflow-hidden rounded-2xl border border-brand-100 bg-white dark:divide-ink-800 dark:border-ink-800 dark:bg-ink-950">
+    <ul className="mt-6 grid gap-4 sm:grid-cols-2">
       {references.map((ref) => (
-        <li key={ref.$id} className="flex items-start gap-4 p-4 sm:p-5">
-          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sand-100 text-brand-500 dark:bg-ink-900 dark:text-sand-100">
-            {shelfOf(ref) === UNCATEGORIZED ? (
-              <FolderIcon className="h-4 w-4" />
-            ) : (
-              (() => {
-                const Icon = SHELVES[shelfOf(ref) as ReferenceCategory].icon;
-                return <Icon className="h-4 w-4" />;
-              })()
-            )}
-          </span>
-
-          <div className="min-w-0 flex-1">
-            <p className="font-medium text-brand-700 dark:text-sand-100">{ref.title}</p>
-            <p className="mt-0.5 text-sm text-brand-500 dark:text-brand-100">
-              {[ref.category, ref.publisher, ref.year].filter(Boolean).join(' · ')}
-            </p>
-
-            <div className="mt-2.5 flex flex-wrap gap-4 text-sm">
-              {ref.fileId && (
-                <>
-                  <a
-                    href={getFileViewUrl(BUCKETS.media, ref.fileId)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 font-medium text-brand-500 hover:text-brand-700 dark:text-brand-100 dark:hover:text-sand-100"
-                  >
-                    View{ref.fileName ? ` "${ref.fileName}"` : ' file'}
-                  </a>
-                  <a
-                    href={getFileDownloadUrl(BUCKETS.media, ref.fileId)}
-                    className="download-button"
-                  >
-                    <span className="download-button-content">
-                      <DownloadIcon className="h-3.5 w-3.5" />
-                      Download
-                    </span>
-                  </a>
-                </>
-              )}
-              {ref.url && (
-                <a
-                  href={ref.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 font-medium text-brand-500 hover:text-brand-700 dark:text-brand-100 dark:hover:text-sand-100"
-                >
-                  <ExternalLinkIcon className="h-3.5 w-3.5" />
-                  Visit source
-                </a>
-              )}
-            </div>
-          </div>
+        <li key={ref.$id}>
+          <ReferenceCard reference={ref} />
         </li>
       ))}
     </ul>
+  );
+}
+
+function ReferenceCard({ reference: ref }: { reference: ReferenceDoc }) {
+  const shelf = shelfOf(ref);
+  const Icon = shelf === UNCATEGORIZED ? FolderIcon : SHELVES[shelf as ReferenceCategory].icon;
+  const meta = [ref.publisher, ref.year].filter(Boolean).join(' · ');
+
+  return (
+    <div className="flex h-full flex-col rounded-2xl border border-brand-100 bg-white p-5 shadow-sm transition hover:border-brand-300 hover:shadow-md dark:border-ink-800 dark:bg-ink-950 dark:hover:border-brand-500/50">
+      <div className="flex items-start gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sand-100 text-brand-500 dark:bg-ink-900 dark:text-sand-100">
+          <Icon className="h-4 w-4" />
+        </span>
+        <div className="min-w-0 flex-1 pt-0.5">
+          {shelf !== UNCATEGORIZED && (
+            <p className="text-xs font-semibold uppercase tracking-wide text-clay-500 dark:text-clay-400">
+              {shelf}
+            </p>
+          )}
+          <p className="mt-0.5 font-display text-base leading-snug text-brand-700 dark:text-sand-100">
+            {ref.title}
+          </p>
+          {meta && <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">{meta}</p>}
+        </div>
+      </div>
+
+      {(ref.fileId || ref.url) && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-brand-100 pt-4 dark:border-ink-800">
+          {ref.fileId && (
+            <>
+              <a
+                href={getFileViewUrl(BUCKETS.media, ref.fileId)}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 px-3 py-1.5 text-xs font-medium text-brand-700 transition hover:border-brand-300 hover:bg-sand-50 dark:border-ink-800 dark:text-sand-100 dark:hover:bg-ink-900"
+                title={ref.fileName ? `View "${ref.fileName}"` : 'View file'}
+              >
+                <ExternalLinkIcon className="h-3.5 w-3.5" />
+                View
+              </a>
+              <a
+                href={getFileDownloadUrl(BUCKETS.media, ref.fileId)}
+                className="download-button ml-auto"
+              >
+                <span className="download-button-content">
+                  <DownloadIcon className="h-3.5 w-3.5" />
+                  Download
+                </span>
+              </a>
+            </>
+          )}
+          {ref.url && (
+            <a
+              href={ref.url}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 px-3 py-1.5 text-xs font-medium text-brand-700 transition hover:border-brand-300 hover:bg-sand-50 dark:border-ink-800 dark:text-sand-100 dark:hover:bg-ink-900"
+            >
+              <ExternalLinkIcon className="h-3.5 w-3.5" />
+              Visit source
+            </a>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

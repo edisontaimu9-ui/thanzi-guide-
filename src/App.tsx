@@ -11,6 +11,7 @@ import { Signup } from '@/routes/Signup';
 import { Verify } from '@/routes/Verify';
 import { Dashboard } from '@/routes/Dashboard';
 import { Settings } from '@/routes/Settings';
+import { Browse } from '@/routes/Browse';
 import { Foods } from '@/routes/Foods';
 import { Health } from '@/routes/Health';
 import { HealthTopicDetail } from '@/routes/HealthTopicDetail';
@@ -66,6 +67,7 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/verify" element={<Verify />} />
+              <Route path="/browse" element={<Browse />} />
               <Route path="/foods" element={<Foods />} />
               <Route path="/foods/:id" element={<FoodDetail />} />
               <Route path="/health" element={<Health />} />

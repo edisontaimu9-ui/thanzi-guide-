@@ -10,7 +10,7 @@ export function BottomNav() {
   const tabs = [
     { to: '/', label: 'Home', icon: HomeIcon, end: true },
     { to: '/ask', label: 'Ask', icon: AskIcon, end: false },
-    { to: '/foods', label: 'Browse', icon: BrowseIcon, end: false },
+    { to: '/browse', label: 'Browse', icon: BrowseIcon, end: false },
     { to: '/learn', label: 'Learn', icon: LearnIcon, end: false },
     { to: user ? '/dashboard' : '/login', label: 'You', icon: YouIcon, end: false }
   ];

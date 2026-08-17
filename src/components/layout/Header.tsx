@@ -5,6 +5,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { NotificationBell } from './NotificationBell';
 
 const navLinks = [
+  { to: '/browse', label: 'Browse' },
   { to: '/foods', label: 'Foods' },
   { to: '/health', label: 'Health' },
   { to: '/recipes', label: 'Recipes' },
