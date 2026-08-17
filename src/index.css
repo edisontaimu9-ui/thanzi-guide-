@@ -46,3 +46,6 @@ body {
   0%, 100% { transform: rotate(20deg); }
   50% { transform: rotate(-16deg); }
 }
+@keyframes thanzi-runner-ring-spin {
+  100% { transform: rotate(360deg); }
+}
