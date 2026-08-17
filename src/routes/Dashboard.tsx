@@ -97,6 +97,12 @@ export function Dashboard() {
 
   const role = profile?.role ?? 'USER';
   const isContributor = CONTRIBUTOR_ROLES.includes(role);
+  // Only show the "claim your profile" prompt to accounts an admin has
+  // tagged with the "provider" label in Appwrite (Auth → user → Labels).
+  // Anyone already linked to a provider record (myProvider) still sees
+  // their "Manage your practice" tile even without the label, so an
+  // admin removing the label later doesn't lock a live provider out.
+  const canSeeProviderTile = Boolean(myProvider) || (user?.labels?.includes('provider') ?? false);
   const initial = (user?.name || 'T').trim().charAt(0).toUpperCase();
   const memberSince = user?.registration
     ? new Intl.DateTimeFormat('en', { month: 'long', year: 'numeric' }).format(new Date(user.registration))
@@ -150,13 +156,15 @@ export function Dashboard() {
       <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <StatTile label="Favorite foods" value={loaded ? favorites.length : null} />
         <StatTile label="Lessons completed" value={completedCount} />
-        <Link
-          to="/provider"
-          className="flex flex-col justify-center rounded-lg border border-brand-100 bg-sand-50 p-4 text-brand-700 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-900/40 dark:text-sand-100"
-        >
-          <span className="font-mono text-base font-semibold">Provider</span>
-          <span className="text-xs">{myProvider ? 'Manage your practice →' : 'Claim your profile →'}</span>
-        </Link>
+        {canSeeProviderTile && (
+          <Link
+            to="/provider"
+            className="flex flex-col justify-center rounded-lg border border-brand-100 bg-sand-50 p-4 text-brand-700 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-900/40 dark:text-sand-100"
+          >
+            <span className="font-mono text-base font-semibold">Provider</span>
+            <span className="text-xs">{myProvider ? 'Manage your practice →' : 'Claim your profile →'}</span>
+          </Link>
+        )}
         {isContributor && (
           <Link
             to="/admin"
