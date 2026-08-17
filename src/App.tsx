@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/lib/theme';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
@@ -94,7 +94,9 @@ export default function App() {
               <Route path="/tools/bmi" element={<BmiCalculator />} />
               <Route path="/tools/energy" element={<EnergyEstimator />} />
               <Route path="/support" element={<Support />} />
-              <Route path="/references" element={<References />} />
+              <Route path="/library" element={<References />} />
+              {/* old URL — kept as a redirect so existing links/bookmarks still work */}
+              <Route path="/references" element={<Navigate to="/library" replace />} />
               <Route path="/care" element={<Care />} />
               <Route path="/care/:id" element={<ProviderDetail />} />
               <Route path="/partner" element={<Partner />} />

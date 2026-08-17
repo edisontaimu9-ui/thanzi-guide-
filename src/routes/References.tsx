@@ -40,7 +40,7 @@ function shelfOf(ref: ReferenceDoc): string {
 }
 
 export function References() {
-  useDocumentTitle('References');
+  useDocumentTitle('Library');
   const [references, setReferences] = useState<ReferenceDoc[]>([]);
   const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
   const [activeShelf, setActiveShelf] = useState<string | null>(null);

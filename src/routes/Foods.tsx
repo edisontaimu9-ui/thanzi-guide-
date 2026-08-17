@@ -123,10 +123,10 @@ export function Foods() {
 
       <div className="mt-6 flex justify-end">
         <Link
-          to="/references"
+          to="/library"
           className="text-sm font-medium text-brand-500 underline hover:text-brand-700 dark:text-brand-100"
         >
-          View source references →
+          View source library →
         </Link>
       </div>
 

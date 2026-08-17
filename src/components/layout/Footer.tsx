@@ -47,8 +47,8 @@ export function Footer() {
             <Link to="/support" className={linkClass}>
               Help &amp; Support
             </Link>
-            <Link to="/references" className={linkClass}>
-              References
+            <Link to="/library" className={linkClass}>
+              Library
             </Link>
             <Link to="/about" className={linkClass}>
               About

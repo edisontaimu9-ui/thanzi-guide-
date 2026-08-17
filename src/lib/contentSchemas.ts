@@ -304,7 +304,7 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
   },
   {
     key: 'references',
-    label: 'References',
+    label: 'Library',
     collectionId: 'references',
     titleField: 'title',
     adminOnly: true,
