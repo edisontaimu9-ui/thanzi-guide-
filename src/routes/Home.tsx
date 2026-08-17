@@ -70,19 +70,18 @@ function Hero() {
       <div className="relative mx-auto grid max-w-5xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[3fr_2fr] lg:items-center">
         <div>
           <span className="inline-flex items-center rounded-full border border-clay-400/40 bg-clay-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-clay-400">
-            Health &amp; nutrition, explained for Malawi
+            Health &amp; nutrition, designed for Malawi
           </span>
           <h1 className="mt-4 font-display text-4xl leading-tight text-sand-50 sm:text-5xl">
-            Learn about your health.
+            Understand your health.
             <br />
-            Understand your food.
+            Know your food.
             <br />
-            <span className="text-clay-400">Make better choices.</span>
+            <span className="text-clay-400">Make informed choices.</span>
           </h1>
           <p className="mt-5 max-w-md text-brand-100">
-            Search real Malawian foods, read nutrition guidance you can trust,
-            and use simple tools built for local life, not imported medical
-            templates.
+            Explore real Malawian foods, evidence-based nutrition guidance, and practical tools
+            built around the foods, lifestyles, and health needs of Malawi.
           </p>
           <form action="/search" className="mt-8 flex max-w-md gap-2">
             <label htmlFor="hero-search" className="sr-only">
