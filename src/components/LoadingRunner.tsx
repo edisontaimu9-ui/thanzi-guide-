@@ -1,74 +1,116 @@
-// A small branded "running" loading indicator — a figure that stays in
-// place and cycles a running motion (bob + swinging arms/legs), wrapped
-// in a rotating ring so the loop reads as ongoing progress even though
-// the runner itself never travels. The figure itself is original: a blue
-// runner inside a spinning ring, not a copy of any third-party mascot
-// design. No visible text — a screen-reader-only label is kept for
-// accessibility.
+// A branded loading indicator — a wallet with bills sliding in and out
+// while it gives a light squish/bounce, adapted from a community CSS
+// snippet (originally rupee-themed, brown/mint) into Thanzi Guide's own
+// teal-and-gold palette with a Kwacha ("K") mark on the bills. Kept the
+// component/export name LoadingRunner so every existing
+// `import { LoadingRunner } from '@/components/LoadingRunner'` across
+// the app keeps working without touching call sites — only the visual
+// design changed.
+//
+// The design is built at a fixed 110x80 "device" size and scaled as a
+// whole via CSS transform so the size prop still works the same way it
+// did before, without needing to redo every pixel value per size.
 interface LoadingRunnerProps {
   size?: 'sm' | 'md' | 'lg';
   fullScreen?: boolean;
   className?: string;
 }
 
-const SIZE_PX: Record<NonNullable<LoadingRunnerProps['size']>, number> = {
-  sm: 28,
-  md: 40,
-  lg: 56
+const BASE_W = 110;
+const BASE_H = 80;
+
+const SCALE: Record<NonNullable<LoadingRunnerProps['size']>, number> = {
+  sm: 0.6,
+  md: 0.85,
+  lg: 1.1
 };
 
+// Lake Malawi teal + harvest gold — the app's own brand colors (see
+// tailwind.config.js) rather than the snippet's original brown/mint.
+const WALLET_TOP = '#0F6B63'; // brand-500
+const WALLET_BOTTOM = '#072F2B'; // brand-900
+const BILL_BG = '#CFE6E1'; // brand-100
+const BILL_BORDER = '#0F6B63'; // brand-500
+const BADGE_BORDER = '#B8811F'; // clay-500
+const TEXT_COLOR = '#F2F1E6'; // sand-50
+
+const BILL_DELAYS = [0, 0.8, 1.6];
+
 export function LoadingRunner({ size = 'md', fullScreen = false, className = '' }: LoadingRunnerProps) {
-  const px = SIZE_PX[size];
+  const scale = SCALE[size];
 
   const content = (
     <div className={`flex items-center justify-center ${className}`} role="status">
-      <span className="sr-only">Loading</span>
-      <svg width={px} height={Math.round(px * 1.2)} viewBox="0 0 48 58" aria-hidden="true">
-        {/* ground shadow — stays put while the figure bobs above it */}
-        <ellipse cx="24" cy="54" rx="9" ry="2" className="fill-brand-900/10 dark:fill-black/30" />
-
-        {/* spinning ring — a faint full track plus a shorter blue arc that
-            rotates continuously around the runner, signaling progress
-            while the figure itself stays centered */}
-        <circle cx="24" cy="26" r="21" strokeWidth="3" fill="none" className="stroke-sky-500/15 dark:stroke-sky-300/15" />
-        <circle
-          cx="24" cy="26" r="21" strokeWidth="3" fill="none" strokeLinecap="round"
-          strokeDasharray="34 98"
-          className="stroke-sky-500 dark:stroke-sky-400"
-          style={{ transformOrigin: '24px 26px', animation: 'thanzi-runner-ring-spin 1s linear infinite' }}
-        />
-
-        <g style={{ animation: 'thanzi-runner-bob 0.5s ease-in-out infinite' }}>
-          <circle cx="24" cy="9" r="6" className="fill-sky-600 dark:fill-sky-300" />
-          <rect x="21" y="16" width="6" height="15" rx="3" className="fill-sky-600 dark:fill-sky-300" />
-
-          <line
-            x1="21" y1="19" x2="13" y2="25"
-            strokeWidth="4" strokeLinecap="round"
-            className="stroke-sky-400"
-            style={{ transformOrigin: '21px 19px', animation: 'thanzi-runner-arm-back 0.5s ease-in-out infinite' }}
-          />
-          <line
-            x1="27" y1="19" x2="35" y2="13"
-            strokeWidth="4" strokeLinecap="round"
-            className="stroke-sky-400"
-            style={{ transformOrigin: '27px 19px', animation: 'thanzi-runner-arm-front 0.5s ease-in-out infinite' }}
+      <div style={{ width: BASE_W * scale, height: BASE_H * scale }}>
+        <div className="relative" style={{ width: BASE_W, height: BASE_H, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+          {/* wallet back panel, sits behind the bills */}
+          <div
+            className="absolute rounded-t"
+            style={{ bottom: 10, left: 5, width: 100, height: 45, background: WALLET_BOTTOM }}
           />
 
-          <line
-            x1="22" y1="31" x2="13" y2="43"
-            strokeWidth="5" strokeLinecap="round"
-            className="stroke-sky-800 dark:stroke-sky-100"
-            style={{ transformOrigin: '22px 31px', animation: 'thanzi-runner-leg-back 0.5s ease-in-out infinite' }}
-          />
-          <line
-            x1="26" y1="31" x2="35" y2="41"
-            strokeWidth="5" strokeLinecap="round"
-            className="stroke-sky-800 dark:stroke-sky-100"
-            style={{ transformOrigin: '26px 31px', animation: 'thanzi-runner-leg-front 0.5s ease-in-out infinite' }}
-          />
-        </g>
-      </svg>
+          {/* bills sliding up out of the wallet, staggered */}
+          {BILL_DELAYS.map((delay, i) => (
+            <div
+              key={delay}
+              className="absolute left-1/2 flex items-center justify-center rounded-sm opacity-0"
+              style={{
+                top: -30,
+                width: 70,
+                height: 40,
+                transform: 'translateX(-50%)',
+                background: BILL_BG,
+                border: `1px solid ${BILL_BORDER}`,
+                zIndex: i + 1,
+                animation: 'thanzi-wallet-slide-in 4s ease-in-out infinite',
+                animationDelay: `${delay}s`
+              }}
+            >
+              <span
+                className="absolute rounded-sm"
+                style={{ inset: 3, border: `1px dashed ${BILL_BORDER}` }}
+                aria-hidden="true"
+              />
+              <span
+                className="flex items-center justify-center rounded-full text-xs font-bold"
+                style={{ width: 20, height: 20, border: `2px solid ${BADGE_BORDER}`, color: BILL_BORDER, background: 'rgba(255,255,255,0.35)' }}
+              >
+                K
+              </span>
+            </div>
+          ))}
+
+          {/* wallet front flap, on top, with the loading text */}
+          <div
+            className="absolute bottom-0 left-0 flex items-center justify-center rounded-t-md rounded-b-xl shadow-md"
+            style={{
+              width: BASE_W,
+              height: 52,
+              zIndex: 10,
+              background: `linear-gradient(180deg, ${WALLET_TOP}, ${WALLET_BOTTOM})`,
+              animation: 'thanzi-wallet-bounce 4s ease-in-out infinite'
+            }}
+          >
+            <span
+              className="absolute rounded-t-sm rounded-b-lg"
+              style={{ inset: 6, border: '1px dashed rgba(242,241,230,0.3)' }}
+              aria-hidden="true"
+            />
+            <span className="text-sm font-semibold tracking-wide" style={{ color: TEXT_COLOR }}>
+              Loading
+              {[0, 0.1, 0.2].map((delay) => (
+                <span
+                  key={delay}
+                  className="inline-block"
+                  style={{ animation: 'thanzi-wallet-dot-wave 1.5s infinite', animationDelay: `${delay}s` }}
+                >
+                  .
+                </span>
+              ))}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
