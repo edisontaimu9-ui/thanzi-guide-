@@ -1,320 +1,168 @@
-/* From Uiverse.io by Nawsome — used as Thanzi Guide's loading indicator.
-   Keyframe names are prefixed thanzi- to avoid clashing with any other
-   global animations in the app. */
-.wheel-and-hamster {
-  --dur: 1s;
+/* Thanzi Guide loading indicator — a running-person pictogram (brand
+   teal figure, gold motion lines), built from simple shapes rather than
+   a naturalistic figure. Scales via font-size, same as the previous
+   hamster design, so LoadingRunner's size prop still just sets em. */
+.runner-loader {
   position: relative;
-  width: 12em;
-  height: 12em;
+  width: 6em;
+  height: 6em;
 }
 
-.wheel,
-.hamster,
-.hamster div,
-.spoke {
+.runner {
   position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 1.6em;
+  height: 3.4em;
+  transform: translate(-50%, -50%);
+  animation: thanzi-runner-bob 0.6s ease-in-out infinite;
 }
 
-.wheel,
-.spoke {
-  border-radius: 50%;
+.runner__head {
+  position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.wheel {
-  background: radial-gradient(100% 100% at center, hsla(0, 0%, 60%, 0) 47.8%, hsl(0, 0%, 60%) 48%);
-  z-index: 2;
-}
-
-.hamster {
-  animation: thanzi-hamster var(--dur) ease-in-out infinite;
-  top: 50%;
-  left: calc(50% - 3.5em);
-  width: 7em;
-  height: 3.75em;
-  transform: rotate(4deg) translate(-0.8em, 1.85em);
-  transform-origin: 50% 0;
-  z-index: 1;
-}
-
-.hamster__head {
-  animation: thanzi-hamsterHead var(--dur) ease-in-out infinite;
-  background: hsl(30, 90%, 55%);
-  border-radius: 70% 30% 0 100% / 40% 25% 25% 60%;
-  box-shadow: 0 -0.25em 0 hsl(30, 90%, 80%) inset, 0.75em -1.55em 0 hsl(30, 90%, 90%) inset;
-  top: 0;
-  left: -2em;
-  width: 2.75em;
-  height: 2.5em;
-  transform-origin: 100% 50%;
-}
-
-.hamster__ear {
-  animation: thanzi-hamsterEar var(--dur) ease-in-out infinite;
-  background: hsl(0, 90%, 85%);
+  left: 50%;
+  width: 0.9em;
+  height: 0.9em;
   border-radius: 50%;
-  box-shadow: -0.25em 0 hsl(30, 90%, 55%) inset;
-  top: -0.25em;
-  right: -0.25em;
-  width: 0.75em;
-  height: 0.75em;
-  transform-origin: 50% 75%;
+  background: #0f6b63; /* brand-500 */
+  transform: translateX(-50%);
 }
 
-.hamster__eye {
-  animation: thanzi-hamsterEye var(--dur) linear infinite;
-  background-color: hsl(0, 0%, 0%);
-  border-radius: 50%;
-  top: 0.375em;
-  left: 1.25em;
-  width: 0.5em;
-  height: 0.5em;
-}
-
-.hamster__nose {
-  background: hsl(0, 90%, 75%);
-  border-radius: 35% 65% 85% 15% / 70% 50% 50% 30%;
-  top: 0.75em;
-  left: 0;
-  width: 0.2em;
-  height: 0.25em;
-}
-
-.hamster__body {
-  animation: thanzi-hamsterBody var(--dur) ease-in-out infinite;
-  background: hsl(30, 90%, 90%);
-  border-radius: 50% 30% 50% 30% / 15% 60% 40% 40%;
-  box-shadow: 0.1em 0.75em 0 hsl(30, 90%, 55%) inset, 0.15em -0.5em 0 hsl(30, 90%, 80%) inset;
-  top: 0.25em;
-  left: 2em;
-  width: 4.5em;
-  height: 3em;
-  transform-origin: 17% 50%;
-  transform-style: preserve-3d;
-}
-
-.hamster__limb--fr,
-.hamster__limb--fl {
-  clip-path: polygon(0 0, 100% 0, 70% 80%, 60% 100%, 0% 100%, 40% 80%);
-  top: 2em;
-  left: 0.5em;
-  width: 1em;
+.runner__torso {
+  position: absolute;
+  top: 0.85em;
+  left: 50%;
+  width: 0.65em;
   height: 1.5em;
-  transform-origin: 50% 0;
+  border-radius: 0.3em;
+  background: #0f6b63; /* brand-500 */
+  transform: translateX(-50%) rotate(6deg);
+  transform-origin: 50% 0%;
 }
 
-.hamster__limb--fr {
-  animation: thanzi-hamsterFRLimb var(--dur) linear infinite;
-  background: linear-gradient(hsl(30, 90%, 80%) 80%, hsl(0, 90%, 75%) 80%);
-  transform: rotate(15deg) translateZ(-1px);
+.runner__limb {
+  position: absolute;
+  width: 0.32em;
+  height: 1.2em;
+  border-radius: 0.16em;
+  background: #072f2b; /* brand-900 */
 }
 
-.hamster__limb--fl {
-  animation: thanzi-hamsterFLLimb var(--dur) linear infinite;
-  background: linear-gradient(hsl(30, 90%, 90%) 80%, hsl(0, 90%, 85%) 80%);
-  transform: rotate(15deg);
-}
-
-.hamster__limb--br,
-.hamster__limb--bl {
-  border-radius: 0.75em 0.75em 0 0;
-  clip-path: polygon(0 0, 100% 0, 100% 30%, 70% 90%, 70% 100%, 30% 100%, 40% 90%, 0% 30%);
+.runner__arm--back {
   top: 1em;
-  left: 2.8em;
-  width: 1.5em;
-  height: 2.5em;
-  transform-origin: 50% 30%;
+  left: 0.45em;
+  transform-origin: 50% 0%;
+  animation: thanzi-runner-arm-back 0.6s ease-in-out infinite;
 }
 
-.hamster__limb--br {
-  animation: thanzi-hamsterBRLimb var(--dur) linear infinite;
-  background: linear-gradient(hsl(30, 90%, 80%) 90%, hsl(0, 90%, 75%) 90%);
-  transform: rotate(-25deg) translateZ(-1px);
+.runner__arm--front {
+  top: 1em;
+  right: 0.45em;
+  background: #0f6b63; /* brand-500, reads slightly forward of the back arm */
+  transform-origin: 50% 0%;
+  animation: thanzi-runner-arm-front 0.6s ease-in-out infinite;
 }
 
-.hamster__limb--bl {
-  animation: thanzi-hamsterBLLimb var(--dur) linear infinite;
-  background: linear-gradient(hsl(30, 90%, 90%) 90%, hsl(0, 90%, 85%) 90%);
-  transform: rotate(-25deg);
+.runner__leg--back {
+  top: 2.15em;
+  left: 0.5em;
+  transform-origin: 50% 0%;
+  animation: thanzi-runner-leg-back 0.6s ease-in-out infinite;
 }
 
-.hamster__tail {
-  animation: thanzi-hamsterTail var(--dur) linear infinite;
-  background: hsl(0, 90%, 85%);
-  border-radius: 0.25em 50% 50% 0.25em;
-  box-shadow: 0 -0.2em 0 hsl(0, 90%, 75%) inset;
-  top: 1.5em;
-  right: -0.5em;
+.runner__leg--front {
+  top: 2.15em;
+  right: 0.5em;
+  background: #0f6b63; /* brand-500 */
+  transform-origin: 50% 0%;
+  animation: thanzi-runner-leg-front 0.6s ease-in-out infinite;
+}
+
+/* Gold motion dashes trailing behind, suggesting forward movement */
+.runner-loader__dash {
+  position: absolute;
+  top: 60%;
+  right: 0.4em;
+  height: 0.14em;
   width: 1em;
-  height: 0.5em;
-  transform: rotate(30deg) translateZ(-1px);
-  transform-origin: 0.25em 0.25em;
+  border-radius: 0.1em;
+  background: #d9a441; /* clay-400 */
+  animation: thanzi-runner-dash 0.6s linear infinite;
 }
 
-.spoke {
-  animation: thanzi-spoke var(--dur) linear infinite;
-  background: radial-gradient(100% 100% at center, hsl(0, 0%, 60%) 4.8%, hsla(0, 0%, 60%, 0) 5%),
-    linear-gradient(hsla(0, 0%, 55%, 0) 46.9%, hsl(0, 0%, 65%) 47% 52.9%, hsla(0, 0%, 65%, 0) 53%) 50% 50% / 99% 99%
-      no-repeat;
+.runner-loader__dash:nth-child(2) {
+  top: 72%;
+  width: 0.7em;
+  animation-delay: 0.1s;
 }
 
-@keyframes thanzi-hamster {
-  from,
-  to {
-    transform: rotate(4deg) translate(-0.8em, 1.85em);
+.runner-loader__dash:nth-child(3) {
+  top: 50%;
+  width: 0.5em;
+  animation-delay: 0.2s;
+}
+
+@keyframes thanzi-runner-bob {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
   }
   50% {
-    transform: rotate(0) translate(-0.8em, 1.85em);
+    transform: translate(-50%, -50%) translateY(-0.15em);
   }
 }
 
-@keyframes thanzi-hamsterHead {
-  from,
-  25%,
-  50%,
-  75%,
-  to {
-    transform: rotate(0);
+@keyframes thanzi-runner-arm-back {
+  0%,
+  100% {
+    transform: rotate(35deg);
   }
-  12.5%,
-  37.5%,
-  62.5%,
-  87.5% {
-    transform: rotate(8deg);
+  50% {
+    transform: rotate(-35deg);
   }
 }
 
-@keyframes thanzi-hamsterEye {
-  from,
-  90%,
-  to {
-    transform: scaleY(1);
+@keyframes thanzi-runner-arm-front {
+  0%,
+  100% {
+    transform: rotate(-35deg);
   }
-  95% {
-    transform: scaleY(0);
-  }
-}
-
-@keyframes thanzi-hamsterEar {
-  from,
-  25%,
-  50%,
-  75%,
-  to {
-    transform: rotate(0);
-  }
-  12.5%,
-  37.5%,
-  62.5%,
-  87.5% {
-    transform: rotate(12deg);
+  50% {
+    transform: rotate(35deg);
   }
 }
 
-@keyframes thanzi-hamsterBody {
-  from,
-  25%,
-  50%,
-  75%,
-  to {
-    transform: rotate(0);
+@keyframes thanzi-runner-leg-back {
+  0%,
+  100% {
+    transform: rotate(-40deg);
   }
-  12.5%,
-  37.5%,
-  62.5%,
-  87.5% {
-    transform: rotate(-2deg);
+  50% {
+    transform: rotate(40deg);
   }
 }
 
-@keyframes thanzi-hamsterFRLimb {
-  from,
-  25%,
-  50%,
-  75%,
-  to {
-    transform: rotate(50deg) translateZ(-1px);
+@keyframes thanzi-runner-leg-front {
+  0%,
+  100% {
+    transform: rotate(40deg);
   }
-  12.5%,
-  37.5%,
-  62.5%,
-  87.5% {
-    transform: rotate(-30deg) translateZ(-1px);
+  50% {
+    transform: rotate(-40deg);
   }
 }
 
-@keyframes thanzi-hamsterFLLimb {
-  from,
-  25%,
-  50%,
-  75%,
-  to {
-    transform: rotate(-30deg);
+@keyframes thanzi-runner-dash {
+  0% {
+    opacity: 0;
+    transform: translateX(0.3em);
   }
-  12.5%,
-  37.5%,
-  62.5%,
-  87.5% {
-    transform: rotate(50deg);
+  30% {
+    opacity: 1;
   }
-}
-
-@keyframes thanzi-hamsterBRLimb {
-  from,
-  25%,
-  50%,
-  75%,
-  to {
-    transform: rotate(-60deg) translateZ(-1px);
-  }
-  12.5%,
-  37.5%,
-  62.5%,
-  87.5% {
-    transform: rotate(20deg) translateZ(-1px);
-  }
-}
-
-@keyframes thanzi-hamsterBLLimb {
-  from,
-  25%,
-  50%,
-  75%,
-  to {
-    transform: rotate(20deg);
-  }
-  12.5%,
-  37.5%,
-  62.5%,
-  87.5% {
-    transform: rotate(-60deg);
-  }
-}
-
-@keyframes thanzi-hamsterTail {
-  from,
-  25%,
-  50%,
-  75%,
-  to {
-    transform: rotate(30deg) translateZ(-1px);
-  }
-  12.5%,
-  37.5%,
-  62.5%,
-  87.5% {
-    transform: rotate(10deg) translateZ(-1px);
-  }
-}
-
-@keyframes thanzi-spoke {
-  from {
-    transform: rotate(0);
-  }
-  to {
-    transform: rotate(-1turn);
+  100% {
+    opacity: 0;
+    transform: translateX(-0.6em);
   }
 }
