@@ -8,6 +8,7 @@ import {
   NotificationDoc
 } from '@/lib/notifications';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 export function NotificationBell() {
   const { user } = useAuth();
@@ -122,7 +123,9 @@ export function NotificationBell() {
           )}
 
           {status === 'loading' ? (
-            <p className="px-2 py-6 text-center text-sm text-brand-300 dark:text-brand-100">Loading…</p>
+            <div className="px-2 py-4">
+              <LoadingRunner size="sm" label={null} />
+            </div>
           ) : status === 'error' ? (
             <p className="px-2 py-6 text-center text-sm text-clay-500 dark:text-clay-400">
               Couldn't load notifications.

@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 const ADMIN_ROLES = ['EDITOR', 'NUTRITION_EXPERT', 'ADMIN'];
 
@@ -7,7 +8,7 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth();
 
   if (loading) {
-    return <div className="flex min-h-screen items-center justify-center text-brand-500 dark:text-brand-100">Loading…</div>;
+    return <LoadingRunner fullScreen />;
   }
 
   if (!user) {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { listAppointmentsForProvider, getSlot, AppointmentDoc, SlotDoc, ProviderDoc } from '@/lib/providers';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 type Status = 'loading' | 'idle' | 'error';
 
@@ -45,7 +46,7 @@ export function ProviderInbox({ provider }: { provider: ProviderDoc }) {
         Manage your availability
       </Link>
 
-      {status === 'loading' && <p className="mt-8 text-brand-500 dark:text-brand-100">Loading…</p>}
+      {status === 'loading' && <LoadingRunner className="mt-8" />}
       {status === 'error' && (
         <p role="alert" className="mt-8 text-sm text-clay-500 dark:text-clay-400">
           Couldn't load your appointments right now.

@@ -6,6 +6,7 @@ import { getContentSchema, FieldSchema } from '@/lib/contentSchemas';
 import { getContentById, createContent, updateContent, publishContent, GenericDoc } from '@/lib/genericContent';
 import { uploadImage, uploadFile, getFileViewUrl } from '@/lib/storage';
 import { Permission, Role } from '@/lib/appwrite';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 type Status = 'loading' | 'idle' | 'error';
 type FormValues = Record<string, string>;
@@ -181,7 +182,7 @@ export function ContentForm() {
         </p>
       )}
 
-      {status === 'loading' && <p className="mt-8 text-brand-500 dark:text-brand-100">Loading…</p>}
+      {status === 'loading' && <LoadingRunner className="mt-8" />}
       {status === 'error' && (
         <p role="alert" className="mt-8 text-sm text-clay-500 dark:text-clay-400">
           Couldn't load this item right now.

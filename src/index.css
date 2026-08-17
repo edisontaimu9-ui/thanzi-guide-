@@ -24,3 +24,25 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* LoadingRunner — see src/components/LoadingRunner.tsx */
+@keyframes thanzi-runner-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2.5px); }
+}
+@keyframes thanzi-runner-leg-front {
+  0%, 100% { transform: rotate(22deg); }
+  50% { transform: rotate(-18deg); }
+}
+@keyframes thanzi-runner-leg-back {
+  0%, 100% { transform: rotate(-18deg); }
+  50% { transform: rotate(22deg); }
+}
+@keyframes thanzi-runner-arm-front {
+  0%, 100% { transform: rotate(-16deg); }
+  50% { transform: rotate(20deg); }
+}
+@keyframes thanzi-runner-arm-back {
+  0%, 100% { transform: rotate(20deg); }
+  50% { transform: rotate(-16deg); }
+}

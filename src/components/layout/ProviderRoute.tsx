@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
 import { getProviderByUserId, ProviderDoc } from '@/lib/providers';
 import { functions, FUNCTIONS } from '@/lib/appwrite';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 interface ProviderRouteProps {
   children: (provider: ProviderDoc) => React.ReactNode;
@@ -46,7 +47,7 @@ export function ProviderRoute({ children }: ProviderRouteProps) {
   }
 
   if (loading || provider === undefined) {
-    return <div className="flex min-h-screen items-center justify-center text-brand-500 dark:text-brand-100">Loading…</div>;
+    return <LoadingRunner fullScreen />;
   }
 
   if (!user) {

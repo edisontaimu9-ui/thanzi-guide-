@@ -3,6 +3,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { listPublishedReferences, ReferenceDoc } from '@/lib/publicReferences';
 import { getFileViewUrl, getFileDownloadUrl } from '@/lib/storage';
 import { BUCKETS } from '@/lib/appwrite';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 export function References() {
   useDocumentTitle('References');
@@ -25,7 +26,7 @@ export function References() {
         Source material and documents behind the guidance on Thanzi Guide.
       </p>
 
-      {status === 'loading' && <p className="mt-8 text-brand-500 dark:text-brand-100">Loading…</p>}
+      {status === 'loading' && <LoadingRunner className="mt-8" />}
       {status === 'error' && (
         <p role="alert" className="mt-8 text-sm text-clay-500 dark:text-clay-400">
           Couldn't load references right now.

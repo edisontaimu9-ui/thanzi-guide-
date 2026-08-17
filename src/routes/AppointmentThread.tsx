@@ -5,6 +5,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { getAppointment, getProvider, getProviderByUserId, getSlot, AppointmentDoc, ProviderDoc, SlotDoc } from '@/lib/providers';
 import { MessageThread } from '@/components/MessageThread';
 import type { SenderRole } from '@/lib/messages';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 type Status = 'loading' | 'idle' | 'error' | 'forbidden';
 
@@ -66,7 +67,7 @@ export function AppointmentThread() {
         ← Back
       </Link>
 
-      {status === 'loading' && <p className="mt-6 text-brand-500 dark:text-brand-100">Loading…</p>}
+      {status === 'loading' && <LoadingRunner className="mt-6" />}
       {status === 'error' && (
         <p role="alert" className="mt-6 text-sm text-clay-500 dark:text-clay-400">
           Couldn't load this conversation right now.

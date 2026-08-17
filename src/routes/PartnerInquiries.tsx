@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { listPartnerInquiries, deletePartnerInquiry, PartnerInquiryDoc } from '@/lib/partnerInquiries';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 type Status = 'loading' | 'idle' | 'error';
 
@@ -45,7 +46,7 @@ export function PartnerInquiries() {
       <h1 className="mt-4 font-display text-3xl text-brand-700 dark:text-sand-100">Partner Inquiries</h1>
       <p className="mt-2 text-brand-500 dark:text-brand-100">Submissions from the "Partner with us" form.</p>
 
-      {status === 'loading' && <p className="mt-8 text-brand-500 dark:text-brand-100">Loading…</p>}
+      {status === 'loading' && <LoadingRunner className="mt-8" />}
       {status === 'error' && (
         <p role="alert" className="mt-8 text-sm text-clay-500 dark:text-clay-400">
           Couldn't load inquiries right now.

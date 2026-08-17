@@ -11,6 +11,7 @@ import {
   SlotDoc,
   ProviderDoc
 } from '@/lib/providers';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 type Status = 'loading' | 'idle' | 'error';
 
@@ -187,7 +188,7 @@ export function ProviderSlots({ provider }: { provider: ProviderDoc }) {
 
       <h2 className="mt-8 font-display text-lg text-brand-700 dark:text-sand-100">Upcoming Slots</h2>
 
-      {status === 'loading' && <p className="mt-4 text-brand-500 dark:text-brand-100">Loading…</p>}
+      {status === 'loading' && <LoadingRunner className="mt-4" />}
       {status === 'error' && (
         <p role="alert" className="mt-4 text-sm text-clay-500 dark:text-clay-400">
           Couldn't load your slots right now.

@@ -16,6 +16,7 @@ import {
   FoodAdminDoc
 } from '@/lib/admin';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 type Status = 'loading' | 'idle' | 'error';
 
@@ -93,7 +94,7 @@ export function Admin() {
         Partner Inquiries
       </Link>
 
-      {status === 'loading' && <p className="mt-8 text-brand-500 dark:text-brand-100">Loading…</p>}
+      {status === 'loading' && <LoadingRunner className="mt-8" />}
       {status === 'error' && (
         <p role="alert" className="mt-8 text-sm text-clay-500 dark:text-clay-400">
           Couldn't load draft content right now.

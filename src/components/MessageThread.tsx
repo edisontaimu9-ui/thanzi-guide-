@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { listMessages, sendMessage, MessageDoc, SenderRole } from '@/lib/messages';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 type Status = 'loading' | 'idle' | 'error';
 
@@ -73,7 +74,7 @@ export function MessageThread({
   return (
     <div className="flex h-[60vh] flex-col rounded-lg border border-brand-100 dark:border-ink-800">
       <div className="flex-1 space-y-3 overflow-y-auto p-4">
-        {status === 'loading' && <p className="text-sm text-brand-500 dark:text-brand-100">Loading…</p>}
+        {status === 'loading' && <LoadingRunner size="sm" />}
         {status === 'error' && (
           <p role="alert" className="text-sm text-clay-500 dark:text-clay-400">
             Couldn't load messages right now.

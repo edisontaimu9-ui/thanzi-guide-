@@ -10,6 +10,7 @@ import {
   SlotDoc
 } from '@/lib/providers';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { LoadingRunner } from '@/components/LoadingRunner';
 
 export function ProviderDetail() {
   const { id } = useParams<{ id: string }>();
@@ -88,7 +89,7 @@ export function ProviderDetail() {
   }
 
   if (status === 'loading') {
-    return <p className="mx-auto max-w-2xl px-6 py-12 text-brand-500 dark:text-brand-100">Loading…</p>;
+    return <LoadingRunner className="mx-auto max-w-2xl px-6 py-12" />;
   }
 
   if (status === 'not-found') {
