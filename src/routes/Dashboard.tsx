@@ -113,9 +113,17 @@ export function Dashboard() {
       {/* Profile header */}
       <section className="flex flex-col gap-5 rounded-2xl border border-brand-100 bg-white p-6 shadow-sm dark:border-ink-800 dark:bg-ink-950 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-2xl text-white">
-            {initial}
-          </div>
+          {profile?.avatarUrl ? (
+            <img
+              src={profile.avatarUrl}
+              alt=""
+              className="h-16 w-16 shrink-0 rounded-full border border-brand-100 object-cover dark:border-ink-800"
+            />
+          ) : (
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-2xl text-white">
+              {initial}
+            </div>
+          )}
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="font-display text-2xl text-brand-700 dark:text-sand-100">{user?.name || 'Friend'}</h1>

@@ -5,6 +5,7 @@ import { useTheme, ThemePreference } from '@/lib/theme';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { account, databases, DB } from '@/lib/appwrite';
+import { uploadImage } from '@/lib/storage';
 import { getConsent, setConsent, onConsentChange } from '@/lib/consent';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string; hint: string }[] = [
@@ -25,32 +26,67 @@ export function Settings() {
   const analyticsEnabled = consent?.value === 'all';
 
   const [name, setName] = useState(user?.name ?? '');
-  const [nameStatus, setNameStatus] = useState<'idle' | 'working' | 'done' | 'error'>('idle');
-  const [nameError, setNameError] = useState<string | null>(null);
+  const [bio, setBio] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [profileStatus, setProfileStatus] = useState<'idle' | 'working' | 'done' | 'error'>('idle');
+  const [profileError, setProfileError] = useState<string | null>(null);
+
+  // Profile fields (avatar, bio) live on the profile document, which loads
+  // slightly after `user` does. Sync local edit state once it arrives so
+  // the form isn't stuck showing blanks — but only on first load of a given
+  // profile, so we don't clobber in-progress edits if refresh() re-fires.
+  const [syncedProfileId, setSyncedProfileId] = useState<string | null>(null);
+  useEffect(() => {
+    if (profile && profile.$id !== syncedProfileId) {
+      setBio(profile.bio ?? '');
+      setAvatarUrl(profile.avatarUrl ?? '');
+      setSyncedProfileId(profile.$id);
+    }
+  }, [profile, syncedProfileId]);
+  useEffect(() => {
+    setName(user?.name ?? '');
+  }, [user?.name]);
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [passwordStatus, setPasswordStatus] = useState<'idle' | 'working' | 'done' | 'error'>('idle');
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
-  async function handleNameSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!name.trim() || name === user?.name) return;
-    setNameStatus('working');
-    setNameError(null);
+  async function handleAvatarChange(file: File) {
+    setAvatarUploading(true);
+    setProfileError(null);
     try {
-      await account.updateName(name.trim());
+      const url = await uploadImage('food_images', file);
+      setAvatarUrl(url);
+    } catch (err) {
+      setProfileError(err instanceof Error ? err.message : 'Photo upload failed.');
+    } finally {
+      setAvatarUploading(false);
+    }
+  }
+
+  async function handleProfileSubmit(e: FormEvent) {
+    e.preventDefault();
+    setProfileStatus('working');
+    setProfileError(null);
+    try {
+      if (name.trim() && name !== user?.name) {
+        await account.updateName(name.trim());
+      }
       if (profile) {
         await databases.updateDocument(DB.databaseId, DB.collections.profiles, profile.$id, {
-          name: name.trim()
+          name: name.trim() || profile.name,
+          bio,
+          avatarUrl
         });
       }
       await refresh();
-      setNameStatus('done');
-      setTimeout(() => setNameStatus('idle'), 2000);
+      setProfileStatus('done');
+      setTimeout(() => setProfileStatus('idle'), 2000);
     } catch (err) {
-      setNameError(err instanceof Error ? err.message : 'Could not update your name.');
-      setNameStatus('error');
+      setProfileError(err instanceof Error ? err.message : 'Could not update your profile.');
+      setProfileStatus('error');
     }
   }
 
@@ -198,10 +234,39 @@ export function Settings() {
 
       {user ? (
         <>
-          {/* Account: name */}
+          {/* Account: profile (name, avatar, bio) */}
           <section className="mt-6 rounded-2xl border border-brand-100 bg-white p-6 dark:border-ink-800 dark:bg-ink-950">
             <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Profile</h2>
-            <form onSubmit={handleNameSubmit} className="mt-4 space-y-3">
+            <form onSubmit={handleProfileSubmit} className="mt-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-brand-700 dark:text-sand-100">Photo</label>
+                <div className="mt-1 flex items-center gap-4">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt=""
+                      className="h-16 w-16 rounded-full border border-brand-100 object-cover dark:border-ink-800"
+                    />
+                  ) : (
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-500 font-display text-xl text-white">
+                      {(name || user.name || 'T').trim().charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleAvatarChange(file);
+                      }}
+                      disabled={avatarUploading}
+                      className="text-sm text-brand-500 dark:text-brand-100"
+                    />
+                    {avatarUploading && <p className="text-xs text-brand-300 dark:text-brand-100">Uploading…</p>}
+                  </div>
+                </div>
+              </div>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-brand-700 dark:text-sand-100">
                   Display name
@@ -215,20 +280,33 @@ export function Settings() {
                 />
               </div>
               <div>
+                <label htmlFor="bio" className="block text-sm font-medium text-brand-700 dark:text-sand-100">
+                  Bio
+                </label>
+                <textarea
+                  id="bio"
+                  rows={3}
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="A short line about you (optional)"
+                  className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
+                />
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-brand-700 dark:text-sand-100">Email</label>
                 <p className="mt-1 text-sm text-brand-500 dark:text-brand-100">{user.email}</p>
               </div>
-              {nameError && (
+              {profileError && (
                 <p role="alert" className="text-sm text-clay-500 dark:text-clay-400">
-                  {nameError}
+                  {profileError}
                 </p>
               )}
               <button
                 type="submit"
-                disabled={nameStatus === 'working' || !name.trim() || name === user.name}
+                disabled={profileStatus === 'working' || avatarUploading}
                 className="rounded-md bg-brand-500 px-4 py-1.5 text-sm font-medium text-white disabled:opacity-60"
               >
-                {nameStatus === 'working' ? 'Saving…' : nameStatus === 'done' ? 'Saved ✓' : 'Save name'}
+                {profileStatus === 'working' ? 'Saving…' : profileStatus === 'done' ? 'Saved ✓' : 'Save profile'}
               </button>
             </form>
           </section>
