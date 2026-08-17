@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { FormEvent, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
 import { listArticles, ArticleDoc } from '@/lib/articles';
 import { useAuth } from '@/lib/auth-context';
@@ -54,6 +54,17 @@ export function Home() {
 
 function Hero() {
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  function handleSearch(e: FormEvent<HTMLFormElement>) {
+    // Route client-side via react-router instead of letting the browser do
+    // a full-page GET to action="/search" — that ignored the app's
+    // /thanzi-guide-/ base path and hit the GitHub Pages root (404).
+    e.preventDefault();
+    const query = new FormData(e.currentTarget).get('q');
+    const q = typeof query === 'string' ? query.trim() : '';
+    navigate(q ? `/search?q=${encodeURIComponent(q)}` : '/search');
+  }
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-brand-900 via-brand-700 to-brand-500">
@@ -83,7 +94,7 @@ function Hero() {
             Explore real Malawian foods, evidence-based nutrition guidance, and practical tools
             built around the foods, lifestyles, and health needs of Malawi.
           </p>
-          <form action="/search" className="mt-8 flex max-w-md gap-2">
+          <form onSubmit={handleSearch} className="mt-8 flex max-w-md gap-2">
             <label htmlFor="hero-search" className="sr-only">
               Search foods
             </label>
