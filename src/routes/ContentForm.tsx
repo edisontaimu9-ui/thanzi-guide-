@@ -256,7 +256,7 @@ export function ContentForm() {
                   </div>
                 </div>
               ) : field.type === 'file' ? (
-                <div className="mt-1 flex items-center gap-4">
+                <div className="mt-1 flex flex-wrap items-center gap-4">
                   {values[field.key] && (
                     <a
                       href={getFileViewUrl(field.bucketId ?? 'food_images', values[field.key])}
@@ -268,18 +268,25 @@ export function ContentForm() {
                     </a>
                   )}
                   <div>
-                    <input
-                      type="file"
-                      accept=".pdf,.docx,.txt,.csv,image/*,video/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleFileUpload(field, file);
-                      }}
-                      disabled={uploadingField === field.key}
-                      className="text-sm text-brand-500 dark:text-brand-100"
-                    />
+                    <label
+                      className={`add-file-button ${uploadingField === field.key ? 'pointer-events-none opacity-60' : ''}`}
+                      htmlFor={`file-${field.key}`}
+                    >
+                      <AddFileIcon />
+                      Add file
+                      <input
+                        id={`file-${field.key}`}
+                        type="file"
+                        accept=".pdf,.docx,.txt,.csv,image/*,video/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileUpload(field, file);
+                        }}
+                        disabled={uploadingField === field.key}
+                      />
+                    </label>
                     {uploadingField === field.key && (
-                      <p className="text-xs text-brand-300 dark:text-brand-100">Uploading…</p>
+                      <p className="mt-1.5 text-xs text-brand-300 dark:text-brand-100">Uploading…</p>
                     )}
                   </div>
                 </div>
@@ -333,5 +340,28 @@ export function ContentForm() {
         </form>
       )}
     </main>
+  );
+}
+
+// From Uiverse.io by SpatexDEV — the document/paperclip glyph for the
+// "Add file" upload button.
+function AddFileIcon() {
+  return (
+    <svg aria-hidden="true" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" fill="none">
+      <path
+        strokeWidth="2"
+        stroke="#ffffff"
+        d="M13.5 3H12H8C6.34315 3 5 4.34315 5 6V18C5 19.6569 6.34315 21 8 21H11M13.5 3L19 8.625M13.5 3V7.625C13.5 8.17728 13.9477 8.625 14.5 8.625H19M19 8.625V11.8125"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+      <path
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        strokeWidth="2"
+        stroke="#ffffff"
+        d="M17 15V18M17 21V18M17 18H14M17 18H20"
+      />
+    </svg>
   );
 }

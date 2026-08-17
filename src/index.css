@@ -77,3 +77,61 @@ body {
   );
   transition: all 0.475s;
 }
+
+/* From Uiverse.io by SpatexDEV — "Add file" upload button used in the
+   admin content form's file fields. Scoped to .add-file-button (rather
+   than the original bare `button` selector) so it doesn't restyle every
+   button in the app; the label wraps a visually-hidden native file input
+   so the whole pill stays clickable and keyboard/screen-reader friendly. */
+.add-file-button {
+  border: none;
+  display: inline-flex;
+  padding: 0.75rem 1.5rem;
+  background-color: #488aec;
+  color: #ffffff;
+  font-size: 0.75rem;
+  line-height: 1;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  vertical-align: middle;
+  align-items: center;
+  border-radius: 0.5rem;
+  user-select: none;
+  gap: 0.75rem;
+  box-shadow:
+    0 4px 6px -1px #488aec31,
+    0 2px 4px -1px #488aec17;
+  transition: all 0.6s ease;
+}
+
+.add-file-button:hover {
+  box-shadow:
+    0 10px 15px -3px #488aec4f,
+    0 4px 6px -2px #488aec17;
+}
+
+.add-file-button:focus-within,
+.add-file-button:active {
+  opacity: 0.85;
+  box-shadow: none;
+}
+
+.add-file-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.add-file-button input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
