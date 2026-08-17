@@ -4,6 +4,13 @@ import { LoadingRunner } from '@/components/LoadingRunner';
 
 const ADMIN_ROLES = ['EDITOR', 'NUTRITION_EXPERT', 'ADMIN'];
 
+// Appwrite labels are the source of truth for permissions (see README,
+// "Roles"). profile.role is just what the app displays and can drift out
+// of sync with the console, so a user carrying the admin label should
+// always get in here even if nobody remembered to update their profile
+// document to match.
+const ADMIN_LABELS = ['admin'];
+
 export function AdminRoute({ children }: { children: React.ReactNode }) {
   const { user, profile, loading } = useAuth();
 
@@ -15,7 +22,10 @@ export function AdminRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!profile || !ADMIN_ROLES.includes(profile.role)) {
+  const hasAdminLabel = user.labels?.some((label) => ADMIN_LABELS.includes(label)) ?? false;
+  const hasAdminRole = !!profile && ADMIN_ROLES.includes(profile.role);
+
+  if (!hasAdminLabel && !hasAdminRole) {
     return (
       <main className="mx-auto max-w-md px-6 py-24 text-center">
         <h1 className="font-display text-2xl text-brand-700 dark:text-sand-100">Not authorized</h1>
