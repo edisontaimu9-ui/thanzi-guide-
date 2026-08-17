@@ -32,7 +32,7 @@ import { CourseDetail } from '@/routes/CourseDetail';
 import { Lesson } from '@/routes/Lesson';
 import { Search } from '@/routes/Search';
 import { Tools } from '@/routes/Tools';
-import { ComingSoon } from '@/routes/ComingSoon';
+import { About } from '@/routes/About';
 import { Support } from '@/routes/Support';
 import { References } from '@/routes/References';
 import { Care } from '@/routes/Care';
@@ -89,15 +89,7 @@ export default function App() {
               <Route path="/kids" element={<Kids />} />
               <Route path="/kids/:stageSlug" element={<KidsStageDetail />} />
               <Route path="/seniors" element={<LifeStagePage slug="seniors" fallbackTitle="For Seniors" />} />
-              <Route
-                path="/about"
-                element={
-                  <ComingSoon
-                    title="About Thanzi Guide"
-                    description="Who's behind Thanzi Guide, and how the content is written and reviewed. This page is on the way."
-                  />
-                }
-              />
+              <Route path="/about" element={<About />} />
               <Route path="/tools" element={<Tools />} />
               <Route path="/tools/bmi" element={<BmiCalculator />} />
               <Route path="/tools/energy" element={<EnergyEstimator />} />
