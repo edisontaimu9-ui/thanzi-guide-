@@ -256,10 +256,12 @@ function ReferenceShelfList({ references, emptyLabel }: { references: ReferenceD
                   </a>
                   <a
                     href={getFileDownloadUrl(BUCKETS.media, ref.fileId)}
-                    className="inline-flex items-center gap-1.5 font-medium text-brand-500 hover:text-brand-700 dark:text-brand-100 dark:hover:text-sand-100"
+                    className="download-button"
                   >
-                    <DownloadIcon className="h-3.5 w-3.5" />
-                    Download
+                    <span className="download-button-content">
+                      <DownloadIcon className="h-3.5 w-3.5" />
+                      Download
+                    </span>
                   </a>
                 </>
               )}
