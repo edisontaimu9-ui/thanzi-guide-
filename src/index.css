@@ -24,28 +24,3 @@ body {
     scroll-behavior: auto !important;
   }
 }
-
-/* LoadingRunner — see src/components/LoadingRunner.tsx. Kept the
-   component/file name for backward compatibility with existing imports
-   across the app, even though the design itself is now a wallet with
-   bills sliding in, not a runner. */
-@keyframes thanzi-wallet-slide-in {
-  0% { top: -30px; opacity: 0; transform: translateX(-50%) scale(0.8); }
-  10% { opacity: 1; }
-  25% { top: 18px; transform: translateX(-50%) scale(1); }
-  90% { top: 18px; opacity: 1; }
-  100% { top: 18px; opacity: 0; }
-}
-@keyframes thanzi-wallet-bounce {
-  0%, 100% { transform: scale(1); }
-  12% { transform: scale(1.02, 0.98); }
-  15% { transform: scale(1); }
-  32% { transform: scale(1.02, 0.98); }
-  35% { transform: scale(1); }
-  52% { transform: scale(1.02, 0.98); }
-  55% { transform: scale(1); }
-}
-@keyframes thanzi-wallet-dot-wave {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-3px); }
-}
