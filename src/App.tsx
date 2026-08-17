@@ -8,6 +8,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Home } from '@/routes/Home';
 import { Login } from '@/routes/Login';
 import { Signup } from '@/routes/Signup';
+import { Verify } from '@/routes/Verify';
 import { Dashboard } from '@/routes/Dashboard';
 import { Settings } from '@/routes/Settings';
 import { Foods } from '@/routes/Foods';
@@ -64,6 +65,7 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/verify" element={<Verify />} />
               <Route path="/foods" element={<Foods />} />
               <Route path="/foods/:id" element={<FoodDetail />} />
               <Route path="/health" element={<Health />} />

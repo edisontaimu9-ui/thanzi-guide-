@@ -55,7 +55,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await account.create(ID.unique(), email, password, name);
     await account.createEmailPasswordSession(email, password);
     await refreshInternal(true);
-    await account.createVerification(`${window.location.origin}/verify`);
+    // BASE_URL is '/thanzi-guide-/' in production and '/' in dev, so this
+    // resolves to https://<host>/thanzi-guide-/verify in prod (matching the
+    // BrowserRouter basename in App.tsx) and http://localhost:5173/verify
+    // locally — either way it lands inside the router, not outside it.
+    await account.createVerification(`${window.location.origin}${import.meta.env.BASE_URL}verify`);
   }
 
   async function logout() {
