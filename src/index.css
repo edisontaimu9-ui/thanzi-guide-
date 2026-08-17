@@ -26,9 +26,13 @@ body {
 }
 
 /* LoadingRunner — see src/components/LoadingRunner.tsx */
+@keyframes thanzi-runner-move {
+  from { transform: translateX(var(--runner-start)); }
+  to { transform: translateX(var(--runner-end)); }
+}
 @keyframes thanzi-runner-bob {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2.5px); }
+  50% { transform: translateY(-2px); }
 }
 @keyframes thanzi-runner-leg-front {
   0%, 100% { transform: rotate(22deg); }

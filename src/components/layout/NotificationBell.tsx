@@ -124,7 +124,7 @@ export function NotificationBell() {
 
           {status === 'loading' ? (
             <div className="px-2 py-4">
-              <LoadingRunner size="sm" label={null} />
+              <LoadingRunner size="sm" />
             </div>
           ) : status === 'error' ? (
             <p className="px-2 py-6 text-center text-sm text-clay-500 dark:text-clay-400">
