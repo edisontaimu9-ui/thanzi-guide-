@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { OAuthProvider } from 'appwrite';
 import type { Models } from 'appwrite';
 import { account, ID } from './appwrite';
 import { ensureProfile, touchLastActive, ProfileDoc } from './profiles';
@@ -10,6 +11,7 @@ interface AuthContextValue {
   profile: ProfileDoc | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: () => void;
   signup: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -51,6 +53,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await refreshInternal(true);
   }
 
+  // Redirects the browser to Google's consent screen; Appwrite handles the
+  // callback and lands the user back on /dashboard (or /login on failure).
+  // Requires the Google OAuth2 provider to be configured in the Appwrite
+  // console (Auth → Settings → OAuth2 Providers) before this will work.
+  function loginWithGoogle() {
+    const base = `${window.location.origin}${import.meta.env.BASE_URL}`;
+    account.createOAuth2Session(OAuthProvider.Google, `${base}dashboard`, `${base}login`);
+  }
+
   async function signup(email: string, password: string, name: string) {
     await account.create(ID.unique(), email, password, name);
     await account.createEmailPasswordSession(email, password);
@@ -69,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, signup, logout, refresh }}>
+    <AuthContext.Provider value={{ user, profile, loading, login, loginWithGoogle, signup, logout, refresh }}>
       {children}
     </AuthContext.Provider>
   );
