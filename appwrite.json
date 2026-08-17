@@ -813,6 +813,12 @@
           "required": true
         },
         {
+          "key": "category",
+          "type": "string",
+          "size": 64,
+          "required": false
+        },
+        {
           "key": "url",
           "type": "string",
           "size": 500,

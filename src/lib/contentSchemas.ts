@@ -3,6 +3,8 @@
 // hand-building a page per type. Add a new content type here and it shows
 // up in the panel automatically — no new components needed.
 
+import { REFERENCE_CATEGORIES } from '@/lib/referenceCategories';
+
 export type FieldType = 'text' | 'textarea' | 'number' | 'lines' | 'select' | 'image' | 'file' | 'boolean';
 
 export interface FieldSchema {
@@ -308,6 +310,13 @@ export const CONTENT_SCHEMAS: ContentSchema[] = [
     adminOnly: true,
     fields: [
       { key: 'title', label: 'Title', type: 'text', required: true },
+      {
+        key: 'category',
+        label: 'Category',
+        type: 'select',
+        options: [...REFERENCE_CATEGORIES],
+        helpText: 'Which shelf this reference appears under in the public library'
+      },
       { key: 'url', label: 'URL', type: 'text', helpText: 'External link, if this reference points off-site' },
       {
         key: 'fileId',

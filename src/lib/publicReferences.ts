@@ -3,6 +3,7 @@ import type { Models } from 'appwrite';
 
 export interface ReferenceDoc extends Models.Document {
   title: string;
+  category?: string;
   url?: string;
   fileId?: string;
   fileName?: string;
