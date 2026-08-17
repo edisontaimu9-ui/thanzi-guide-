@@ -227,13 +227,13 @@ function ReferenceShelfList({ references, emptyLabel }: { references: ReferenceD
       {references.map((ref) => (
         <li key={ref.$id} className="flex items-start gap-4 p-4 sm:p-5">
           <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sand-100 text-brand-500 dark:bg-ink-900 dark:text-sand-100">
-            {SHELVES[ref.category as ReferenceCategory]?.icon ? (
+            {shelfOf(ref) === UNCATEGORIZED ? (
+              <FolderIcon className="h-4 w-4" />
+            ) : (
               (() => {
-                const Icon = SHELVES[ref.category as ReferenceCategory].icon;
+                const Icon = SHELVES[shelfOf(ref) as ReferenceCategory].icon;
                 return <Icon className="h-4 w-4" />;
               })()
-            ) : (
-              <FolderIcon className="h-4 w-4" />
             )}
           </span>
 
