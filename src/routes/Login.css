@@ -1,5 +1,10 @@
 /* From Uiverse.io by micaelgomestavares — adapted for Thanzi Guide (Apple login removed) */
 .form {
+  /* Pins this card to light rendering regardless of the phone/browser's
+     dark preference or the app's own dark-mode toggle — otherwise Chrome
+     auto-darkens native form controls (inputs) inside it because :root
+     declares `color-scheme: light dark` in src/index.css. */
+  color-scheme: light;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -46,6 +51,8 @@
   border: none;
   width: 85%;
   height: 100%;
+  background-color: #ffffff;
+  color: #151717;
 }
 
 .input:focus {
@@ -119,6 +126,7 @@
   gap: 10px;
   border: 1px solid #ededef;
   background-color: white;
+  color: #151717;
   cursor: pointer;
   transition: 0.2s ease-in-out;
 }
