@@ -54,6 +54,7 @@ import { ContentManager } from '@/routes/ContentManager';
 import { ContentTypeList } from '@/routes/ContentTypeList';
 import { ContentForm } from '@/routes/ContentForm';
 import { PartnerInquiries } from '@/routes/PartnerInquiries';
+import { SubmitFood } from '@/routes/SubmitFood';
 import { NotFound } from '@/routes/NotFound';
 
 export default function App() {
@@ -70,6 +71,7 @@ export default function App() {
               <Route path="/browse" element={<Browse />} />
               <Route path="/foods" element={<Foods />} />
               <Route path="/foods/:id" element={<FoodDetail />} />
+              <Route path="/foods/submit" element={<SubmitFood />} />
               <Route path="/health" element={<Health />} />
               <Route path="/health/:topicSlug" element={<HealthTopicDetail />} />
               <Route path="/health/:topicSlug/:subtopicSlug" element={<HealthSubtopicDetail />} />

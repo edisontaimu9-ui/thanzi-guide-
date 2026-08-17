@@ -119,6 +119,9 @@ export function Search() {
           <div className="rounded-lg border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-ink-800">
             <p className="font-medium text-brand-700 dark:text-sand-100">No results for "{query}"</p>
             <p className="mt-1 text-sm">Try a different search term.</p>
+            <Link to="/foods/submit" className="mt-4 inline-block text-sm font-medium text-brand-500 underline dark:text-brand-100">
+              Can't find a packaged food? Submit it
+            </Link>
           </div>
         )}
 
@@ -155,6 +158,12 @@ export function Search() {
                 {cascadeFood.food.energy_kcal ?? '—'} kcal · P {cascadeFood.food.protein_g ?? '—'}g · C{' '}
                 {cascadeFood.food.carbs_g ?? '—'}g · F {cascadeFood.food.fat_g ?? '—'}g
               </p>
+              <Link
+                to="/foods/submit"
+                className="mt-3 inline-block text-xs font-medium text-brand-500 underline dark:text-brand-100"
+              >
+                Add this to the Malawi database
+              </Link>
             </div>
           </section>
         )}

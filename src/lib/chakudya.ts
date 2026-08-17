@@ -113,6 +113,104 @@ export async function lookupFood(query: string): Promise<FoodLookupResult | null
   return { food: json.data, source: json.source, cached: json.cached, freshlyCached: json.freshly_cached };
 }
 
+// ── Community packaged-food submissions ────────────────────────────────────
+// Ported from Oasis CNST's packaged-foods submission flow (per-100
+// normalization, Atwater kcal-consistency check), adapted to call Chakudya
+// directly instead of going through Oasis's IndexedDB-backed cache layer.
+
+// Matches packaged_foods DB column names exactly (POST /packaged/submit
+// writes these columns directly — see chakudya-api's PACKAGED_FOOD_DB_
+// NUTRIENT_FIELDS). `barcode` and `product_name` are the only two the API
+// requires; everything else is optional.
+export interface PackagedFoodSubmission {
+  barcode: string;
+  product_name: string;
+  brand?: string;
+  serving_size?: string | null;
+  energy_kcal?: number | null;
+  protein_g?: number | null;
+  fat_g?: number | null;
+  saturated_fat_g?: number | null;
+  carbs_g?: number | null;
+  sugar_g?: number | null;
+  fiber_g?: number | null;
+  sodium_mg?: number | null;
+  salt_g?: number | null;
+}
+
+export interface PackagedFoodSubmitResult {
+  alreadyExists: boolean;
+  message: string;
+  data: Record<string, unknown>;
+}
+
+/**
+ * Atwater estimate: protein 4 kcal/g, carbs 4 kcal/g, fat 9 kcal/g.
+ * Mirrors Oasis's `calcExpectedKcal` — used client-side to give the
+ * submitter an early heads-up before the server's own check runs.
+ */
+export function calcExpectedKcal(
+  proteinG: number | null,
+  carbsG: number | null,
+  fatG: number | null
+): number | null {
+  if (proteinG == null || carbsG == null || fatG == null) return null;
+  return Math.round((proteinG * 4 + carbsG * 4 + fatG * 9) * 100) / 100;
+}
+
+/**
+ * Same tolerance formula Chakudya's server uses (checkMacrosMatchCalories):
+ * greater of 20 kcal flat or 15% relative — absorbs normal label rounding
+ * without flagging every legitimate submission.
+ */
+export function checkKcalConsistency(
+  kcal: number | null,
+  proteinG: number | null,
+  carbsG: number | null,
+  fatG: number | null
+): { checked: boolean; expectedKcal?: number; providedKcal?: number; diffKcal?: number; consistent?: boolean } {
+  const expected = calcExpectedKcal(proteinG, carbsG, fatG);
+  if (expected == null || kcal == null) return { checked: false };
+  const diff = Math.round(Math.abs(expected - kcal) * 100) / 100;
+  const tolerance = Math.round(Math.max(20, kcal * 0.15) * 100) / 100;
+  return { checked: true, expectedKcal: expected, providedKcal: kcal, diffKcal: diff, consistent: diff <= tolerance };
+}
+
+/**
+ * Scales a per-serving value up to per-100g/ml. Mirrors Oasis's
+ * `_pkgScaleToPer100` — used when the submitter enters values off the
+ * label's "per serving" column instead of "per 100g/ml".
+ */
+export function scaleToPer100(value: number | null, servingGrams: number): number | null {
+  if (value == null || !servingGrams) return value;
+  return Math.round(value * (100 / servingGrams) * 100) / 100;
+}
+
+/**
+ * POST /packaged/submit — public, rate-limited community contribution.
+ * Requires `barcode` and `product_name`; everything else is optional.
+ * The server does its own per-100 normalization and Atwater check too, so
+ * this never blocks a submission — it inserts as status "pending" for
+ * admin review either way. A 409 means this barcode already has an
+ * approved/pending entry; that's surfaced as `alreadyExists`, not thrown.
+ */
+export async function submitPackagedFood(payload: PackagedFoodSubmission): Promise<PackagedFoodSubmitResult> {
+  const res = await fetch(`${BASE_URL}/packaged/submit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const json: { status: string; message?: string; already_exists?: boolean; data?: Record<string, unknown> } =
+    await res.json();
+  if (res.status === 409 && json.already_exists) {
+    return { alreadyExists: true, message: json.message || 'This barcode already has an entry.', data: json.data || {} };
+  }
+  if (!res.ok || json.status !== 'success') {
+    throw new Error(json.message || `Chakudya API error (${res.status})`);
+  }
+  return { alreadyExists: false, message: json.message || 'Submitted for review', data: json.data || {} };
+}
+
 export interface RagAskResult {
   answer: string;
   intent: string;
