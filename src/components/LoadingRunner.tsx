@@ -1,7 +1,7 @@
 // A branded loading indicator — a wallet with bills sliding in and out
 // while it gives a light squish/bounce, adapted from a community CSS
 // snippet (originally rupee-themed, brown/mint) into Thanzi Guide's own
-// teal-and-gold palette with a Kwacha ("K") mark on the bills. Kept the
+// teal-and-gold palette with a "T" (Thanzi) mark on the bills. Kept the
 // component/export name LoadingRunner so every existing
 // `import { LoadingRunner } from '@/components/LoadingRunner'` across
 // the app keeps working without touching call sites — only the visual
@@ -75,7 +75,7 @@ export function LoadingRunner({ size = 'md', fullScreen = false, className = '' 
                 className="flex items-center justify-center rounded-full text-xs font-bold"
                 style={{ width: 20, height: 20, border: `2px solid ${BADGE_BORDER}`, color: BILL_BORDER, background: 'rgba(255,255,255,0.35)' }}
               >
-                K
+                T
               </span>
             </div>
           ))}
