@@ -258,22 +258,24 @@ function ReferenceCard({ reference: ref }: { reference: ReferenceDoc }) {
       </div>
 
       {(ref.fileId || ref.url) && (
-        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-brand-100 pt-4 dark:border-ink-800">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 border-t border-brand-100 pt-4 dark:border-ink-800">
           {ref.fileId && (
             <>
               <a
                 href={getFileViewUrl(BUCKETS.media, ref.fileId)}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 px-3 py-1.5 text-xs font-medium text-brand-700 transition hover:border-brand-300 hover:bg-sand-50 dark:border-ink-800 dark:text-sand-100 dark:hover:bg-ink-900"
+                className="download-button"
                 title={ref.fileName ? `View "${ref.fileName}"` : 'View file'}
               >
-                <ExternalLinkIcon className="h-3.5 w-3.5" />
-                View
+                <span className="download-button-content">
+                  <ExternalLinkIcon className="h-3.5 w-3.5" />
+                  View
+                </span>
               </a>
               <a
                 href={getFileDownloadUrl(BUCKETS.media, ref.fileId)}
-                className="download-button ml-auto"
+                className="download-button"
               >
                 <span className="download-button-content">
                   <DownloadIcon className="h-3.5 w-3.5" />
@@ -287,10 +289,12 @@ function ReferenceCard({ reference: ref }: { reference: ReferenceDoc }) {
               href={ref.url}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full border border-brand-100 px-3 py-1.5 text-xs font-medium text-brand-700 transition hover:border-brand-300 hover:bg-sand-50 dark:border-ink-800 dark:text-sand-100 dark:hover:bg-ink-900"
+              className="download-button"
             >
-              <ExternalLinkIcon className="h-3.5 w-3.5" />
-              Visit source
+              <span className="download-button-content">
+                <ExternalLinkIcon className="h-3.5 w-3.5" />
+                Visit source
+              </span>
             </a>
           )}
         </div>
