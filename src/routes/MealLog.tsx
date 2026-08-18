@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
+import { searchFoods, lookupFood, ChakudyaFood } from '@/lib/chakudya';
 import { logMeal, listMealLogsForDay, deleteMealLog, MealLogDoc, MealType, MEAL_TYPES } from '@/lib/mealLog';
+import { BarcodeScanner } from '@/components/BarcodeScanner';
 
 export function MealLog() {
   useDocumentTitle('Meal log');
@@ -150,6 +151,41 @@ function LogMealForm({ userId, onLogged, onCancel }: { userId: string; onLogged:
   const [mealType, setMealType] = useState<MealType>('Breakfast');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [scanLoading, setScanLoading] = useState(false);
+
+  async function handleBarcodeDetected(barcode: string) {
+    setScannerOpen(false);
+    setScanLoading(true);
+    setError('');
+    try {
+      const result = await lookupFood(barcode);
+      if (!result) {
+        setError("No food found for that barcode. Try searching by name instead.");
+        return;
+      }
+      const { food } = result;
+      // lookupFood's cascade result isn't always a local ChakudyaFood row
+      // (it may come from USDA/Open Food Facts/FatSecret) — normalize just
+      // the fields the log form and logMeal() actually need.
+      setSelected({
+        id: food.id ?? 0,
+        food_name: food.food_name,
+        category: food.category,
+        measure: food.measure ?? 'serving',
+        weight_g: food.weight_g ?? 0,
+        kcal: food.energy_kcal ?? food.kcal ?? 0,
+        kj: food.kj ?? 0,
+        protein_g: food.protein_g ?? 0,
+        carbs_g: food.carbs_g ?? 0,
+        fat_g: food.fat_g ?? 0
+      });
+    } catch {
+      setError("Couldn't look up that barcode — try again.");
+    } finally {
+      setScanLoading(false);
+    }
+  }
 
   useEffect(() => {
     if (!query.trim()) {
@@ -183,13 +219,28 @@ function LogMealForm({ userId, onLogged, onCancel }: { userId: string; onLogged:
     <div className="mt-4 rounded-lg border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950">
       {!selected ? (
         <>
-          <input
-            autoFocus
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search a food, e.g. nsima"
-            className="w-full rounded-md border border-brand-100 px-3 py-2 text-sm text-brand-700 placeholder:text-brand-300 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
-          />
+          <div className="flex gap-2">
+            <input
+              autoFocus
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search a food, e.g. nsima"
+              className="flex-1 rounded-md border border-brand-100 px-3 py-2 text-sm text-brand-700 placeholder:text-brand-300 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
+            />
+            <button
+              type="button"
+              onClick={() => setScannerOpen(true)}
+              aria-label="Scan barcode"
+              title="Scan barcode"
+              disabled={scanLoading}
+              className="flex shrink-0 items-center justify-center rounded-md border border-brand-100 px-3 text-brand-500 disabled:opacity-50 dark:border-ink-800 dark:text-brand-100"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" d="M4 7V5a1 1 0 0 1 1-1h2M4 17v2a1 1 0 0 0 1 1h2M20 7V5a1 1 0 0 0-1-1h-2M20 17v2a1 1 0 0 1-1 1h-2M6 8v8M9 8v8M12 8v8M15 8v8M18 8v8" />
+              </svg>
+            </button>
+          </div>
+          {scanLoading && <p className="mt-2 text-xs text-brand-300 dark:text-brand-100">Looking up barcode…</p>}
           {searching && <p className="mt-2 text-xs text-brand-300 dark:text-brand-100">Searching…</p>}
           {results.length > 0 && (
             <div className="mt-2 max-h-56 space-y-1 overflow-y-auto">
@@ -256,6 +307,8 @@ function LogMealForm({ userId, onLogged, onCancel }: { userId: string; onLogged:
           Cancel
         </button>
       )}
+
+      {scannerOpen && <BarcodeScanner onDetect={handleBarcodeDetected} onClose={() => setScannerOpen(false)} />}
     </div>
   );
 }
