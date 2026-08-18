@@ -153,6 +153,12 @@ export function Dashboard() {
         </div>
         <div className="flex items-center gap-2 self-start sm:self-center">
           <Link
+            to="/log"
+            className="rounded-md border border-brand-100 px-4 py-1.5 text-sm font-medium text-brand-700 hover:border-brand-500 dark:border-ink-800 dark:text-sand-100"
+          >
+            Meal log
+          </Link>
+          <Link
             to="/settings"
             className="rounded-md border border-brand-100 px-4 py-1.5 text-sm font-medium text-brand-700 hover:border-brand-500 dark:border-ink-800 dark:text-sand-100"
           >

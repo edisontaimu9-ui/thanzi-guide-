@@ -10,6 +10,7 @@ import { Login } from '@/routes/Login';
 import { Signup } from '@/routes/Signup';
 import { Verify } from '@/routes/Verify';
 import { Dashboard } from '@/routes/Dashboard';
+import { MealLog } from '@/routes/MealLog';
 import { Settings } from '@/routes/Settings';
 import { Browse } from '@/routes/Browse';
 import { Foods } from '@/routes/Foods';
@@ -113,6 +114,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/log"
+                element={
+                  <ProtectedRoute>
+                    <MealLog />
                   </ProtectedRoute>
                 }
               />

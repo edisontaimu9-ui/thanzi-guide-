@@ -19,12 +19,17 @@ function sourceLabel(source: string): string {
   return source || 'Source';
 }
 
+// A couple of disease/medicine topics up front give the field the same
+// "explain this" shape as the free-text questions below, so people
+// unfamiliar with the format see what kind of thing they can ask.
 const suggested = [
   'What nutrients are in nsima?',
   'What causes anaemia?',
+  "Explain diabetes: causes, symptoms, and nutrition considerations.",
   'How much water should I drink daily?',
   'Is groundnut flour good for a baby?',
-  'What foods help manage high blood pressure?'
+  'What foods help manage high blood pressure?',
+  'Explain metformin: uses, side effects, and food interactions.'
 ];
 
 type Message =
