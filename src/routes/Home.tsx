@@ -330,14 +330,35 @@ function QuoteBanner() {
   );
 }
 
+// Two rows like "Amaranth leaves (bonongwe, boiled)" and "Amaranth leaves
+// (bonongwe, raw)" are prep variants of the same food, not different
+// foods — comparing the name up to the first "(" catches that without
+// mistaking genuinely different foods that merely share a word (e.g.
+// "African cake" vs "African medlar").
+function baseFoodName(name: string): string {
+  const parenIndex = name.indexOf('(');
+  return (parenIndex === -1 ? name : name.slice(0, parenIndex)).trim().toLowerCase();
+}
+
 function FoodsPreview() {
   const [foods, setFoods] = useState<ChakudyaFood[]>([]);
   const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
 
   useEffect(() => {
-    searchFoods({ limit: 4 })
+    // Fetch a larger pool than we need so there's enough left after
+    // de-duplicating variants to still fill all 4 preview slots.
+    searchFoods({ limit: 16 })
       .then((results) => {
-        setFoods(results);
+        const seenNames = new Set<string>();
+        const deduped: ChakudyaFood[] = [];
+        for (const food of results) {
+          const key = baseFoodName(food.food_name);
+          if (seenNames.has(key)) continue;
+          seenNames.add(key);
+          deduped.push(food);
+          if (deduped.length === 4) break;
+        }
+        setFoods(deduped);
         setStatus('idle');
       })
       .catch(() => setStatus('error'));
