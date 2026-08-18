@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { searchFoods, lookupFood, ChakudyaFood, FoodLookupResult } from '@/lib/chakudya';
 import { listArticles, ArticleDoc } from '@/lib/articles';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { BarcodeScanner } from '@/components/BarcodeScanner';
 
 export function Search() {
   useDocumentTitle('Search');
@@ -13,6 +14,7 @@ export function Search() {
   const [articles, setArticles] = useState<ArticleDoc[]>([]);
   const [cascadeFood, setCascadeFood] = useState<FoodLookupResult | null>(null);
   const [status, setStatus] = useState<'idle' | 'loading' | 'error' | 'empty'>('idle');
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   useEffect(() => {
     const q = searchParams.get('q') ?? '';
@@ -79,6 +81,12 @@ export function Search() {
     setSearchParams(query ? { q: query } : {});
   }
 
+  function handleBarcodeDetected(code: string) {
+    setScannerOpen(false);
+    setQuery(code);
+    setSearchParams({ q: code });
+  }
+
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Search</h1>
@@ -97,10 +105,23 @@ export function Search() {
           onChange={(e) => setQuery(e.target.value)}
           className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
         />
+        <button
+          type="button"
+          onClick={() => setScannerOpen(true)}
+          aria-label="Scan a barcode"
+          title="Scan a barcode"
+          className="flex items-center justify-center rounded-md border border-brand-100 px-3 text-brand-500 dark:border-ink-800 dark:text-brand-100"
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" d="M4 7V5a1 1 0 0 1 1-1h2M4 17v2a1 1 0 0 0 1 1h2M20 7V5a1 1 0 0 0-1-1h-2M20 17v2a1 1 0 0 1-1 1h-2M6 8v8M9 8v8M12 8v8M15 8v8M18 8v8" />
+          </svg>
+        </button>
         <button type="submit" className="rounded-md bg-brand-500 px-4 py-2 font-medium text-white">
           Search
         </button>
       </form>
+
+      {scannerOpen && <BarcodeScanner onDetect={handleBarcodeDetected} onClose={() => setScannerOpen(false)} />}
 
       <div className="mt-8 space-y-10">
         {status === 'loading' && (

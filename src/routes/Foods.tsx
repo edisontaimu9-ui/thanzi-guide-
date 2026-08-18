@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback, FormEvent } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { BarcodeScanner } from '@/components/BarcodeScanner';
 
 type FoodTopic = {
   title: string;
@@ -79,11 +81,13 @@ function FoodTopicAccordion() {
 
 export function Foods() {
   useDocumentTitle('Foods');
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('search') ?? '');
   const [foods, setFoods] = useState<ChakudyaFood[]>([]);
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   const runSearch = useCallback(async (search: string) => {
     setStatus('loading');
@@ -110,6 +114,13 @@ export function Foods() {
     e.preventDefault();
     setSearchParams(query ? { search: query } : {});
     runSearch(query);
+  }
+
+  function handleBarcodeDetected(code: string) {
+    setScannerOpen(false);
+    // The local `foods` search is name-only; a barcode needs Chakudya's
+    // barcode-specific lookup cascade on the Search page.
+    navigate(`/search?q=${encodeURIComponent(code)}`);
   }
 
   return (
@@ -143,12 +154,25 @@ export function Foods() {
           className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
         />
         <button
+          type="button"
+          onClick={() => setScannerOpen(true)}
+          aria-label="Scan a barcode"
+          title="Scan a barcode"
+          className="flex items-center justify-center rounded-md border border-brand-100 px-3 text-brand-500 dark:border-ink-800 dark:text-brand-100"
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" d="M4 7V5a1 1 0 0 1 1-1h2M4 17v2a1 1 0 0 0 1 1h2M20 7V5a1 1 0 0 0-1-1h-2M20 17v2a1 1 0 0 1-1 1h-2M6 8v8M9 8v8M12 8v8M15 8v8M18 8v8" />
+          </svg>
+        </button>
+        <button
           type="submit"
           className="rounded-md bg-brand-500 px-4 py-2 font-medium text-white"
         >
           Search
         </button>
       </form>
+
+      {scannerOpen && <BarcodeScanner onDetect={handleBarcodeDetected} onClose={() => setScannerOpen(false)} />}
 
       <div className="mt-2 flex justify-end">
         <Link

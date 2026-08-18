@@ -11,6 +11,7 @@ import {
 } from '@/lib/chakudya';
 import { resizeAndEncodeImage } from '@/lib/imageEncode';
 import { listMySubmissions, recordMySubmission, MySubmissionEntry } from '@/lib/mySubmissions';
+import { BarcodeScanner } from '@/components/BarcodeScanner';
 
 const MAX_SCAN_PHOTOS = 5;
 
@@ -71,6 +72,7 @@ export function SubmitFood() {
   );
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const [barcodeScannerOpen, setBarcodeScannerOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -390,17 +392,40 @@ export function SubmitFood() {
             <label htmlFor="sf-barcode" className={labelClasses}>
               Barcode
             </label>
-            <input
-              id="sf-barcode"
-              required
-              inputMode="numeric"
-              value={fields.barcode}
-              onChange={(e) => updateField('barcode', e.target.value)}
-              className={inputClasses}
-              placeholder="Numbers on the package barcode"
-            />
+            <div className="flex gap-2">
+              <input
+                id="sf-barcode"
+                required
+                inputMode="numeric"
+                value={fields.barcode}
+                onChange={(e) => updateField('barcode', e.target.value)}
+                className={inputClasses}
+                placeholder="Numbers on the package barcode"
+              />
+              <button
+                type="button"
+                onClick={() => setBarcodeScannerOpen(true)}
+                aria-label="Scan barcode"
+                title="Scan barcode"
+                className="flex shrink-0 items-center justify-center rounded-md border border-brand-100 px-3 text-brand-500 dark:border-ink-800 dark:text-brand-100"
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" d="M4 7V5a1 1 0 0 1 1-1h2M4 17v2a1 1 0 0 0 1 1h2M20 7V5a1 1 0 0 0-1-1h-2M20 17v2a1 1 0 0 1-1 1h-2M6 8v8M9 8v8M12 8v8M15 8v8M18 8v8" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
+
+        {barcodeScannerOpen && (
+          <BarcodeScanner
+            onDetect={(code) => {
+              updateField('barcode', code);
+              setBarcodeScannerOpen(false);
+            }}
+            onClose={() => setBarcodeScannerOpen(false)}
+          />
+        )}
 
         <div>
           <span className={labelClasses}>Nutrition values are per</span>
