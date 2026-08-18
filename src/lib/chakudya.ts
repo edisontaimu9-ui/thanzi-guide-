@@ -284,11 +284,16 @@ export interface RagAskResult {
  * `context: 'general'` is the right value for Thanzi Guide's public,
  * non-clinical audience — 'clinical' is for Oasis CNST.
  */
-export async function ragAsk(query: string, topK = 6): Promise<RagAskResult> {
+export async function ragAsk(query: string, topK = 6, sessionId?: string): Promise<RagAskResult> {
   const res = await fetch(`${BASE_URL}/rag/ask`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, context: 'general', top_k: topK })
+    body: JSON.stringify({
+      query,
+      context: 'general',
+      top_k: topK,
+      ...(sessionId ? { session_id: sessionId } : {})
+    })
   });
   if (!res.ok) {
     throw new Error(`Chakudya API error (${res.status})`);
