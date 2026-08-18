@@ -145,30 +145,39 @@ export function Foods() {
         <label htmlFor="food-search" className="sr-only">
           Search foods
         </label>
-        <input
-          id="food-search"
-          type="search"
-          placeholder="Search foods, e.g. nsima, beans, groundnuts"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
-        />
-        <button
-          type="button"
-          onClick={() => setScannerOpen(true)}
-          aria-label="Scan a barcode"
-          title="Scan a barcode"
-          className="flex items-center justify-center rounded-md border border-brand-100 px-3 text-brand-500 dark:border-ink-800 dark:text-brand-100"
-        >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" d="M4 7V5a1 1 0 0 1 1-1h2M4 17v2a1 1 0 0 0 1 1h2M20 7V5a1 1 0 0 0-1-1h-2M20 17v2a1 1 0 0 1-1 1h-2M6 8v8M9 8v8M12 8v8M15 8v8M18 8v8" />
-          </svg>
-        </button>
+        <div className="relative min-w-0 flex-1">
+          <input
+            id="food-search"
+            type="search"
+            placeholder="Search foods, e.g. nsima, beans"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full rounded-md border border-brand-100 bg-white py-2 pl-3 pr-11 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
+          />
+          <button
+            type="button"
+            onClick={() => setScannerOpen(true)}
+            aria-label="Scan a barcode"
+            title="Scan a barcode"
+            className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-brand-300 dark:text-brand-100"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" d="M4 7V5a1 1 0 0 1 1-1h2M4 17v2a1 1 0 0 0 1 1h2M20 7V5a1 1 0 0 0-1-1h-2M20 17v2a1 1 0 0 1-1 1h-2M6 8v8M9 8v8M12 8v8M15 8v8M18 8v8" />
+            </svg>
+          </button>
+        </div>
         <button
           type="submit"
-          className="rounded-md bg-brand-500 px-4 py-2 font-medium text-white"
+          disabled={status === 'loading'}
+          className="flex shrink-0 items-center gap-2 rounded-md bg-brand-500 px-4 py-2 font-medium text-white disabled:opacity-70"
         >
-          Search
+          {status === 'loading' && (
+            <svg viewBox="0 0 24 24" className="h-4 w-4 animate-spin" fill="none">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.3" />
+              <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+          )}
+          {status === 'loading' ? 'Searching…' : 'Search'}
         </button>
       </form>
 
