@@ -97,10 +97,20 @@ export interface FoodLookupResult {
  * searches go USDA -> FatSecret). Use this as a fallback when a plain
  * `searchFoods` call comes back empty — it's a single best match, not a
  * list, so it's not a drop-in replacement for `searchFoods`.
+ *
+ * The API takes `q` (name) and `barcode` as genuinely separate params —
+ * a barcode string sent as `q` only runs the name ilike-search branch and
+ * never reaches the barcode-specific local/Open Food Facts/FatSecret
+ * lookups. So an 8-14 digit query (a barcode/EAN/UPC) is sent as
+ * `barcode` instead of `q`; anything else is sent as `q` as before.
+ *
  * Returns null on a genuine "not found anywhere" (API responds 404).
  */
 export async function lookupFood(query: string): Promise<FoodLookupResult | null> {
-  const res = await fetch(`${BASE_URL}/foods/lookup?q=${encodeURIComponent(query)}`);
+  const trimmed = query.trim();
+  const isBarcode = /^\d{8,14}$/.test(trimmed);
+  const param = isBarcode ? `barcode=${encodeURIComponent(trimmed)}` : `q=${encodeURIComponent(trimmed)}`;
+  const res = await fetch(`${BASE_URL}/foods/lookup?${param}`);
   if (res.status === 404) return null;
   if (!res.ok) {
     throw new Error(`Chakudya API error (${res.status})`);
@@ -215,6 +225,7 @@ export interface ScanLabelResult {
   status: 'success' | 'needs_retry' | 'error';
   message?: string;
   needsReview?: boolean;
+  alreadyExists?: boolean;
   data?: Record<string, unknown>;
 }
 
@@ -227,27 +238,38 @@ export interface ScanLabelResult {
  * success, so this bypasses filling in the fields entirely rather than
  * just autofilling them. `needs_retry` means the label couldn't be read
  * confidently and nothing was submitted; `needsReview` on a *success*
- * means it went in but with lower OCR confidence, flagged for closer
- * admin review.
+ * means it went in but with lower OCR confidence (or the declared calories
+ * don't closely match protein/carbs/fat), flagged for closer admin review.
+ * Same as `/packaged/submit`, a barcode that already has an
+ * approved/pending entry comes back as `status: "success"` (HTTP 409) with
+ * `alreadyExists: true` and the existing row in `data` — not an error.
  */
 export async function scanPackagedFoodLabel(images: string[], barcode?: string): Promise<ScanLabelResult> {
+  const cleanBarcode = barcode ? barcode.replace(/\D/g, '') : '';
   const res = await fetch(`${BASE_URL}/packaged/scan`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       images: images.slice(0, 5),
-      barcode: barcode ? barcode.replace(/\D/g, '') || undefined : undefined
+      ...(cleanBarcode ? { barcode: cleanBarcode } : {})
     })
   });
-  const json: { status: string; message?: string; needs_review?: boolean; data?: Record<string, unknown> } =
-    await res.json();
+  const json: {
+    status: string;
+    message?: string;
+    needs_review?: boolean;
+    already_exists?: boolean;
+    data?: Record<string, unknown>;
+  } = await res.json();
   return {
     status: (json.status as ScanLabelResult['status']) || 'error',
     message: json.message,
     needsReview: json.needs_review,
+    alreadyExists: json.already_exists,
     data: json.data
   };
 }
+
 
 export interface RagAskResult {
   answer: string;

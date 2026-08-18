@@ -114,10 +114,12 @@ export function SubmitFood() {
       const res = await scanPackagedFoodLabel(scanPhotos, fields.barcode);
       if (res.status === 'success') {
         setScanStatus({
-          message: res.needsReview
-            ? '✓ Submitted for review — scan confidence was low, an admin will double-check.'
-            : '✓ Submitted for review. Thanks for contributing to Chakudya!',
-          tone: 'success'
+          message: res.alreadyExists
+            ? res.message || 'This barcode already has an entry — not submitting a duplicate.'
+            : res.needsReview
+              ? '✓ Submitted for review — scan confidence was low, an admin will double-check.'
+              : '✓ Submitted for review. Thanks for contributing to Chakudya!',
+          tone: res.alreadyExists ? 'warn' : 'success'
         });
         const data = res.data || {};
         recordMySubmission(user.$id, {
@@ -125,7 +127,7 @@ export function SubmitFood() {
           productName: String(data.product_name ?? data.name ?? 'Scanned product'),
           brand: data.brand ? String(data.brand) : undefined,
           submittedAt: new Date().toISOString(),
-          alreadyExisted: false
+          alreadyExisted: !!res.alreadyExists
         });
         setHistory(listMySubmissions(user.$id));
         setScanPhotos([]);
