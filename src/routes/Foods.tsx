@@ -150,6 +150,15 @@ export function Foods() {
         </button>
       </form>
 
+      <div className="mt-2 flex justify-end">
+        <Link
+          to="/foods/submit"
+          className="text-sm font-medium text-brand-500 underline hover:text-brand-700 dark:text-brand-100"
+        >
+          Can't find a packaged food? Submit it →
+        </Link>
+      </div>
+
       <div className="mt-8">
         {status === 'loading' && <FoodListSkeleton />}
 
@@ -170,6 +179,12 @@ export function Foods() {
           <div className="rounded-md border border-brand-100 p-8 text-center text-brand-500 dark:text-brand-100 dark:border-ink-800">
             <p className="font-medium text-brand-700 dark:text-sand-100">No foods matched "{query}"</p>
             <p className="mt-1 text-sm">Try a different name, or browse without a search term.</p>
+            <Link
+              to="/foods/submit"
+              className="mt-3 inline-block text-sm font-medium text-brand-700 underline dark:text-sand-100"
+            >
+              Can't find a packaged food? Submit it
+            </Link>
           </div>
         )}
 
