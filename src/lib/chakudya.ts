@@ -211,6 +211,44 @@ export async function submitPackagedFood(payload: PackagedFoodSubmission): Promi
   return { alreadyExists: false, message: json.message || 'Submitted for review', data: json.data || {} };
 }
 
+export interface ScanLabelResult {
+  status: 'success' | 'needs_retry' | 'error';
+  message?: string;
+  needsReview?: boolean;
+  data?: Record<string, unknown>;
+}
+
+/**
+ * POST /packaged/scan — photo-based submission shortcut, ported from
+ * Oasis CNST's packaged-foods scanner. Send up to 5 resized/base64
+ * (data URL) photos of a nutrition label, plus the barcode if it's known.
+ * Chakudya OCRs and parses them server-side and — unlike the manual form —
+ * inserts the result directly as a "pending" packaged_foods row on
+ * success, so this bypasses filling in the fields entirely rather than
+ * just autofilling them. `needs_retry` means the label couldn't be read
+ * confidently and nothing was submitted; `needsReview` on a *success*
+ * means it went in but with lower OCR confidence, flagged for closer
+ * admin review.
+ */
+export async function scanPackagedFoodLabel(images: string[], barcode?: string): Promise<ScanLabelResult> {
+  const res = await fetch(`${BASE_URL}/packaged/scan`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      images: images.slice(0, 5),
+      barcode: barcode ? barcode.replace(/\D/g, '') || undefined : undefined
+    })
+  });
+  const json: { status: string; message?: string; needs_review?: boolean; data?: Record<string, unknown> } =
+    await res.json();
+  return {
+    status: (json.status as ScanLabelResult['status']) || 'error',
+    message: json.message,
+    needsReview: json.needs_review,
+    data: json.data
+  };
+}
+
 export interface RagAskResult {
   answer: string;
   intent: string;

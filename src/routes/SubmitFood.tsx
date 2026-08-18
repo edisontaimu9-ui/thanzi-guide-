@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useAuth } from '@/lib/auth-context';
@@ -6,9 +6,13 @@ import {
   submitPackagedFood,
   checkKcalConsistency,
   scaleToPer100,
+  scanPackagedFoodLabel,
   PackagedFoodSubmission
 } from '@/lib/chakudya';
+import { resizeAndEncodeImage } from '@/lib/imageEncode';
 import { listMySubmissions, recordMySubmission, MySubmissionEntry } from '@/lib/mySubmissions';
+
+const MAX_SCAN_PHOTOS = 5;
 
 const inputClasses =
   'mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50';
@@ -59,10 +63,89 @@ export function SubmitFood() {
   const [result, setResult] = useState<{ alreadyExists: boolean; message: string } | null>(null);
   const [history, setHistory] = useState<MySubmissionEntry[]>([]);
 
+  // ── Scan-a-label shortcut (secondary path — manual form remains the default) ──
+  const [scanPhotos, setScanPhotos] = useState<string[]>([]);
+  const [scanning, setScanning] = useState(false);
+  const [scanStatus, setScanStatus] = useState<{ message: string; tone: 'info' | 'success' | 'warn' | 'error' } | null>(
+    null
+  );
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!user) return;
     setHistory(listMySubmissions(user.$id));
   }, [user]);
+
+  async function handleAddScanPhotos(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (!files.length) return;
+
+    const remaining = MAX_SCAN_PHOTOS - scanPhotos.length;
+    if (remaining <= 0) {
+      setScanStatus({ message: `You can add up to ${MAX_SCAN_PHOTOS} photos.`, tone: 'warn' });
+      return;
+    }
+    const toAdd = files.slice(0, remaining);
+    if (files.length > toAdd.length) {
+      setScanStatus({ message: `Only added ${toAdd.length} — max ${MAX_SCAN_PHOTOS} photos per submission.`, tone: 'warn' });
+    }
+    try {
+      const encoded = await Promise.all(toAdd.map((f) => resizeAndEncodeImage(f)));
+      setScanPhotos((prev) => [...prev, ...encoded]);
+    } catch {
+      setScanStatus({ message: 'Could not read one of those photos. Try again.', tone: 'error' });
+    }
+  }
+
+  function removeScanPhoto(index: number) {
+    setScanPhotos((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  async function handleScanSubmit() {
+    if (!scanPhotos.length || !user) return;
+    setScanning(true);
+    setScanStatus({
+      message: `Reading ${scanPhotos.length} photo${scanPhotos.length > 1 ? 's' : ''} — this can take up to 15-20 seconds…`,
+      tone: 'info'
+    });
+    try {
+      const res = await scanPackagedFoodLabel(scanPhotos, fields.barcode);
+      if (res.status === 'success') {
+        setScanStatus({
+          message: res.needsReview
+            ? '✓ Submitted for review — scan confidence was low, an admin will double-check.'
+            : '✓ Submitted for review. Thanks for contributing to Chakudya!',
+          tone: 'success'
+        });
+        const data = res.data || {};
+        recordMySubmission(user.$id, {
+          barcode: String(data.barcode ?? fields.barcode ?? '').replace(/\D/g, ''),
+          productName: String(data.product_name ?? data.name ?? 'Scanned product'),
+          brand: data.brand ? String(data.brand) : undefined,
+          submittedAt: new Date().toISOString(),
+          alreadyExisted: false
+        });
+        setHistory(listMySubmissions(user.$id));
+        setScanPhotos([]);
+      } else if (res.status === 'needs_retry') {
+        setScanStatus({
+          message: res.message || "Couldn't read a label clearly. Try clearer photos or fill in the fields manually.",
+          tone: 'warn'
+        });
+      } else {
+        setScanStatus({ message: res.message || 'Scan failed. Try again or fill in the fields manually.', tone: 'error' });
+      }
+    } catch (err) {
+      setScanStatus({
+        message: `Scan failed: ${err instanceof Error ? err.message : String(err)} — try again or fill in manually.`,
+        tone: 'error'
+      });
+    } finally {
+      setScanning(false);
+    }
+  }
 
   function updateField<K extends keyof FieldState>(key: K, value: string) {
     setFields((prev) => ({ ...prev, [key]: value }));
@@ -182,6 +265,96 @@ export function SubmitFood() {
           {result.message}
         </div>
       )}
+
+      {/* Scan-a-label shortcut — optional, secondary path. Manual form below remains the default way in. */}
+      <div className="mt-6 rounded-lg border border-dashed border-blue-300 bg-blue-50/50 p-4 dark:border-blue-900/40 dark:bg-blue-950/20">
+        <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-300">
+          Optional — got the packet on hand?
+        </p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => cameraInputRef.current?.click()}
+            className="flex flex-1 min-w-[140px] items-center justify-center gap-2 rounded-md border border-blue-300 bg-blue-100/50 px-3 py-2 text-sm font-medium text-blue-700 dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-blue-300"
+          >
+            Add photo
+          </button>
+          <button
+            type="button"
+            onClick={() => galleryInputRef.current?.click()}
+            className="flex flex-1 min-w-[140px] items-center justify-center gap-2 rounded-md border border-blue-300 bg-blue-100/50 px-3 py-2 text-sm font-medium text-blue-700 dark:border-blue-900/40 dark:bg-blue-950/30 dark:text-blue-300"
+          >
+            Choose from gallery
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-blue-600/80 dark:text-blue-300/80">
+          Add up to {MAX_SCAN_PHOTOS} photos of the same product — e.g. one of the nutrition panel and one of the
+          barcode, if they're on different sides. Good lighting and a flat, in-focus label give the best results.
+        </p>
+
+        {scanPhotos.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {scanPhotos.map((photo, i) => (
+              <div key={i} className="relative h-14 w-14">
+                <img src={photo} alt="" className="h-14 w-14 rounded-md border border-blue-300/60 object-cover dark:border-blue-900/50" />
+                <button
+                  type="button"
+                  onClick={() => removeScanPhoto(i)}
+                  aria-label="Remove photo"
+                  className="absolute -right-1.5 -top-1.5 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-clay-500 text-[10px] font-bold leading-none text-white"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {scanPhotos.length > 0 && (
+          <button
+            type="button"
+            onClick={handleScanSubmit}
+            disabled={scanning}
+            className="mt-3 w-full rounded-md bg-blue-500 py-2 text-sm font-semibold text-white disabled:opacity-60"
+          >
+            {scanning ? 'Scanning…' : `Scan ${scanPhotos.length} photo${scanPhotos.length > 1 ? 's' : ''}`}
+          </button>
+        )}
+
+        {scanStatus && (
+          <p
+            role="status"
+            className={`mt-2 rounded-md px-3 py-2 text-xs ${
+              scanStatus.tone === 'success'
+                ? 'bg-green-50 text-green-800 dark:bg-green-950/30 dark:text-green-200'
+                : scanStatus.tone === 'warn'
+                  ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200'
+                  : scanStatus.tone === 'error'
+                    ? 'bg-clay-50 text-clay-700 dark:bg-clay-950/30 dark:text-clay-300'
+                    : 'bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-300'
+            }`}
+          >
+            {scanStatus.message}
+          </p>
+        )}
+
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleAddScanPhotos}
+        />
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={handleAddScanPhotos}
+        />
+      </div>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-5">
         <div>
