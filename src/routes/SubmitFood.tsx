@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useAuth } from '@/lib/auth-context';
@@ -8,6 +8,7 @@ import {
   scaleToPer100,
   PackagedFoodSubmission
 } from '@/lib/chakudya';
+import { listMySubmissions, recordMySubmission, MySubmissionEntry } from '@/lib/mySubmissions';
 
 const inputClasses =
   'mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50';
@@ -56,6 +57,12 @@ export function SubmitFood() {
   const [error, setError] = useState<string | null>(null);
   const [mismatchWarning, setMismatchWarning] = useState<string | null>(null);
   const [result, setResult] = useState<{ alreadyExists: boolean; message: string } | null>(null);
+  const [history, setHistory] = useState<MySubmissionEntry[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+    setHistory(listMySubmissions(user.$id));
+  }, [user]);
 
   function updateField<K extends keyof FieldState>(key: K, value: string) {
     setFields((prev) => ({ ...prev, [key]: value }));
@@ -118,6 +125,16 @@ export function SubmitFood() {
     try {
       const res = await submitPackagedFood(payload);
       setResult({ alreadyExists: res.alreadyExists, message: res.message });
+      if (user) {
+        recordMySubmission(user.$id, {
+          barcode,
+          productName,
+          brand: fields.brand.trim() || undefined,
+          submittedAt: new Date().toISOString(),
+          alreadyExisted: res.alreadyExists
+        });
+        setHistory(listMySubmissions(user.$id));
+      }
       if (!res.alreadyExists) {
         setFields(EMPTY_FIELDS);
         setBasis('100');
@@ -390,6 +407,46 @@ export function SubmitFood() {
           Submissions are reviewed before appearing in search — thanks for contributing to Chakudya.
         </p>
       </form>
+
+      {history.length > 0 && (
+        <section className="mt-12">
+          <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Your recent submissions</h2>
+          <p className="mt-1 text-xs text-brand-300 dark:text-brand-100">
+            Tracked on this device only — a receipt of what you've sent in, not a live review status.
+          </p>
+          <div className="mt-3 space-y-2">
+            {history.map((entry, i) => (
+              <div
+                key={`${entry.barcode}-${entry.submittedAt}-${i}`}
+                className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950"
+              >
+                <div>
+                  <p className="font-medium text-brand-700 dark:text-sand-100">{entry.productName}</p>
+                  <p className="text-xs text-brand-300 dark:text-brand-100">
+                    {entry.brand ? `${entry.brand} · ` : ''}Barcode {entry.barcode}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span
+                    className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      entry.alreadyExisted
+                        ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200'
+                        : 'bg-green-50 text-green-800 dark:bg-green-950/30 dark:text-green-200'
+                    }`}
+                  >
+                    {entry.alreadyExisted ? 'Already exists' : 'Submitted'}
+                  </span>
+                  <p className="mt-1 text-xs text-brand-300 dark:text-brand-100">
+                    {new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' }).format(
+                      new Date(entry.submittedAt)
+                    )}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
 import { useFavorites } from '@/hooks/useFavorites';
 import { getFood, ChakudyaFood } from '@/lib/chakudya';
+import { listMySubmissions, MySubmissionEntry } from '@/lib/mySubmissions';
 import { listAllCompletedProgress } from '@/lib/courses';
 import { AppointmentDoc, cancelAppointment, getProvider, getProviderByUserId, getSlot, listMyAppointments, ProviderDoc, SlotDoc } from '@/lib/providers';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -29,10 +30,16 @@ export function Dashboard() {
   const [appointmentsStatus, setAppointmentsStatus] = useState<'loading' | 'idle' | 'error'>('loading');
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [myProvider, setMyProvider] = useState<ProviderDoc | null>(null);
+  const [foodSubmissions, setFoodSubmissions] = useState<MySubmissionEntry[]>([]);
 
   useEffect(() => {
     if (!user) return;
     getProviderByUserId(user.$id).then(setMyProvider);
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    setFoodSubmissions(listMySubmissions(user.$id));
   }, [user]);
 
   useEffect(() => {
@@ -164,6 +171,7 @@ export function Dashboard() {
       <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <StatTile label="Favorite foods" value={loaded ? favorites.length : null} />
         <StatTile label="Lessons completed" value={completedCount} />
+        <StatTile label="Foods submitted" value={foodSubmissions.length} />
         {canSeeProviderTile && (
           <Link
             to="/provider"
@@ -287,6 +295,53 @@ export function Dashboard() {
                 <p className="mt-2 font-mono text-sm text-brand-500 dark:text-brand-100">{food.kcal} kcal</p>
               </Link>
             ))}
+          </div>
+        )}
+      </section>
+
+      {/* Food submissions */}
+      <section className="mt-10">
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Food submissions</h2>
+          <Link to="/foods/submit" className="text-sm font-medium text-brand-500 underline dark:text-brand-100">
+            Submit a food
+          </Link>
+        </div>
+
+        {foodSubmissions.length === 0 ? (
+          <div className="mt-3 rounded-lg border border-brand-100 p-6 text-brand-500 dark:text-brand-100 dark:border-ink-800">
+            <p>You haven't submitted any packaged foods yet.</p>
+            <Link to="/foods/submit" className="mt-2 inline-block text-sm font-medium text-brand-700 underline dark:text-sand-100">
+              Add one to Chakudya
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-3 space-y-2">
+            {foodSubmissions.slice(0, 5).map((entry, i) => (
+              <div
+                key={`${entry.barcode}-${entry.submittedAt}-${i}`}
+                className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950"
+              >
+                <div>
+                  <p className="font-medium text-brand-700 dark:text-sand-100">{entry.productName}</p>
+                  <p className="text-xs text-brand-300 dark:text-brand-100">Barcode {entry.barcode}</p>
+                </div>
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    entry.alreadyExisted
+                      ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200'
+                      : 'bg-green-50 text-green-800 dark:bg-green-950/30 dark:text-green-200'
+                  }`}
+                >
+                  {entry.alreadyExisted ? 'Already exists' : 'Submitted'}
+                </span>
+              </div>
+            ))}
+            {foodSubmissions.length > 5 && (
+              <Link to="/foods/submit" className="block text-center text-sm font-medium text-brand-500 underline dark:text-brand-100">
+                View all {foodSubmissions.length} on the submit page
+              </Link>
+            )}
           </div>
         )}
       </section>
