@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { searchFoods, ChakudyaFood } from '@/lib/chakudya';
 import { listArticles, ArticleDoc } from '@/lib/articles';
+import { listProviders, ProviderDoc } from '@/lib/providers';
 import { useAuth } from '@/lib/auth-context';
 
 // `highlight: true` topics show on the homepage by default; the rest are
@@ -44,9 +45,9 @@ export function Home() {
       <Hero />
       <TopicsPreview />
       <FeaturedArticles />
-      <QuoteBanner />
       <FoodsPreview />
       <ExploreSection />
+      <CarePreview />
       <ToolsPreview />
     </>
   );
@@ -271,60 +272,64 @@ function TopicsPreview() {
   );
 }
 
-// Two enduring lines from Hippocrates on food and medicine — a natural
-// fit for a nutrition-education app. Rotates like FoodSnapshot does, so the
-// homepage keeps a consistent "quietly alive" feel between sections.
-const quotes = [
-  {
-    text: 'Wherever the art of medicine is loved, there is also a love of humanity.',
-    author: 'Hippocrates'
-  },
-  {
-    text: 'Our food should be our medicine, and our medicine should be our food.',
-    author: 'Hippocrates'
-  }
-];
-
-function QuoteBanner() {
-  const [index, setIndex] = useState(0);
+function CarePreview() {
+  const [providers, setProviders] = useState<ProviderDoc[]>([]);
+  const [status, setStatus] = useState<'loading' | 'idle' | 'error'>('loading');
 
   useEffect(() => {
-    if (quotes.length < 2) return;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-    const timer = setInterval(() => {
-      setIndex((i) => (i + 1) % quotes.length);
-    }, 6000);
-    return () => clearInterval(timer);
+    listProviders()
+      .then((results) => {
+        setProviders(results.slice(0, 3));
+        setStatus('idle');
+      })
+      .catch(() => setStatus('error'));
   }, []);
 
-  const quote = quotes[index];
+  // Nothing to preview yet — don't show an empty/broken-looking section.
+  if (status === 'error' || (status === 'idle' && providers.length === 0)) return null;
 
   return (
-    <section className="border-y border-brand-100 bg-sand-100 dark:border-ink-800 dark:bg-ink-900">
-      <div className="mx-auto max-w-3xl px-6 py-16 text-center">
-        <p className="font-display text-2xl italic leading-snug text-brand-700 dark:text-sand-50 sm:text-3xl">
-          &ldquo;{quote.text}&rdquo;
-        </p>
-        <div className="mx-auto mt-6 h-0.5 w-10 bg-clay-400" aria-hidden="true" />
-        <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-clay-500 dark:text-clay-400">
-          {quote.author}
-        </p>
-        {quotes.length > 1 && (
-          <div className="mt-6 flex justify-center gap-1.5" role="tablist" aria-label="Quotes">
-            {quotes.map((q, i) => (
-              <button
-                key={q.text}
-                type="button"
-                role="tab"
-                aria-selected={i === index}
-                aria-label={`Quote ${i + 1}`}
-                onClick={() => setIndex(i)}
-                className={`h-1.5 w-4 rounded-full ${i === index ? 'bg-clay-400' : 'bg-brand-100 dark:bg-ink-800'}`}
+    <section className="mx-auto max-w-5xl px-6 py-16">
+      <div className="flex items-baseline justify-between">
+        <div>
+          <h2 className="font-display text-2xl text-brand-700 dark:text-sand-50">Talk to a professional</h2>
+          <p className="mt-2 max-w-xl text-brand-500 dark:text-brand-100">
+            When you need guidance beyond an article, book time with a real dietitian or doctor.
+          </p>
+        </div>
+        <Link to="/care" className="shrink-0 text-sm font-medium text-brand-500 underline dark:text-brand-100">
+          See all
+        </Link>
+      </div>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        {status === 'loading'
+          ? Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-28 animate-pulse rounded-lg border border-brand-100 bg-white dark:border-ink-800 dark:bg-ink-950"
               />
+            ))
+          : providers.map((provider) => (
+              <Link
+                key={provider.$id}
+                to={`/care/${provider.$id}`}
+                className="rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-lg text-white">
+                    {provider.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-medium text-brand-700 dark:text-sand-50">{provider.name}</p>
+                    <p className="text-xs text-brand-300 dark:text-brand-100">{provider.title}</p>
+                  </div>
+                </div>
+                {provider.specialty && (
+                  <p className="mt-3 text-sm text-brand-500 dark:text-brand-100">{provider.specialty}</p>
+                )}
+              </Link>
             ))}
-          </div>
-        )}
       </div>
     </section>
   );
