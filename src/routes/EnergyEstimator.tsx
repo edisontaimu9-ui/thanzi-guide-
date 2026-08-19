@@ -4,7 +4,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import {
   generate,
   getRateRange,
-  NutritionPlan,
+  AnyNutritionPlan,
   Sex,
   ActivityLevel,
   Goal,
@@ -44,10 +44,12 @@ export function EnergyEstimator() {
   const [trainsForSport, setTrainsForSport] = useState(false);
   const [sportType, setSportType] = useState<SportType>('recreational');
   const [sessionMin, setSessionMin] = useState('60');
-  const [plan, setPlan] = useState<NutritionPlan | null>(null);
+  const [plan, setPlan] = useState<AnyNutritionPlan | null>(null);
   const [error, setError] = useState('');
 
   const rateRange = getRateRange(goal, sex);
+  const ageNum = Number(age);
+  const isChild = age !== '' && !Number.isNaN(ageNum) && ageNum >= 0 && ageNum < 18;
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -55,13 +57,13 @@ export function EnergyEstimator() {
     const heightCm = Number(height);
     const ageYears = Number(age);
 
-    if (!weightKg || !heightCm || !ageYears || weightKg <= 0 || heightCm <= 0 || ageYears <= 0) {
+    if (!weightKg || !heightCm || age === '' || weightKg <= 0 || heightCm <= 0 || ageYears < 0) {
       setError('Enter a valid weight, height, and age.');
       setPlan(null);
       return;
     }
-    if (ageYears < 18 || ageYears > 100) {
-      setError('This calculator covers ages 18 and up.');
+    if (ageYears > 100) {
+      setError('Enter an age between 0 and 100.');
       setPlan(null);
       return;
     }
@@ -116,19 +118,23 @@ export function EnergyEstimator() {
 
         <div>
           <label htmlFor="age" className="block text-sm font-medium text-brand-700 dark:text-sand-100">
-            Age (years, 18+)
+            Age (years)
           </label>
           <input
             id="age"
             type="number"
-            inputMode="numeric"
-            min="18"
+            inputMode="decimal"
+            min="0"
             max="100"
+            step="0.1"
             value={age}
             onChange={(e) => setAge(e.target.value)}
             className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
             required
           />
+          <p className="mt-1 text-xs text-brand-300 dark:text-brand-100">
+            For a baby under 3, enter age as a decimal — e.g. 0.5 for 6 months.
+          </p>
         </div>
 
         <div>
@@ -183,28 +189,30 @@ export function EnergyEstimator() {
           </select>
         </div>
 
-        <div>
-          <label htmlFor="goal" className="block text-sm font-medium text-brand-700 dark:text-sand-100">
-            Goal
-          </label>
-          <select
-            id="goal"
-            value={goal}
-            onChange={(e) => {
-              setGoal(e.target.value as Goal);
-              setRate(undefined);
-            }}
-            className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950"
-          >
-            {GOAL_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {!isChild && (
+          <div>
+            <label htmlFor="goal" className="block text-sm font-medium text-brand-700 dark:text-sand-100">
+              Goal
+            </label>
+            <select
+              id="goal"
+              value={goal}
+              onChange={(e) => {
+                setGoal(e.target.value as Goal);
+                setRate(undefined);
+              }}
+              className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950"
+            >
+              {GOAL_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
-        {rateRange && (
+        {!isChild && rateRange && (
           <div>
             <span className="block text-sm font-medium text-brand-700 dark:text-sand-100">Pace</span>
             <div className="mt-1 flex gap-2">
@@ -226,36 +234,45 @@ export function EnergyEstimator() {
           </div>
         )}
 
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-brand-700 dark:text-sand-100">
-            <input type="checkbox" checked={trainsForSport} onChange={(e) => setTrainsForSport(e.target.checked)} />
-            I train for a sport or regularly exercise
-          </label>
-          {trainsForSport && (
-            <div className="mt-2 space-y-2">
-              <select
-                value={sportType}
-                onChange={(e) => setSportType(e.target.value as SportType)}
-                className="w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950"
-              >
-                {SPORT_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="number"
-                inputMode="numeric"
-                min="1"
-                value={sessionMin}
-                onChange={(e) => setSessionMin(e.target.value)}
-                placeholder="Typical session length (minutes)"
-                className="w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-sm text-brand-900 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
-              />
-            </div>
-          )}
-        </div>
+        {!isChild && (
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-brand-700 dark:text-sand-100">
+              <input type="checkbox" checked={trainsForSport} onChange={(e) => setTrainsForSport(e.target.checked)} />
+              I train for a sport or regularly exercise
+            </label>
+            {trainsForSport && (
+              <div className="mt-2 space-y-2">
+                <select
+                  value={sportType}
+                  onChange={(e) => setSportType(e.target.value as SportType)}
+                  className="w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950"
+                >
+                  {SPORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  value={sessionMin}
+                  onChange={(e) => setSessionMin(e.target.value)}
+                  placeholder="Typical session length (minutes)"
+                  className="w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-sm text-brand-900 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
+                />
+              </div>
+            )}
+          </div>
+        )}
+
+        {isChild && (
+          <p className="rounded-md bg-sand-100 px-3 py-2 text-xs text-brand-500 dark:bg-ink-900 dark:text-brand-100">
+            For a child, this gives energy, protein, and macronutrient reference ranges for healthy growth — goal
+            and sport-specific targets apply from age 18.
+          </p>
+        )}
 
         {error && (
           <p role="alert" className="text-sm text-clay-500 dark:text-clay-400">
@@ -268,7 +285,7 @@ export function EnergyEstimator() {
         </button>
       </form>
 
-      {plan && (
+      {plan && plan.kind === 'adult' && (
         <div className="mt-8 space-y-6">
           {plan.energy.goal_override && (
             <p className="rounded-md bg-clay-400/10 px-3 py-2 text-sm text-clay-500 dark:text-clay-400">
@@ -370,6 +387,45 @@ export function EnergyEstimator() {
         </div>
       )}
 
+      {plan && plan.kind === 'child' && (
+        <div className="mt-8 space-y-6">
+          <section>
+            <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Energy ({plan.age_band})</h2>
+            <div className="mt-2 grid grid-cols-1 gap-3">
+              <Stat label="Estimated daily energy" value={plan.eer_kcal} sub="kcal/day" highlight />
+            </div>
+            <p className="mt-2 text-xs text-brand-500 dark:text-brand-100">{plan.eer_method}</p>
+          </section>
+
+          <section>
+            <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Protein</h2>
+            <p className="mt-2 text-sm text-brand-700 dark:text-sand-50">
+              {plan.protein.g_total}g/day ({plan.protein.g_per_kg} g/kg — {plan.protein.label} RDA)
+            </p>
+          </section>
+
+          <section>
+            <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Macronutrient range ({plan.macro_range.label})</h2>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              <MacroRangeStat label="Carbs" range={plan.macro_range.carbs_pct} />
+              <MacroRangeStat label="Fat" range={plan.macro_range.fat_pct} />
+              <MacroRangeStat label="Protein" range={plan.macro_range.protein_pct} />
+            </div>
+          </section>
+
+          <section>
+            <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Fluid</h2>
+            <p className="mt-2 text-sm text-brand-700 dark:text-sand-50">{plan.fluid_ml_per_day} mL/day (Holliday-Segar method)</p>
+          </section>
+
+          <ul className="list-disc space-y-1 pl-5 text-xs text-brand-500 dark:text-brand-100">
+            {plan.notes.map((n) => (
+              <li key={n}>{n}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <p className="mt-8 text-xs text-brand-500 dark:text-brand-100">
         This is an estimate, not a diagnosis. It's built on published equations and dietary reference intakes
         (Krause & Mahan, DRI/NASEM, ACSM) but won't be exact for everyone. Pregnancy, illness, and other
@@ -400,6 +456,17 @@ function MacroStat({ label, g, pct }: { label: string; g: number; pct: number })
       <p className="text-xs text-brand-500 dark:text-brand-100">{label}</p>
       <p className="font-display text-lg text-brand-700 dark:text-sand-100">{g}g</p>
       <p className="text-[11px] text-brand-300 dark:text-brand-100">{pct}%</p>
+    </div>
+  );
+}
+
+function MacroRangeStat({ label, range }: { label: string; range: [number, number] }) {
+  return (
+    <div className="rounded-lg border border-brand-100 bg-white p-3 text-center dark:border-ink-800 dark:bg-ink-950">
+      <p className="text-xs text-brand-500 dark:text-brand-100">{label}</p>
+      <p className="font-display text-lg text-brand-700 dark:text-sand-100">
+        {range[0]}–{range[1]}%
+      </p>
     </div>
   );
 }

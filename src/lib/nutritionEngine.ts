@@ -756,7 +756,130 @@ export function foodRecommendations(goal: Goal): FoodRecommendations {
   };
 }
 
-// ── SECTION 13 — Master generate() function ────────────────────────────────
+// ── SECTION 13 — Pediatric engine (healthy children, 0-<18 years) ──────────
+//
+// Separate from the adult engine above: different equations (DRI/IOM 2006),
+// different protein/macro reference ranges (IOM 2005 RDA, AMDR), and no
+// adult-only concepts (BMI category, IBW, weight-loss/gain goals, sports
+// dosing). Scoped to healthy children with typical growth — not sick,
+// hospitalized, or preterm infants, who need clinical assessment (stress
+// factors, enteral feed protocols, etc. — out of scope here by design).
+
+// Sex-specific PA coefficients for the DRI/IOM (2006) 3-18 year EER
+// equation. Same activity-level vocabulary as the adult engine.
+const CHILD_PA_COEFFICIENTS: Record<Sex, Record<ActivityLevel, number>> = {
+  M: { sedentary: 1.0, low_active: 1.13, active: 1.26, very_active: 1.42 },
+  F: { sedentary: 1.0, low_active: 1.16, active: 1.31, very_active: 1.56 }
+};
+
+interface ChildEERResult {
+  kcal: number;
+  method: string;
+  age_band: string;
+}
+
+/**
+ * DRI/IOM (2006) EER for children. Under 3 years uses the infant equation
+ * (weight + age-band constant only, no sex/activity/height term). From 3
+ * years, uses the sex-specific weight+height+activity equation, same shape
+ * as the adult unified equation but with pediatric coefficients.
+ */
+function childEER(ageYears: number, sex: Sex, wtKg: number, htM: number, activity: ActivityLevel): ChildEERResult {
+  if (ageYears < 3) {
+    const months = ageYears * 12;
+    let addConst: number;
+    let band: string;
+    if (months <= 3) {
+      addConst = 175;
+      band = '0–3 months';
+    } else if (months <= 6) {
+      addConst = 56;
+      band = '4–6 months';
+    } else if (months <= 12) {
+      addConst = 22;
+      band = '7–12 months';
+    } else {
+      addConst = 20;
+      band = '13–35 months';
+    }
+    return { kcal: round(89 * wtKg - 100 + addConst), method: 'DRI/IOM (2006) infant EER equation', age_band: band };
+  }
+
+  const pa = CHILD_PA_COEFFICIENTS[sex][activity] || CHILD_PA_COEFFICIENTS[sex].sedentary;
+  const kcalAdd = ageYears < 9 ? 20 : 25;
+  const kcal =
+    sex === 'F'
+      ? 135.3 - 30.8 * ageYears + pa * (10 * wtKg + 934 * htM) + kcalAdd
+      : 88.5 - 61.9 * ageYears + pa * (26.7 * wtKg + 903 * htM) + kcalAdd;
+
+  return { kcal: round(kcal), method: 'DRI/IOM (2006) child/adolescent EER equation', age_band: ageYears < 9 ? '3–8 years' : '9–18 years' };
+}
+
+/** IOM (2005) protein RDA for healthy growth, by age band. */
+function childProteinRDA(ageYears: number): { gPerKg: number; label: string } {
+  const months = ageYears * 12;
+  if (months < 6) return { gPerKg: 1.52, label: '1–6 months (AI)' };
+  if (months < 12) return { gPerKg: 1.5, label: '6–12 months' };
+  if (ageYears < 4) return { gPerKg: 1.1, label: '1–3 years' };
+  if (ageYears < 14) return { gPerKg: 0.95, label: '4–13 years' };
+  return { gPerKg: 0.85, label: '14–18 years' };
+}
+
+/** Acceptable Macronutrient Distribution Range (AMDR), by age band. */
+function childMacroRange(ageYears: number): { carbs: [number, number]; fat: [number, number]; protein: [number, number]; label: string } {
+  const months = ageYears * 12;
+  if (months < 12) return { carbs: [35, 65], fat: [30, 55], protein: [7, 16], label: 'Full-term infant' };
+  if (ageYears < 3) return { carbs: [45, 65], fat: [30, 40], protein: [5, 20], label: '1–3 years' };
+  return { carbs: [45, 65], fat: [25, 35], protein: [10, 30], label: '4–18 years' };
+}
+
+/** Holliday-Segar maintenance fluid method. Returns the low end of the published range for the 0-10kg band. */
+function childFluidML(wtKg: number): number {
+  if (wtKg <= 10) return round(wtKg * 100);
+  if (wtKg <= 20) return round(1000 + 50 * (wtKg - 10));
+  return round(1500 + 20 * (wtKg - 20));
+}
+
+export interface ChildNutritionPlan {
+  kind: 'child';
+  _meta: { engine: string; reference: string; generated_at: string };
+  age_band: string;
+  eer_kcal: number;
+  eer_method: string;
+  protein: { g_per_kg: number; g_total: number; label: string };
+  macro_range: { carbs_pct: [number, number]; fat_pct: [number, number]; protein_pct: [number, number]; label: string };
+  fluid_ml_per_day: number;
+  notes: string[];
+}
+
+function generateChildPlan(age: number, sex: Sex, weight_kg: number, height_m: number, activity_level: ActivityLevel): ChildNutritionPlan {
+  const eer = childEER(age, sex, weight_kg, height_m, activity_level);
+  const protein = childProteinRDA(age);
+  const macro = childMacroRange(age);
+  const fluid = childFluidML(weight_kg);
+
+  return {
+    kind: 'child',
+    _meta: {
+      engine: 'ThanziNutrition (pediatric) v1.0 (ported)',
+      reference: 'DRI/IOM 2006 EER | IOM 2005 protein RDA | AMDR macronutrient ranges',
+      generated_at: new Date().toISOString()
+    },
+    age_band: eer.age_band,
+    eer_kcal: eer.kcal,
+    eer_method: eer.method,
+    protein: { g_per_kg: protein.gPerKg, g_total: round(weight_kg * protein.gPerKg), label: protein.label },
+    macro_range: { carbs_pct: macro.carbs, fat_pct: macro.fat, protein_pct: macro.protein, label: macro.label },
+    fluid_ml_per_day: fluid,
+    notes: [
+      'This is for a healthy child with typical growth — it does not apply to a sick, hospitalized, or preterm child, who needs clinical assessment.',
+      'Healthy growth is best judged from a growth chart (weight/height-for-age percentiles), not from BMI categories built for adults.',
+      weight_kg <= 10 ? 'Fluid shown is the lower end of the published 100–150 mL/kg/day range for this weight.' : null
+    ].filter((n): n is string => Boolean(n))
+  };
+}
+
+// ── SECTION 14 — Master generate() function ─────────────────────────────────
 
 export interface NutritionProfile {
   age: number;
@@ -773,6 +896,7 @@ export interface NutritionProfile {
 }
 
 export interface NutritionPlan {
+  kind: 'adult';
   _meta: { engine: string; reference: string; generated_at: string };
   assessment: { bmi: number; bmi_category: string; ibw_kg: number; bmr_kcal: number; eer_kcal: number };
   energy: WeightPlan;
@@ -788,16 +912,24 @@ export interface NutritionPlan {
   };
 }
 
+export type AnyNutritionPlan = NutritionPlan | ChildNutritionPlan;
+
 /**
  * Main entry point — generates a complete personalized nutrition plan.
- * Targets adults 18 and up. Returns { error } on invalid input instead of
- * throwing, so callers can render a friendly message.
+ * Ages 0-<18 route to the pediatric engine (healthy-growth reference
+ * values only); 18-100 use the full adult engine. Returns { error } on
+ * invalid input instead of throwing, so callers can render a friendly
+ * message.
  */
-export function generate(profile: NutritionProfile): NutritionPlan | { error: string } {
+export function generate(profile: NutritionProfile): AnyNutritionPlan | { error: string } {
   const { age, sex, weight_kg, height_m, activity_level, goal, rate_kg_per_week, sport_type, session_min, bone_inputs, oral_inputs } = profile;
 
-  if (age < 18 || age > 100) return { error: 'This calculator covers ages 18 and up — for children and teens under 18, nutrient needs differ and require a pediatric assessment.' };
-  if (!PA_COEFFICIENTS[sex][activity_level]) return { error: 'Invalid activity level.' };
+  if (age < 0 || age > 100) return { error: 'Enter an age between 0 and 100.' };
+  if (!CHILD_PA_COEFFICIENTS[sex][activity_level]) return { error: 'Invalid activity level.' };
+
+  if (age < 18) {
+    return generateChildPlan(age, sex, weight_kg, height_m, activity_level);
+  }
 
   const bmiValue = bmi(weight_kg, height_m);
   const ibwKg = ibw(height_m, sex);
@@ -818,6 +950,7 @@ export function generate(profile: NutritionProfile): NutritionPlan | { error: st
   const oral = oral_inputs ? oralHealthEngine(oral_inputs) : null;
 
   return {
+    kind: 'adult',
     _meta: {
       engine: 'ThanziNutrition v1.0 (ported)',
       reference: 'Krause & Mahan 14th Ed | DRI/NASEM | ACSM/AND 2016 | WHO',
@@ -831,3 +964,4 @@ export function generate(profile: NutritionProfile): NutritionPlan | { error: st
     modules: { sports, bone_health: bone, aging, young_adult: youth, oral_health: oral }
   };
 }
+
