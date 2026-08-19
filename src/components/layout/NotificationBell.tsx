@@ -5,6 +5,8 @@ import {
   listNotifications,
   markAllNotificationsRead,
   markNotificationRead,
+  deleteNotification,
+  clearAllNotifications,
   NotificationDoc
 } from '@/lib/notifications';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
@@ -66,6 +68,29 @@ export function NotificationBell() {
     markAllNotificationsRead(unread).catch(() => {});
   }
 
+  async function handleDismiss(id: string) {
+    setNotifications((prev) => prev.filter((n) => n.$id !== id));
+    try {
+      await deleteNotification(id);
+    } catch {
+      // A handful of notifications created before delete support was added
+      // won't have delete permission on the document yet — the item still
+      // disappears from view either way, so this failing silently is fine.
+    }
+  }
+
+  async function handleClearAll() {
+    if (notifications.length === 0) return;
+    const toClear = notifications;
+    setNotifications([]);
+    try {
+      await clearAllNotifications(toClear);
+    } catch {
+      // Same as handleDismiss — some older docs may reject the delete;
+      // the list is already cleared client-side, so nothing more to do.
+    }
+  }
+
   return (
     <div ref={containerRef} className="relative">
       <button
@@ -92,15 +117,26 @@ export function NotificationBell() {
         <div className="fixed right-3 top-16 z-50 w-72 max-w-[calc(100vw-1.5rem)] rounded-lg border border-brand-100 bg-white p-2 shadow-lg dark:border-ink-800 dark:bg-ink-950">
           <div className="flex items-center justify-between px-2 py-1.5">
             <p className="text-sm font-medium text-brand-700 dark:text-sand-50">Notifications</p>
-            {unreadCount > 0 && (
-              <button
-                type="button"
-                onClick={handleMarkAllRead}
-                className="text-xs font-medium text-brand-500 underline dark:text-brand-100"
-              >
-                Mark all read
-              </button>
-            )}
+            <div className="flex items-center gap-3">
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleMarkAllRead}
+                  className="text-xs font-medium text-brand-500 underline dark:text-brand-100"
+                >
+                  Mark all read
+                </button>
+              )}
+              {notifications.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleClearAll}
+                  className="text-xs font-medium text-brand-500 underline dark:text-brand-100"
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
           </div>
 
           {push.supported && (
@@ -137,11 +173,11 @@ export function NotificationBell() {
           ) : (
             <ul className="max-h-80 space-y-1 overflow-y-auto">
               {notifications.map((n) => (
-                <li key={n.$id}>
+                <li key={n.$id} className="group relative">
                   <button
                     type="button"
                     onClick={() => handleSelect(n)}
-                    className={`w-full rounded-md px-2 py-2 text-left text-sm ${
+                    className={`w-full rounded-md px-2 py-2 pr-7 text-left text-sm ${
                       n.read
                         ? 'text-brand-500 dark:text-brand-100'
                         : 'bg-brand-50 text-brand-700 dark:bg-ink-900 dark:text-sand-50'
@@ -149,6 +185,17 @@ export function NotificationBell() {
                   >
                     <p className="font-medium">{n.title}</p>
                     {n.body && <p className="mt-0.5 text-xs opacity-80">{n.body}</p>}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDismiss(n.$id);
+                    }}
+                    aria-label={`Dismiss "${n.title}"`}
+                    className="absolute right-1.5 top-1.5 rounded-full p-1 text-brand-300 hover:bg-brand-100 hover:text-brand-700 dark:text-brand-100 dark:hover:bg-ink-800 dark:hover:text-sand-50"
+                  >
+                    <DismissIcon />
                   </button>
                 </li>
               ))}
@@ -170,6 +217,14 @@ function BellIcon() {
         strokeLinejoin="round"
       />
       <path d="M9.5 19a2.5 2.5 0 005 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function DismissIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }

@@ -32,7 +32,7 @@ export async function createNotification(
     DB.collections.notifications,
     ID.unique(),
     { userId, title, body, link, read: false },
-    [Permission.read(Role.user(userId)), Permission.update(Role.user(userId))]
+    [Permission.read(Role.user(userId)), Permission.update(Role.user(userId)), Permission.delete(Role.user(userId))]
   );
 }
 
@@ -44,4 +44,12 @@ export async function markAllNotificationsRead(notifications: NotificationDoc[])
   await Promise.all(
     notifications.filter((n) => !n.read).map((n) => markNotificationRead(n.$id))
   );
+}
+
+export async function deleteNotification(id: string): Promise<void> {
+  await databases.deleteDocument(DB.databaseId, DB.collections.notifications, id);
+}
+
+export async function clearAllNotifications(notifications: NotificationDoc[]): Promise<void> {
+  await Promise.all(notifications.map((n) => deleteNotification(n.$id)));
 }
