@@ -1077,6 +1077,24 @@
           "type": "string",
           "size": 500,
           "required": false
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "size": 20,
+          "required": false,
+          "default": "booked"
+        },
+        {
+          "key": "statusUpdatedAt",
+          "type": "datetime",
+          "required": false
+        },
+        {
+          "key": "cancelledBy",
+          "type": "string",
+          "size": 36,
+          "required": false
         }
       ],
       "indexes": [
@@ -1085,6 +1103,13 @@
           "type": "key",
           "attributes": [
             "userId"
+          ]
+        },
+        {
+          "key": "status_idx",
+          "type": "key",
+          "attributes": [
+            "status"
           ]
         },
         {

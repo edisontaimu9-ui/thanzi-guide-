@@ -23,12 +23,27 @@ export interface SlotDoc extends Models.Document {
   notes?: string;
 }
 
+// 'booked' is the default for both new documents (via the attribute's
+// Appwrite-side default) and pre-migration documents (backfilled by
+// scripts/migrate-backfill-appointment-status.mjs). Older documents fetched
+// before that migration runs may still come back with status undefined —
+// callers should treat a missing status the same as 'booked', not as an
+// error state.
+export type AppointmentStatus = 'booked' | 'confirmed' | 'rejected' | 'rescheduled' | 'cancelled';
+
 export interface AppointmentDoc extends Models.Document {
   userId: string;
   providerId: string;
   slotId: string;
   patientName: string;
   reason?: string;
+  status?: AppointmentStatus;
+  statusUpdatedAt?: string;
+  // userId of whoever last changed status — compare against this
+  // appointment's userId or the provider's userId to determine whether the
+  // patient or the provider made the change, rather than trusting a
+  // caller-supplied role label.
+  cancelledBy?: string;
 }
 
 export async function listProviders(): Promise<ProviderDoc[]> {
