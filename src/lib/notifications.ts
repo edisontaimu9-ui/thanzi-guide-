@@ -7,6 +7,13 @@ export interface NotificationDoc extends Models.Document {
   body?: string;
   link?: string;
   read: boolean;
+  // Set only by the functions/appointment-notifications server-side
+  // function (e.g. "<appointmentId>:confirmed:patient"), never by client
+  // code. Backed by a unique index — see
+  // scripts/apply-notification-dedupe-schema.sh — so a retried event can't
+  // create a duplicate notification. Client-created notifications (the
+  // ones in this file) leave it unset.
+  dedupeKey?: string;
 }
 
 export async function listNotifications(userId: string): Promise<NotificationDoc[]> {

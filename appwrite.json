@@ -1,2268 +1,2303 @@
 {
-  "projectId": "6a7967cf000f28e73c22",
-  "projectName": "Thanzi Guide",
-  "databases": [
-    {
-      "$id": "thanzi_guide",
-      "name": "Thanzi Guide",
-      "enabled": true
-    }
-  ],
-  "collections": [
-    {
-      "$id": "profiles",
-      "$permissions": [
-        "read(\"users\")",
-        "create(\"users\")",
-        "create(\"label:ADMIN\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Profiles",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
+    "projectId": "6a7967cf000f28e73c22",
+    "projectName": "Thanzi Guide",
+    "databases": [
         {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "name",
-          "type": "string",
-          "size": 128,
-          "required": true
-        },
-        {
-          "key": "role",
-          "type": "string",
-          "size": 32,
-          "required": false,
-          "default": "USER"
-        },
-        {
-          "key": "avatarUrl",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "bio",
-          "type": "string",
-          "size": 1000,
-          "required": false
-        },
-        {
-          "key": "preferences",
-          "type": "string",
-          "size": 5000,
-          "required": false
-        },
-        {
-          "key": "lastActiveAt",
-          "type": "datetime",
-          "required": false
+            "$id": "thanzi_guide",
+            "name": "Thanzi Guide",
+            "enabled": true
         }
-      ],
-      "indexes": [
+    ],
+    "collections": [
         {
-          "key": "userId_unique",
-          "type": "unique",
-          "attributes": [
-            "userId"
-          ]
+            "$id": "profiles",
+            "$permissions": [
+                "read(\"users\")",
+                "create(\"users\")",
+                "create(\"label:ADMIN\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Profiles",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "name",
+                    "type": "string",
+                    "size": 128,
+                    "required": true
+                },
+                {
+                    "key": "role",
+                    "type": "string",
+                    "size": 32,
+                    "required": false,
+                    "default": "USER"
+                },
+                {
+                    "key": "avatarUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "bio",
+                    "type": "string",
+                    "size": 1000,
+                    "required": false
+                },
+                {
+                    "key": "preferences",
+                    "type": "string",
+                    "size": 5000,
+                    "required": false
+                },
+                {
+                    "key": "lastActiveAt",
+                    "type": "datetime",
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "userId_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "lastActiveAt_idx",
+                    "type": "key",
+                    "attributes": [
+                        "lastActiveAt"
+                    ]
+                }
+            ]
         },
         {
-          "key": "lastActiveAt_idx",
-          "type": "key",
-          "attributes": [
-            "lastActiveAt"
-          ]
+            "$id": "categories",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Categories",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "name",
+                    "type": "string",
+                    "size": 128,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 128,
+                    "required": true
+                },
+                {
+                    "key": "type",
+                    "type": "string",
+                    "size": 32,
+                    "required": true
+                },
+                {
+                    "key": "description",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "type_idx",
+                    "type": "key",
+                    "attributes": [
+                        "type"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "foods",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Foods",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "name",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "localNames",
+                    "type": "string",
+                    "size": 100,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "description",
+                    "type": "string",
+                    "size": 2000,
+                    "required": false
+                },
+                {
+                    "key": "categoryId",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
+                },
+                {
+                    "key": "servingSize",
+                    "type": "string",
+                    "size": 100,
+                    "required": false
+                },
+                {
+                    "key": "calories",
+                    "type": "double",
+                    "required": false
+                },
+                {
+                    "key": "protein",
+                    "type": "double",
+                    "required": false
+                },
+                {
+                    "key": "carbs",
+                    "type": "double",
+                    "required": false
+                },
+                {
+                    "key": "fat",
+                    "type": "double",
+                    "required": false
+                },
+                {
+                    "key": "fiber",
+                    "type": "double",
+                    "required": false
+                },
+                {
+                    "key": "micronutrients",
+                    "type": "string",
+                    "size": 5000,
+                    "required": false
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "preparationMethods",
+                    "type": "string",
+                    "size": 300,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "notes",
+                    "type": "string",
+                    "size": 2000,
+                    "required": false
+                },
+                {
+                    "key": "sources",
+                    "type": "string",
+                    "size": 500,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 16,
+                    "required": false,
+                    "default": "draft"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "name_fulltext",
+                    "type": "fulltext",
+                    "attributes": [
+                        "name"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                },
+                {
+                    "key": "category_idx",
+                    "type": "key",
+                    "attributes": [
+                        "categoryId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "articles",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Articles",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 300,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 300,
+                    "required": true
+                },
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 50000,
+                    "required": true
+                },
+                {
+                    "key": "categoryId",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
+                },
+                {
+                    "key": "tags",
+                    "type": "string",
+                    "size": 100,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "featuredImage",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "authorId",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 16,
+                    "required": false,
+                    "default": "draft"
+                },
+                {
+                    "key": "publishedAt",
+                    "type": "datetime",
+                    "required": false
+                },
+                {
+                    "key": "updatedAt",
+                    "type": "datetime",
+                    "required": false
+                },
+                {
+                    "key": "sources",
+                    "type": "string",
+                    "size": 500,
+                    "required": false,
+                    "array": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                },
+                {
+                    "key": "category_idx",
+                    "type": "key",
+                    "attributes": [
+                        "categoryId"
+                    ]
+                },
+                {
+                    "key": "title_fulltext",
+                    "type": "fulltext",
+                    "attributes": [
+                        "title"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "courses",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:nutritionExpert\")",
+                "update(\"label:nutritionExpert\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Courses",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "description",
+                    "type": "string",
+                    "size": 2000,
+                    "required": false
+                },
+                {
+                    "key": "coverImage",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 16,
+                    "required": false,
+                    "default": "draft"
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "lessons",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Lessons",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "courseId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "content",
+                    "type": "string",
+                    "size": 50000,
+                    "required": true
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 16,
+                    "required": false,
+                    "default": "draft"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "course_idx",
+                    "type": "key",
+                    "attributes": [
+                        "courseId"
+                    ]
+                },
+                {
+                    "key": "course_slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "courseId",
+                        "slug"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "quizzes",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Quizzes",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "lessonId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "lesson_idx",
+                    "type": "key",
+                    "attributes": [
+                        "lessonId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "questions",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Questions",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "quizId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "text",
+                    "type": "string",
+                    "size": 1000,
+                    "required": true
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "quiz_idx",
+                    "type": "key",
+                    "attributes": [
+                        "quizId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "answers",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Answers",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "questionId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "text",
+                    "type": "string",
+                    "size": 500,
+                    "required": true
+                },
+                {
+                    "key": "isCorrect",
+                    "type": "boolean",
+                    "required": false,
+                    "default": false
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "question_idx",
+                    "type": "key",
+                    "attributes": [
+                        "questionId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "user_progress",
+            "$permissions": [
+                "read(\"users\")",
+                "create(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "User Progress",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "courseId",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
+                },
+                {
+                    "key": "lessonId",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
+                },
+                {
+                    "key": "completed",
+                    "type": "boolean",
+                    "required": false,
+                    "default": false
+                },
+                {
+                    "key": "completedAt",
+                    "type": "datetime",
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "user_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "user_lesson_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "userId",
+                        "lessonId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "bookmarks",
+            "$permissions": [
+                "read(\"users\")",
+                "create(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Bookmarks",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "itemType",
+                    "type": "string",
+                    "size": 16,
+                    "required": true
+                },
+                {
+                    "key": "itemId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "user_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "user_item_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "userId",
+                        "itemType",
+                        "itemId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "favorites",
+            "$permissions": [
+                "read(\"users\")",
+                "create(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Favorites",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "foodId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "user_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "user_food_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "userId",
+                        "foodId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "references",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "References",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 300,
+                    "required": true
+                },
+                {
+                    "key": "category",
+                    "type": "string",
+                    "size": 64,
+                    "required": false
+                },
+                {
+                    "key": "url",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "publisher",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                },
+                {
+                    "key": "year",
+                    "type": "integer",
+                    "required": false
+                },
+                {
+                    "key": "relatedType",
+                    "type": "string",
+                    "size": 16,
+                    "required": false
+                },
+                {
+                    "key": "relatedId",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
+                },
+                {
+                    "key": "fileId",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
+                },
+                {
+                    "key": "fileName",
+                    "type": "string",
+                    "size": 300,
+                    "required": false
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 16,
+                    "required": false,
+                    "default": "draft"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "related_idx",
+                    "type": "key",
+                    "attributes": [
+                        "relatedId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "providers",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Providers",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "name",
+                    "type": "string",
+                    "size": 128,
+                    "required": true
+                },
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 100,
+                    "required": true
+                },
+                {
+                    "key": "specialty",
+                    "type": "string",
+                    "size": 150,
+                    "required": false
+                },
+                {
+                    "key": "bio",
+                    "type": "string",
+                    "size": 1000,
+                    "required": false
+                },
+                {
+                    "key": "photoUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "location",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                },
+                {
+                    "key": "phone",
+                    "type": "string",
+                    "size": 30,
+                    "required": false
+                },
+                {
+                    "key": "whatsapp",
+                    "type": "string",
+                    "size": 30,
+                    "required": false
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 16,
+                    "required": false,
+                    "default": "active"
+                },
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
+                },
+                {
+                    "key": "claimEmail",
+                    "type": "string",
+                    "size": 320,
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                },
+                {
+                    "key": "userId_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "claimEmail_idx",
+                    "type": "key",
+                    "attributes": [
+                        "claimEmail"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "appointment_slots",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")",
+                "create(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Appointment Slots",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "providerId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "startTime",
+                    "type": "datetime",
+                    "required": true
+                },
+                {
+                    "key": "durationMinutes",
+                    "type": "integer",
+                    "required": false,
+                    "default": 30
+                },
+                {
+                    "key": "notes",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "provider_idx",
+                    "type": "key",
+                    "attributes": [
+                        "providerId"
+                    ]
+                },
+                {
+                    "key": "start_idx",
+                    "type": "key",
+                    "attributes": [
+                        "startTime"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "appointments",
+            "$permissions": [
+                "read(\"users\")",
+                "create(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Appointments",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "providerId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "slotId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "patientName",
+                    "type": "string",
+                    "size": 128,
+                    "required": true
+                },
+                {
+                    "key": "reason",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "booked"
+                },
+                {
+                    "key": "statusUpdatedAt",
+                    "type": "datetime",
+                    "required": false
+                },
+                {
+                    "key": "cancelledBy",
+                    "type": "string",
+                    "size": 36,
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "user_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                },
+                {
+                    "key": "slot_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slotId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "partner_inquiries",
+            "$permissions": [
+                "create(\"any\")",
+                "read(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Partner Inquiries",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "name",
+                    "type": "string",
+                    "size": 128,
+                    "required": true
+                },
+                {
+                    "key": "organization",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                },
+                {
+                    "key": "email",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "phone",
+                    "type": "string",
+                    "size": 30,
+                    "required": false
+                },
+                {
+                    "key": "message",
+                    "type": "string",
+                    "size": 2000,
+                    "required": true
+                }
+            ],
+            "indexes": []
+        },
+        {
+            "$id": "notifications",
+            "$permissions": [
+                "read(\"users\")",
+                "create(\"users\")",
+                "update(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Notifications",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "link",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                },
+                {
+                    "key": "read",
+                    "type": "boolean",
+                    "required": false,
+                    "default": false
+                },
+                {
+                    "key": "dedupeKey",
+                    "type": "string",
+                    "size": 100,
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "user_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "dedupeKey_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "dedupeKey"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "push_subscriptions",
+            "$permissions": [
+                "read(\"users\")",
+                "create(\"users\")",
+                "update(\"users\")",
+                "delete(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Push Subscriptions",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "endpoint",
+                    "type": "string",
+                    "size": 512,
+                    "required": true
+                },
+                {
+                    "key": "p256dh",
+                    "type": "string",
+                    "size": 255,
+                    "required": true
+                },
+                {
+                    "key": "authKey",
+                    "type": "string",
+                    "size": 255,
+                    "required": true
+                },
+                {
+                    "key": "userAgent",
+                    "type": "string",
+                    "size": 255,
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "user_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "endpoint_idx",
+                    "type": "unique",
+                    "attributes": [
+                        "endpoint"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "health_topics",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Health Topics",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 2000,
+                    "required": true
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "articleIds",
+                    "type": "string",
+                    "size": 36,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "published"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "health_topic_views",
+            "$permissions": [
+                "read(\"users\")",
+                "create(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Health Topic Views",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "topicSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "viewedAt",
+                    "type": "datetime",
+                    "required": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "user_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                },
+                {
+                    "key": "user_topic_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "userId",
+                        "topicSlug"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "health_subtopics",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Health Subtopics",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "parentSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "size": 500,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 2000,
+                    "required": false
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "articleSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "published"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "parent_idx",
+                    "type": "key",
+                    "attributes": [
+                        "parentSlug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "fitness_topics",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Fitness Topics",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 2000,
+                    "required": true
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "articleIds",
+                    "type": "string",
+                    "size": 36,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "published"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "fitness_subtopics",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Fitness Subtopics",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "parentSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "size": 500,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 2000,
+                    "required": false
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "articleSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "published"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "parent_idx",
+                    "type": "key",
+                    "attributes": [
+                        "parentSlug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "recipe_categories",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Recipe Categories",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "size": 500,
+                    "required": true
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "published"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "recipes",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Recipes",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "categorySlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "size": 500,
+                    "required": true
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "servings",
+                    "type": "integer",
+                    "required": false,
+                    "default": 4
+                },
+                {
+                    "key": "prepMinutes",
+                    "type": "integer",
+                    "required": false
+                },
+                {
+                    "key": "cookMinutes",
+                    "type": "integer",
+                    "required": false
+                },
+                {
+                    "key": "ingredients",
+                    "type": "string",
+                    "size": 300,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "steps",
+                    "type": "string",
+                    "size": 1000,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "articleSlug",
+                    "type": "string",
+                    "size": 200,
+                    "required": false
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "published"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "category_idx",
+                    "type": "key",
+                    "attributes": [
+                        "categorySlug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "kids_stages",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Kids Stages",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "summary",
+                    "type": "string",
+                    "size": 500,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 2000,
+                    "required": false
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "articleIds",
+                    "type": "string",
+                    "size": 36,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "order",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "published"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "order_idx",
+                    "type": "key",
+                    "attributes": [
+                        "order"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "life_stage_pages",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Life Stage Pages",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "title",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "slug",
+                    "type": "string",
+                    "size": 200,
+                    "required": true
+                },
+                {
+                    "key": "intro",
+                    "type": "string",
+                    "size": 1000,
+                    "required": true
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                },
+                {
+                    "key": "articleIds",
+                    "type": "string",
+                    "size": 36,
+                    "required": false,
+                    "array": true
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "published"
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "slug_unique",
+                    "type": "unique",
+                    "attributes": [
+                        "slug"
+                    ]
+                },
+                {
+                    "key": "status_idx",
+                    "type": "key",
+                    "attributes": [
+                        "status"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "messages",
+            "$permissions": [
+                "create(\"users\")",
+                "read(\"users\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Messages",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "appointmentId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "senderId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "senderRole",
+                    "type": "string",
+                    "size": 20,
+                    "required": true
+                },
+                {
+                    "key": "body",
+                    "type": "string",
+                    "size": 2000,
+                    "required": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "appointment_idx",
+                    "type": "key",
+                    "attributes": [
+                        "appointmentId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "user_references",
+            "$permissions": [
+                "create(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "User References",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "fileName",
+                    "type": "string",
+                    "size": 300,
+                    "required": true
+                },
+                {
+                    "key": "fileType",
+                    "type": "string",
+                    "size": 20,
+                    "required": true
+                },
+                {
+                    "key": "storageFileId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "status",
+                    "type": "string",
+                    "size": 20,
+                    "required": false,
+                    "default": "processing"
+                },
+                {
+                    "key": "chunkCount",
+                    "type": "integer",
+                    "required": false,
+                    "default": 0
+                },
+                {
+                    "key": "errorMessage",
+                    "type": "string",
+                    "size": 500,
+                    "required": false
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "userId_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                }
+            ]
+        },
+        {
+            "$id": "reference_chunks",
+            "$permissions": [
+                "create(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Reference Chunks",
+            "enabled": true,
+            "documentSecurity": true,
+            "attributes": [
+                {
+                    "key": "referenceId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "userId",
+                    "type": "string",
+                    "size": 36,
+                    "required": true
+                },
+                {
+                    "key": "chunkIndex",
+                    "type": "integer",
+                    "required": true
+                },
+                {
+                    "key": "pageNumber",
+                    "type": "integer",
+                    "required": false
+                },
+                {
+                    "key": "sectionLabel",
+                    "type": "string",
+                    "size": 100,
+                    "required": false
+                },
+                {
+                    "key": "text",
+                    "type": "string",
+                    "size": 3000,
+                    "required": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "referenceId_idx",
+                    "type": "key",
+                    "attributes": [
+                        "referenceId"
+                    ]
+                },
+                {
+                    "key": "userId_idx",
+                    "type": "key",
+                    "attributes": [
+                        "userId"
+                    ]
+                }
+            ]
         }
-      ]
-    },
-    {
-      "$id": "categories",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Categories",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
+    ],
+    "buckets": [
         {
-          "key": "name",
-          "type": "string",
-          "size": 128,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 128,
-          "required": true
-        },
-        {
-          "key": "type",
-          "type": "string",
-          "size": 32,
-          "required": true
-        },
-        {
-          "key": "description",
-          "type": "string",
-          "size": 500,
-          "required": false
+            "$id": "food_images",
+            "name": "Media",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "create(\"users\")",
+                "create(\"label:admin\")",
+                "update(\"label:admin\")",
+                "delete(\"label:admin\")"
+            ],
+            "fileSecurity": false,
+            "enabled": true,
+            "maximumFileSize": 100000000,
+            "allowedFileExtensions": [
+                "jpg",
+                "jpeg",
+                "png",
+                "webp",
+                "pdf",
+                "docx",
+                "txt",
+                "csv",
+                "mp4",
+                "mov",
+                "webm",
+                "m4v",
+                "avi",
+                "mkv"
+            ]
         }
-      ],
-      "indexes": [
+    ],
+    "functions": [
         {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
+            "$id": "6a8002d5001d7e482faa",
+            "name": "Claim Provider Profile",
+            "runtime": "node-18.0",
+            "execute": [
+                "users"
+            ],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "entrypoint": "src/main.js",
+            "commands": "npm install",
+            "scopes": [
+                "databases.read",
+                "databases.write",
+                "users.read"
+            ],
+            "path": "functions/claim-provider-profile"
         },
         {
-          "key": "type_idx",
-          "type": "key",
-          "attributes": [
-            "type"
-          ]
+            "$id": "appointment_notifications",
+            "name": "Appointment Notifications",
+            "runtime": "node-18.0",
+            "execute": [],
+            "events": [
+                "databases.thanzi_guide.collections.appointments.documents.*.create",
+                "databases.thanzi_guide.collections.appointments.documents.*.update",
+                "databases.thanzi_guide.collections.appointments.documents.*.delete"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "entrypoint": "src/main.js",
+            "commands": "npm install",
+            "scopes": [
+                "databases.read",
+                "databases.write"
+            ],
+            "path": "functions/appointment-notifications"
         }
-      ]
-    },
-    {
-      "$id": "foods",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Foods",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "name",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "localNames",
-          "type": "string",
-          "size": 100,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "description",
-          "type": "string",
-          "size": 2000,
-          "required": false
-        },
-        {
-          "key": "categoryId",
-          "type": "string",
-          "size": 36,
-          "required": false
-        },
-        {
-          "key": "servingSize",
-          "type": "string",
-          "size": 100,
-          "required": false
-        },
-        {
-          "key": "calories",
-          "type": "double",
-          "required": false
-        },
-        {
-          "key": "protein",
-          "type": "double",
-          "required": false
-        },
-        {
-          "key": "carbs",
-          "type": "double",
-          "required": false
-        },
-        {
-          "key": "fat",
-          "type": "double",
-          "required": false
-        },
-        {
-          "key": "fiber",
-          "type": "double",
-          "required": false
-        },
-        {
-          "key": "micronutrients",
-          "type": "string",
-          "size": 5000,
-          "required": false
-        },
-        {
-          "key": "imageUrl",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "preparationMethods",
-          "type": "string",
-          "size": 300,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "notes",
-          "type": "string",
-          "size": 2000,
-          "required": false
-        },
-        {
-          "key": "sources",
-          "type": "string",
-          "size": 500,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 16,
-          "required": false,
-          "default": "draft"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "name_fulltext",
-          "type": "fulltext",
-          "attributes": [
-            "name"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        },
-        {
-          "key": "category_idx",
-          "type": "key",
-          "attributes": [
-            "categoryId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "articles",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Articles",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 300,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 300,
-          "required": true
-        },
-        {
-          "key": "summary",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "body",
-          "type": "string",
-          "size": 50000,
-          "required": true
-        },
-        {
-          "key": "categoryId",
-          "type": "string",
-          "size": 36,
-          "required": false
-        },
-        {
-          "key": "tags",
-          "type": "string",
-          "size": 100,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "featuredImage",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "authorId",
-          "type": "string",
-          "size": 36,
-          "required": false
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 16,
-          "required": false,
-          "default": "draft"
-        },
-        {
-          "key": "publishedAt",
-          "type": "datetime",
-          "required": false
-        },
-        {
-          "key": "updatedAt",
-          "type": "datetime",
-          "required": false
-        },
-        {
-          "key": "sources",
-          "type": "string",
-          "size": 500,
-          "required": false,
-          "array": true
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        },
-        {
-          "key": "category_idx",
-          "type": "key",
-          "attributes": [
-            "categoryId"
-          ]
-        },
-        {
-          "key": "title_fulltext",
-          "type": "fulltext",
-          "attributes": [
-            "title"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "courses",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:nutritionExpert\")",
-        "update(\"label:nutritionExpert\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Courses",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "description",
-          "type": "string",
-          "size": 2000,
-          "required": false
-        },
-        {
-          "key": "coverImage",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 16,
-          "required": false,
-          "default": "draft"
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "lessons",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Lessons",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "courseId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "content",
-          "type": "string",
-          "size": 50000,
-          "required": true
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 16,
-          "required": false,
-          "default": "draft"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "course_idx",
-          "type": "key",
-          "attributes": [
-            "courseId"
-          ]
-        },
-        {
-          "key": "course_slug_unique",
-          "type": "unique",
-          "attributes": [
-            "courseId",
-            "slug"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "quizzes",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Quizzes",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "lessonId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "lesson_idx",
-          "type": "key",
-          "attributes": [
-            "lessonId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "questions",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Questions",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "quizId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "text",
-          "type": "string",
-          "size": 1000,
-          "required": true
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        }
-      ],
-      "indexes": [
-        {
-          "key": "quiz_idx",
-          "type": "key",
-          "attributes": [
-            "quizId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "answers",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Answers",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "questionId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "text",
-          "type": "string",
-          "size": 500,
-          "required": true
-        },
-        {
-          "key": "isCorrect",
-          "type": "boolean",
-          "required": false,
-          "default": false
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        }
-      ],
-      "indexes": [
-        {
-          "key": "question_idx",
-          "type": "key",
-          "attributes": [
-            "questionId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "user_progress",
-      "$permissions": [
-        "read(\"users\")",
-        "create(\"users\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "User Progress",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "courseId",
-          "type": "string",
-          "size": 36,
-          "required": false
-        },
-        {
-          "key": "lessonId",
-          "type": "string",
-          "size": 36,
-          "required": false
-        },
-        {
-          "key": "completed",
-          "type": "boolean",
-          "required": false,
-          "default": false
-        },
-        {
-          "key": "completedAt",
-          "type": "datetime",
-          "required": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "user_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        },
-        {
-          "key": "user_lesson_unique",
-          "type": "unique",
-          "attributes": [
-            "userId",
-            "lessonId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "bookmarks",
-      "$permissions": [
-        "read(\"users\")",
-        "create(\"users\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Bookmarks",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "itemType",
-          "type": "string",
-          "size": 16,
-          "required": true
-        },
-        {
-          "key": "itemId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        }
-      ],
-      "indexes": [
-        {
-          "key": "user_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        },
-        {
-          "key": "user_item_unique",
-          "type": "unique",
-          "attributes": [
-            "userId",
-            "itemType",
-            "itemId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "favorites",
-      "$permissions": [
-        "read(\"users\")",
-        "create(\"users\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Favorites",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "foodId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        }
-      ],
-      "indexes": [
-        {
-          "key": "user_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        },
-        {
-          "key": "user_food_unique",
-          "type": "unique",
-          "attributes": [
-            "userId",
-            "foodId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "references",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "References",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 300,
-          "required": true
-        },
-        {
-          "key": "category",
-          "type": "string",
-          "size": 64,
-          "required": false
-        },
-        {
-          "key": "url",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "publisher",
-          "type": "string",
-          "size": 200,
-          "required": false
-        },
-        {
-          "key": "year",
-          "type": "integer",
-          "required": false
-        },
-        {
-          "key": "relatedType",
-          "type": "string",
-          "size": 16,
-          "required": false
-        },
-        {
-          "key": "relatedId",
-          "type": "string",
-          "size": 36,
-          "required": false
-        },
-        {
-          "key": "fileId",
-          "type": "string",
-          "size": 36,
-          "required": false
-        },
-        {
-          "key": "fileName",
-          "type": "string",
-          "size": 300,
-          "required": false
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 16,
-          "required": false,
-          "default": "draft"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "related_idx",
-          "type": "key",
-          "attributes": [
-            "relatedId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "providers",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Providers",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "name",
-          "type": "string",
-          "size": 128,
-          "required": true
-        },
-        {
-          "key": "title",
-          "type": "string",
-          "size": 100,
-          "required": true
-        },
-        {
-          "key": "specialty",
-          "type": "string",
-          "size": 150,
-          "required": false
-        },
-        {
-          "key": "bio",
-          "type": "string",
-          "size": 1000,
-          "required": false
-        },
-        {
-          "key": "photoUrl",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "location",
-          "type": "string",
-          "size": 200,
-          "required": false
-        },
-        {
-          "key": "phone",
-          "type": "string",
-          "size": 30,
-          "required": false
-        },
-        {
-          "key": "whatsapp",
-          "type": "string",
-          "size": 30,
-          "required": false
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 16,
-          "required": false,
-          "default": "active"
-        },
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": false
-        },
-        {
-          "key": "claimEmail",
-          "type": "string",
-          "size": 320,
-          "required": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        },
-        {
-          "key": "userId_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        },
-        {
-          "key": "claimEmail_idx",
-          "type": "key",
-          "attributes": [
-            "claimEmail"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "appointment_slots",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")",
-        "create(\"users\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Appointment Slots",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "providerId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "startTime",
-          "type": "datetime",
-          "required": true
-        },
-        {
-          "key": "durationMinutes",
-          "type": "integer",
-          "required": false,
-          "default": 30
-        },
-        {
-          "key": "notes",
-          "type": "string",
-          "size": 200,
-          "required": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "provider_idx",
-          "type": "key",
-          "attributes": [
-            "providerId"
-          ]
-        },
-        {
-          "key": "start_idx",
-          "type": "key",
-          "attributes": [
-            "startTime"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "appointments",
-      "$permissions": [
-        "read(\"users\")",
-        "create(\"users\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Appointments",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "providerId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "slotId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "patientName",
-          "type": "string",
-          "size": 128,
-          "required": true
-        },
-        {
-          "key": "reason",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "booked"
-        },
-        {
-          "key": "statusUpdatedAt",
-          "type": "datetime",
-          "required": false
-        },
-        {
-          "key": "cancelledBy",
-          "type": "string",
-          "size": 36,
-          "required": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "user_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        },
-        {
-          "key": "slot_unique",
-          "type": "unique",
-          "attributes": [
-            "slotId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "partner_inquiries",
-      "$permissions": [
-        "create(\"any\")",
-        "read(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Partner Inquiries",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "name",
-          "type": "string",
-          "size": 128,
-          "required": true
-        },
-        {
-          "key": "organization",
-          "type": "string",
-          "size": 200,
-          "required": false
-        },
-        {
-          "key": "email",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "phone",
-          "type": "string",
-          "size": 30,
-          "required": false
-        },
-        {
-          "key": "message",
-          "type": "string",
-          "size": 2000,
-          "required": true
-        }
-      ],
-      "indexes": []
-    },
-    {
-      "$id": "notifications",
-      "$permissions": [
-        "read(\"users\")",
-        "create(\"users\")",
-        "update(\"users\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Notifications",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "body",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "link",
-          "type": "string",
-          "size": 200,
-          "required": false
-        },
-        {
-          "key": "read",
-          "type": "boolean",
-          "required": false,
-          "default": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "user_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "push_subscriptions",
-      "$permissions": [
-        "read(\"users\")",
-        "create(\"users\")",
-        "update(\"users\")",
-        "delete(\"users\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Push Subscriptions",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "endpoint",
-          "type": "string",
-          "size": 512,
-          "required": true
-        },
-        {
-          "key": "p256dh",
-          "type": "string",
-          "size": 255,
-          "required": true
-        },
-        {
-          "key": "authKey",
-          "type": "string",
-          "size": 255,
-          "required": true
-        },
-        {
-          "key": "userAgent",
-          "type": "string",
-          "size": 255,
-          "required": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "user_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        },
-        {
-          "key": "endpoint_idx",
-          "type": "unique",
-          "attributes": [
-            "endpoint"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "health_topics",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Health Topics",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "body",
-          "type": "string",
-          "size": 2000,
-          "required": true
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        },
-        {
-          "key": "articleIds",
-          "type": "string",
-          "size": 36,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "published"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        },
-        {
-          "key": "order_idx",
-          "type": "key",
-          "attributes": [
-            "order"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "health_topic_views",
-      "$permissions": [
-        "read(\"users\")",
-        "create(\"users\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Health Topic Views",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "topicSlug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "viewedAt",
-          "type": "datetime",
-          "required": true
-        }
-      ],
-      "indexes": [
-        {
-          "key": "user_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        },
-        {
-          "key": "user_topic_unique",
-          "type": "unique",
-          "attributes": [
-            "userId",
-            "topicSlug"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "health_subtopics",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Health Subtopics",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "parentSlug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "summary",
-          "type": "string",
-          "size": 500,
-          "required": true
-        },
-        {
-          "key": "body",
-          "type": "string",
-          "size": 2000,
-          "required": false
-        },
-        {
-          "key": "imageUrl",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "articleSlug",
-          "type": "string",
-          "size": 200,
-          "required": false
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "published"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        },
-        {
-          "key": "parent_idx",
-          "type": "key",
-          "attributes": [
-            "parentSlug"
-          ]
-        },
-        {
-          "key": "order_idx",
-          "type": "key",
-          "attributes": [
-            "order"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "fitness_topics",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Fitness Topics",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "body",
-          "type": "string",
-          "size": 2000,
-          "required": true
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        },
-        {
-          "key": "articleIds",
-          "type": "string",
-          "size": 36,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "published"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        },
-        {
-          "key": "order_idx",
-          "type": "key",
-          "attributes": [
-            "order"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "fitness_subtopics",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Fitness Subtopics",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "parentSlug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "summary",
-          "type": "string",
-          "size": 500,
-          "required": true
-        },
-        {
-          "key": "body",
-          "type": "string",
-          "size": 2000,
-          "required": false
-        },
-        {
-          "key": "imageUrl",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "articleSlug",
-          "type": "string",
-          "size": 200,
-          "required": false
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "published"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        },
-        {
-          "key": "parent_idx",
-          "type": "key",
-          "attributes": [
-            "parentSlug"
-          ]
-        },
-        {
-          "key": "order_idx",
-          "type": "key",
-          "attributes": [
-            "order"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "recipe_categories",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Recipe Categories",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "summary",
-          "type": "string",
-          "size": 500,
-          "required": true
-        },
-        {
-          "key": "imageUrl",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "published"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        },
-        {
-          "key": "order_idx",
-          "type": "key",
-          "attributes": [
-            "order"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "recipes",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Recipes",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "categorySlug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "summary",
-          "type": "string",
-          "size": 500,
-          "required": true
-        },
-        {
-          "key": "imageUrl",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "servings",
-          "type": "integer",
-          "required": false,
-          "default": 4
-        },
-        {
-          "key": "prepMinutes",
-          "type": "integer",
-          "required": false
-        },
-        {
-          "key": "cookMinutes",
-          "type": "integer",
-          "required": false
-        },
-        {
-          "key": "ingredients",
-          "type": "string",
-          "size": 300,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "steps",
-          "type": "string",
-          "size": 1000,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "articleSlug",
-          "type": "string",
-          "size": 200,
-          "required": false
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "published"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        },
-        {
-          "key": "category_idx",
-          "type": "key",
-          "attributes": [
-            "categorySlug"
-          ]
-        },
-        {
-          "key": "order_idx",
-          "type": "key",
-          "attributes": [
-            "order"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "kids_stages",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Kids Stages",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "summary",
-          "type": "string",
-          "size": 500,
-          "required": true
-        },
-        {
-          "key": "body",
-          "type": "string",
-          "size": 2000,
-          "required": false
-        },
-        {
-          "key": "imageUrl",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "articleIds",
-          "type": "string",
-          "size": 36,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "order",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "published"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        },
-        {
-          "key": "order_idx",
-          "type": "key",
-          "attributes": [
-            "order"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "life_stage_pages",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "update(\"label:editor\")",
-        "delete(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Life Stage Pages",
-      "enabled": true,
-      "documentSecurity": false,
-      "attributes": [
-        {
-          "key": "title",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "slug",
-          "type": "string",
-          "size": 200,
-          "required": true
-        },
-        {
-          "key": "intro",
-          "type": "string",
-          "size": 1000,
-          "required": true
-        },
-        {
-          "key": "imageUrl",
-          "type": "string",
-          "size": 500,
-          "required": false
-        },
-        {
-          "key": "articleIds",
-          "type": "string",
-          "size": 36,
-          "required": false,
-          "array": true
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "published"
-        }
-      ],
-      "indexes": [
-        {
-          "key": "slug_unique",
-          "type": "unique",
-          "attributes": [
-            "slug"
-          ]
-        },
-        {
-          "key": "status_idx",
-          "type": "key",
-          "attributes": [
-            "status"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "messages",
-      "$permissions": [
-        "create(\"users\")",
-        "read(\"users\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Messages",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "appointmentId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "senderId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "senderRole",
-          "type": "string",
-          "size": 20,
-          "required": true
-        },
-        {
-          "key": "body",
-          "type": "string",
-          "size": 2000,
-          "required": true
-        }
-      ],
-      "indexes": [
-        {
-          "key": "appointment_idx",
-          "type": "key",
-          "attributes": [
-            "appointmentId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "user_references",
-      "$permissions": [
-        "create(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "User References",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "fileName",
-          "type": "string",
-          "size": 300,
-          "required": true
-        },
-        {
-          "key": "fileType",
-          "type": "string",
-          "size": 20,
-          "required": true
-        },
-        {
-          "key": "storageFileId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "status",
-          "type": "string",
-          "size": 20,
-          "required": false,
-          "default": "processing"
-        },
-        {
-          "key": "chunkCount",
-          "type": "integer",
-          "required": false,
-          "default": 0
-        },
-        {
-          "key": "errorMessage",
-          "type": "string",
-          "size": 500,
-          "required": false
-        }
-      ],
-      "indexes": [
-        {
-          "key": "userId_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        }
-      ]
-    },
-    {
-      "$id": "reference_chunks",
-      "$permissions": [
-        "create(\"label:admin\")"
-      ],
-      "databaseId": "thanzi_guide",
-      "name": "Reference Chunks",
-      "enabled": true,
-      "documentSecurity": true,
-      "attributes": [
-        {
-          "key": "referenceId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "userId",
-          "type": "string",
-          "size": 36,
-          "required": true
-        },
-        {
-          "key": "chunkIndex",
-          "type": "integer",
-          "required": true
-        },
-        {
-          "key": "pageNumber",
-          "type": "integer",
-          "required": false
-        },
-        {
-          "key": "sectionLabel",
-          "type": "string",
-          "size": 100,
-          "required": false
-        },
-        {
-          "key": "text",
-          "type": "string",
-          "size": 3000,
-          "required": true
-        }
-      ],
-      "indexes": [
-        {
-          "key": "referenceId_idx",
-          "type": "key",
-          "attributes": [
-            "referenceId"
-          ]
-        },
-        {
-          "key": "userId_idx",
-          "type": "key",
-          "attributes": [
-            "userId"
-          ]
-        }
-      ]
-    }
-  ],
-  "buckets": [
-    {
-      "$id": "food_images",
-      "name": "Media",
-      "$permissions": [
-        "read(\"any\")",
-        "create(\"label:editor\")",
-        "create(\"users\")",
-        "create(\"label:admin\")",
-        "update(\"label:admin\")",
-        "delete(\"label:admin\")"
-      ],
-      "fileSecurity": false,
-      "enabled": true,
-      "maximumFileSize": 100000000,
-      "allowedFileExtensions": [
-        "jpg",
-        "jpeg",
-        "png",
-        "webp",
-        "pdf",
-        "docx",
-        "txt",
-        "csv",
-        "mp4",
-        "mov",
-        "webm",
-        "m4v",
-        "avi",
-        "mkv"
-      ]
-    }
-  ],
-  "functions": [
-    {
-      "$id": "6a8002d5001d7e482faa",
-      "name": "Claim Provider Profile",
-      "runtime": "node-18.0",
-      "execute": [
-        "users"
-      ],
-      "events": [],
-      "schedule": "",
-      "timeout": 15,
-      "enabled": true,
-      "logging": true,
-      "entrypoint": "src/main.js",
-      "commands": "npm install",
-      "scopes": [
-        "databases.read",
-        "databases.write",
-        "users.read"
-      ],
-      "path": "functions/claim-provider-profile"
-    }
-  ]
+    ]
 }
