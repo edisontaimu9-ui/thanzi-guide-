@@ -80,10 +80,13 @@ export const BUCKETS = {
 
 export const FUNCTIONS = {
   claimProviderProfile: '6a8002d5001d7e482faa',
-  // Custom (non-auto-generated) function $id — see appwrite.json — so it's
-  // stable across environments without needing a console-generated hex id
-  // hardcoded here the way claimProviderProfile is.
-  appointmentAction: 'appointment_action'
+  // Points at the SAME function as appointment_notifications, not a
+  // separate one — the plan here caps functions at 2, so appointment
+  // status actions and appointment notifications are dispatched from one
+  // function by invocation type. See the header comment in
+  // functions/appointment-notifications/src/main.js. Custom (non-auto-
+  // generated) $id from appwrite.json, so it's stable across environments.
+  appointmentAction: 'appointment_notifications'
 } as const;
 
 // App roles — mirrored on each profile document's `role` attribute, and

@@ -30,7 +30,7 @@ export interface SlotDoc extends Models.Document {
 // error state.
 export type AppointmentStatus = 'booked' | 'confirmed' | 'rejected' | 'rescheduled' | 'cancelled';
 
-// Mirrors ACTION_STATUS in functions/appointment-action/src/main.js — keep
+// Mirrors ACTION_STATUS in functions/appointment-notifications/src/main.js (the appointment-action half — see its header comment) — keep
 // these in sync. 'confirm'/'reject'/'reschedule' are provider-only there;
 // 'cancel' is allowed for either the patient or the provider on the
 // appointment. The function is the actual authority on who's allowed to do
@@ -137,7 +137,7 @@ export async function bookSlot(
     //
     // Deliberately no update() permission for the patient: status
     // transitions (including the patient's own cancel) go through
-    // functions/appointment-action instead of a direct client write — see
+    // functions/appointment-notifications instead of a direct client write — see
     // updateAppointmentStatus() below.
     [Permission.read(Role.user(userId)), Permission.delete(Role.user(userId))]
   );
@@ -215,7 +215,7 @@ export async function getAppointment(id: string): Promise<AppointmentDoc | null>
 
 // The only way appointments.status ever changes — patient cancel, and every
 // provider action (confirm/reject/reschedule/cancel), all go through
-// functions/appointment-action. That function is the actual authority on
+// functions/appointment-notifications. That function is the actual authority on
 // who's allowed to make a given transition (see its ACTION_STATUS /
 // PROVIDER_ONLY_ACTIONS); the message thrown here is just whatever it
 // reported back.
@@ -240,7 +240,7 @@ export async function updateAppointmentStatus(
 }
 
 // Soft-cancel (Phase 3) — previously a hard delete. Available to whichever
-// side (patient or provider) calls it; functions/appointment-action decides
+// side (patient or provider) calls it; functions/appointment-notifications decides
 // which, and functions/appointment-notifications tells the *other* side
 // apart using the cancelledBy it writes. Kept as a thin wrapper (rather
 // than having every call site say updateAppointmentStatus(id, 'cancel'))

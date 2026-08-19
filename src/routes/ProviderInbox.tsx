@@ -34,7 +34,7 @@ const STATUS_STYLE: Record<string, string> = {
   cancelled: 'bg-brand-100 text-brand-500 dark:bg-ink-800 dark:text-brand-100'
 };
 
-// Which actions functions/appointment-action will actually allow a
+// Which actions functions/appointment-notifications will actually allow a
 // provider to take from a given status — mirrors that function's
 // ACTION_STATUS/terminal-state check. Kept here purely to decide which
 // buttons to render; the function itself is still the real authority.
