@@ -790,13 +790,13 @@ export interface NutritionPlan {
 
 /**
  * Main entry point — generates a complete personalized nutrition plan.
- * Targets adults 18–60. Returns { error } on invalid input instead of
+ * Targets adults 18 and up. Returns { error } on invalid input instead of
  * throwing, so callers can render a friendly message.
  */
 export function generate(profile: NutritionProfile): NutritionPlan | { error: string } {
   const { age, sex, weight_kg, height_m, activity_level, goal, rate_kg_per_week, sport_type, session_min, bone_inputs, oral_inputs } = profile;
 
-  if (age < 18 || age > 60) return { error: 'This calculator targets ages 18–60.' };
+  if (age < 18 || age > 100) return { error: 'This calculator covers ages 18 and up — for children and teens under 18, nutrient needs differ and require a pediatric assessment.' };
   if (!PA_COEFFICIENTS[sex][activity_level]) return { error: 'Invalid activity level.' };
 
   const bmiValue = bmi(weight_kg, height_m);

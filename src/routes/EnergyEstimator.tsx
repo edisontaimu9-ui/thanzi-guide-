@@ -60,8 +60,8 @@ export function EnergyEstimator() {
       setPlan(null);
       return;
     }
-    if (ageYears < 18 || ageYears > 60) {
-      setError('This calculator gives personalized targets for ages 18–60.');
+    if (ageYears < 18 || ageYears > 100) {
+      setError('This calculator covers ages 18 and up.');
       setPlan(null);
       return;
     }
@@ -116,14 +116,14 @@ export function EnergyEstimator() {
 
         <div>
           <label htmlFor="age" className="block text-sm font-medium text-brand-700 dark:text-sand-100">
-            Age (years, 18–60)
+            Age (years, 18+)
           </label>
           <input
             id="age"
             type="number"
             inputMode="numeric"
             min="18"
-            max="60"
+            max="100"
             value={age}
             onChange={(e) => setAge(e.target.value)}
             className="mt-1 w-full rounded-md border border-brand-100 bg-white px-3 py-2 text-brand-900 focus:border-brand-500 focus:outline-none dark:border-ink-800 dark:bg-ink-950 dark:text-sand-50"
