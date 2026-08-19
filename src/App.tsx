@@ -11,6 +11,7 @@ import { Signup } from '@/routes/Signup';
 import { Verify } from '@/routes/Verify';
 import { Dashboard } from '@/routes/Dashboard';
 import { MealLog } from '@/routes/MealLog';
+import { ExerciseLog } from '@/routes/ExerciseLog';
 import { Settings } from '@/routes/Settings';
 import { Browse } from '@/routes/Browse';
 import { Foods } from '@/routes/Foods';
@@ -122,6 +123,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <MealLog />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/exercise-log"
+                element={
+                  <ProtectedRoute>
+                    <ExerciseLog />
                   </ProtectedRoute>
                 }
               />

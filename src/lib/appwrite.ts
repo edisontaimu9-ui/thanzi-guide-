@@ -61,6 +61,7 @@ export const DB = {
     lifeStagePages: 'life_stage_pages',
     messages: 'messages',
     mealLogs: 'meal_logs',
+    exerciseLogs: 'exercise_logs',
     userReferences: 'user_references',
     referenceChunks: 'reference_chunks'
   }
