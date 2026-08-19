@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { databases, DB } from '@/lib/appwrite';
+import { databases, DB, BUCKETS } from '@/lib/appwrite';
 import { uploadImage } from '@/lib/storage';
 import type { ProviderDoc } from '@/lib/providers';
 
@@ -33,7 +33,7 @@ export function ProviderProfile({ provider }: { provider: ProviderDoc }) {
     setUploading(true);
     setError(null);
     try {
-      const url = await uploadImage('food_images', file);
+      const url = await uploadImage(BUCKETS.media, file);
       setPhotoUrl(url);
       setSaved(false);
     } catch (err) {
