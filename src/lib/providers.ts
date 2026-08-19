@@ -1,5 +1,4 @@
-import { databases, DB, ID, Query, Permission, Role } from '@/lib/appwrite';
-import { createNotification } from '@/lib/notifications';
+import { databases, DB, ID, Query, Permission, Role, functions, FUNCTIONS } from '@/lib/appwrite';
 import type { Models } from 'appwrite';
 
 export interface ProviderDoc extends Models.Document {
@@ -30,6 +29,13 @@ export interface SlotDoc extends Models.Document {
 // callers should treat a missing status the same as 'booked', not as an
 // error state.
 export type AppointmentStatus = 'booked' | 'confirmed' | 'rejected' | 'rescheduled' | 'cancelled';
+
+// Mirrors ACTION_STATUS in functions/appointment-action/src/main.js — keep
+// these in sync. 'confirm'/'reject'/'reschedule' are provider-only there;
+// 'cancel' is allowed for either the patient or the provider on the
+// appointment. The function is the actual authority on who's allowed to do
+// what — this type just keeps the client from calling it with junk.
+export type AppointmentAction = 'confirm' | 'reject' | 'reschedule' | 'cancel';
 
 export interface AppointmentDoc extends Models.Document {
   userId: string;
@@ -107,7 +113,19 @@ export async function bookSlot(
   providerName: string,
   slotTimeLabel: string
 ): Promise<AppointmentDoc> {
-  const appointment = await databases.createDocument<AppointmentDoc>(
+  // providerName and slotTimeLabel are no longer used here — kept as
+  // params so call sites (e.g. ProviderDetail.tsx) don't need to change —
+  // notification copy is now built server-side in
+  // functions/appointment-notifications from the provider/slot documents
+  // themselves, not from whatever the booking browser happened to pass in.
+  void providerName;
+  void slotTimeLabel;
+  // Notifications for this create are handled entirely by
+  // functions/appointment-notifications, triggered by the Appwrite database
+  // event on this write — not by client code. See that function's header
+  // comment for why (client-only notification calls silently no-op on any
+  // non-browser write, and can't be relied on for debugging).
+  return databases.createDocument<AppointmentDoc>(
     DB.databaseId,
     DB.collections.appointments,
     ID.unique(),
@@ -116,38 +134,13 @@ export async function bookSlot(
     // Console (Settings > Permissions > Label: admin > Read), not here —
     // a regular user session isn't allowed to grant a label-based
     // permission on a document it creates.
+    //
+    // Deliberately no update() permission for the patient: status
+    // transitions (including the patient's own cancel) go through
+    // functions/appointment-action instead of a direct client write — see
+    // updateAppointmentStatus() below.
     [Permission.read(Role.user(userId)), Permission.delete(Role.user(userId))]
   );
-  // Best-effort — a failed notification shouldn't undo a successful booking,
-  // but log so a silent failure (e.g. a provider who hasn't claimed their
-  // profile yet, so there's no account to notify) is visible in the console
-  // instead of just looking like "notifications don't work."
-  try {
-    await createNotification(
-      userId,
-      'Appointment booked',
-      `${slotTimeLabel} with ${providerName}`,
-      '/dashboard'
-    );
-  } catch (err) {
-    console.warn('Failed to create patient booking notification:', err);
-  }
-  try {
-    const provider = await getProvider(providerId);
-    if (provider?.userId) {
-      await createNotification(
-        provider.userId,
-        'New appointment booked',
-        `${patientName} booked ${slotTimeLabel}`,
-        '/provider'
-      );
-    } else {
-      console.warn(`Provider ${providerId} has no linked userId (profile not claimed) — skipping provider notification.`);
-    }
-  } catch (err) {
-    console.warn('Failed to create provider booking notification:', err);
-  }
-  return appointment;
 }
 
 export async function getSlot(id: string): Promise<SlotDoc | null> {
@@ -220,49 +213,38 @@ export async function getAppointment(id: string): Promise<AppointmentDoc | null>
   }
 }
 
+// The only way appointments.status ever changes — patient cancel, and every
+// provider action (confirm/reject/reschedule/cancel), all go through
+// functions/appointment-action. That function is the actual authority on
+// who's allowed to make a given transition (see its ACTION_STATUS /
+// PROVIDER_ONLY_ACTIONS); the message thrown here is just whatever it
+// reported back.
+//
+// Writing the status update itself is what makes the notification fire —
+// it's a normal document update, so it lands as an update event that
+// functions/appointment-notifications (Phase 2) picks up on its own.
+export async function updateAppointmentStatus(
+  appointmentId: string,
+  action: AppointmentAction
+): Promise<AppointmentStatus> {
+  const execution = await functions.createExecution(
+    FUNCTIONS.appointmentAction,
+    JSON.stringify({ appointmentId, action }),
+    false
+  );
+  const result = JSON.parse(execution.responseBody);
+  if (!result.success) {
+    throw new Error(result.message ?? 'Something went wrong updating the appointment.');
+  }
+  return result.status as AppointmentStatus;
+}
+
+// Soft-cancel (Phase 3) — previously a hard delete. Available to whichever
+// side (patient or provider) calls it; functions/appointment-action decides
+// which, and functions/appointment-notifications tells the *other* side
+// apart using the cancelledBy it writes. Kept as a thin wrapper (rather
+// than having every call site say updateAppointmentStatus(id, 'cancel'))
+// since "cancel" is the one action both Dashboard and ProviderInbox need.
 export async function cancelAppointment(appointmentId: string): Promise<void> {
-  // Gather what we need to notify the provider before the document is gone.
-  let notifyContext: { providerUserId: string; patientName: string; slotLabel: string } | null = null;
-  try {
-    const appointment = await databases.getDocument<AppointmentDoc>(
-      DB.databaseId,
-      DB.collections.appointments,
-      appointmentId
-    );
-    const [provider, slot] = await Promise.all([getProvider(appointment.providerId), getSlot(appointment.slotId)]);
-    if (provider?.userId) {
-      notifyContext = {
-        providerUserId: provider.userId,
-        patientName: appointment.patientName,
-        slotLabel: slot
-          ? new Intl.DateTimeFormat('en', {
-              weekday: 'short',
-              month: 'short',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit'
-            }).format(new Date(slot.startTime))
-          : 'their appointment'
-      };
-    } else {
-      console.warn(`Provider ${appointment.providerId} has no linked userId (profile not claimed) — skipping cancellation notification.`);
-    }
-  } catch (err) {
-    console.warn('Failed to gather cancellation notification context:', err);
-  }
-
-  await databases.deleteDocument(DB.databaseId, DB.collections.appointments, appointmentId);
-
-  if (notifyContext) {
-    try {
-      await createNotification(
-        notifyContext.providerUserId,
-        'Appointment cancelled',
-        `${notifyContext.patientName} cancelled ${notifyContext.slotLabel}`,
-        '/provider'
-      );
-    } catch (err) {
-      console.warn('Failed to create cancellation notification:', err);
-    }
-  }
+  await updateAppointmentStatus(appointmentId, 'cancel');
 }

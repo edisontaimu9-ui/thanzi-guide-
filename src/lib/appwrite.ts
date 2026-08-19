@@ -79,7 +79,11 @@ export const BUCKETS = {
 } as const;
 
 export const FUNCTIONS = {
-  claimProviderProfile: '6a8002d5001d7e482faa'
+  claimProviderProfile: '6a8002d5001d7e482faa',
+  // Custom (non-auto-generated) function $id — see appwrite.json — so it's
+  // stable across environments without needing a console-generated hex id
+  // hardcoded here the way claimProviderProfile is.
+  appointmentAction: 'appointment_action'
 } as const;
 
 // App roles — mirrored on each profile document's `role` attribute, and

@@ -17,6 +17,25 @@ const ROLE_LABEL: Record<string, string> = {
 
 const CONTRIBUTOR_ROLES = ['EDITOR', 'NUTRITION_EXPERT', 'ADMIN'];
 
+// Undefined/'booked' collapse to the same "Pending" label — see the
+// AppointmentStatus comment in lib/providers.ts for why a missing status
+// on an older document isn't an error state.
+const APPOINTMENT_STATUS_LABEL: Record<string, string> = {
+  booked: 'Pending',
+  confirmed: 'Confirmed',
+  rejected: 'Declined',
+  rescheduled: 'Needs new time',
+  cancelled: 'Cancelled'
+};
+
+const APPOINTMENT_STATUS_STYLE: Record<string, string> = {
+  booked: 'bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200',
+  confirmed: 'bg-green-50 text-green-800 dark:bg-green-950/30 dark:text-green-200',
+  rejected: 'bg-clay-400/10 text-clay-500 dark:bg-clay-950/30 dark:text-clay-400',
+  rescheduled: 'bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-200',
+  cancelled: 'bg-brand-100 text-brand-500 dark:bg-ink-800 dark:text-brand-100'
+};
+
 export function Dashboard() {
   useDocumentTitle('Your account');
   const { user, profile, logout } = useAuth();
@@ -96,7 +115,14 @@ export function Dashboard() {
     setCancellingId(appointmentId);
     try {
       await cancelAppointment(appointmentId);
-      setAppointments((prev) => prev.filter((a) => a.$id !== appointmentId));
+      // Soft-cancel now (Phase 3) — the document still exists with
+      // status='cancelled', so update it in place rather than filtering it
+      // out of the list the way the old hard-delete version did.
+      setAppointments((prev) =>
+        prev.map((a) => (a.$id === appointmentId ? { ...a, status: 'cancelled' } : a))
+      );
+    } catch (err) {
+      console.warn('Failed to cancel appointment:', err);
     } finally {
       setCancellingId(null);
     }
@@ -229,13 +255,22 @@ export function Dashboard() {
             {appointments.map((appt) => {
               const provider = providerById[appt.providerId];
               const slot = slotById[appt.slotId];
+              const status = appt.status ?? 'booked';
+              const isTerminal = status === 'cancelled' || status === 'rejected';
               return (
                 <div
                   key={appt.$id}
                   className="flex items-center justify-between rounded-lg border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950"
                 >
                   <div>
-                    <p className="font-medium text-brand-700 dark:text-sand-100">{provider?.name ?? 'Provider'}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-brand-700 dark:text-sand-100">{provider?.name ?? 'Provider'}</p>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${APPOINTMENT_STATUS_STYLE[status] ?? APPOINTMENT_STATUS_STYLE.booked}`}
+                      >
+                        {APPOINTMENT_STATUS_LABEL[status] ?? APPOINTMENT_STATUS_LABEL.booked}
+                      </span>
+                    </div>
                     <p className="text-xs text-brand-300 dark:text-brand-100">
                       {slot
                         ? new Intl.DateTimeFormat('en', {
@@ -249,19 +284,23 @@ export function Dashboard() {
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-4">
-                    <Link
-                      to={`/appointments/${appt.$id}/messages`}
-                      className="text-sm font-medium text-brand-500 underline dark:text-brand-100"
-                    >
-                      Message
-                    </Link>
-                    <button
-                      onClick={() => handleCancel(appt.$id)}
-                      disabled={cancellingId === appt.$id}
-                      className="text-sm font-medium text-clay-500 underline hover:text-clay-400 disabled:opacity-60"
-                    >
-                      {cancellingId === appt.$id ? 'Cancelling…' : 'Cancel'}
-                    </button>
+                    {!isTerminal && (
+                      <Link
+                        to={`/appointments/${appt.$id}/messages`}
+                        className="text-sm font-medium text-brand-500 underline dark:text-brand-100"
+                      >
+                        Message
+                      </Link>
+                    )}
+                    {!isTerminal && (
+                      <button
+                        onClick={() => handleCancel(appt.$id)}
+                        disabled={cancellingId === appt.$id}
+                        className="text-sm font-medium text-clay-500 underline hover:text-clay-400 disabled:opacity-60"
+                      >
+                        {cancellingId === appt.$id ? 'Cancelling…' : 'Cancel'}
+                      </button>
+                    )}
                   </div>
                 </div>
               );

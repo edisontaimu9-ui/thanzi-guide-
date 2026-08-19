@@ -2298,6 +2298,26 @@
                 "databases.write"
             ],
             "path": "functions/appointment-notifications"
+        },
+        {
+            "$id": "appointment_action",
+            "name": "Appointment Action",
+            "runtime": "node-18.0",
+            "execute": [
+                "users"
+            ],
+            "events": [],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "entrypoint": "src/main.js",
+            "commands": "npm install",
+            "scopes": [
+                "databases.read",
+                "databases.write"
+            ],
+            "path": "functions/appointment-action"
         }
     ]
 }

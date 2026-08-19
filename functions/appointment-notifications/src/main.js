@@ -25,16 +25,15 @@
 // for cancellations — it's how this function tells a provider-initiated
 // change from a patient-initiated one.
 //
-// Known gap (tracked for Phase 3): cancelAppointment() in
-// src/lib/providers.ts still hard-deletes the appointment document without
-// ever setting cancelledBy first, and there is still no provider-side
-// cancel path. That means every 'delete' event today can only be
-// interpreted as "the patient cancelled" (see the delete branch below).
-// Once Phase 3 adds provider-side cancel, appointment cancellation should
-// switch to a soft-cancel (update status='cancelled' + cancelledBy) instead
-// of a hard delete, so the 'update' branch — which already knows how to
-// attribute a cancellation to either side — handles it instead of the
-// delete fallback losing that information.
+// Phase 3: cancellation (by either side) now goes through
+// functions/appointment-action, which soft-cancels — sets status='cancelled'
+// + cancelledBy — rather than deleting the document. That's handled by the
+// 'update' branch below, which already knew how to attribute a cancellation
+// to either side. The 'delete' branch is kept only as a defensive fallback
+// for a document removed some other way (e.g. manually in Appwrite Console);
+// since nothing in the app issues a hard delete anymore, it can no longer
+// assume "delete always means the patient cancelled" and notifies whichever
+// side it can positively identify from cancelledBy.
 
 import { Client, Databases, ID } from 'node-appwrite';
 
@@ -284,21 +283,66 @@ export default async ({ req, res, log, error }) => {
   }
 
   if (action === 'delete') {
-    // See the "Known gap" note at the top of this file: today only patients
-    // can cancel, and they do it via a hard delete that never sets
-    // cancelledBy — so a delete event can only mean "patient cancelled."
-    await notifyOnce(
-      databases,
-      {
-        userId: providerUserId,
-        title: 'Appointment cancelled',
-        body: `${patientName} cancelled ${slotLabel}.`,
-        link: '/provider',
-        dedupeKey: `${appointmentId}:cancelled:provider`
-      },
-      log,
-      error
-    );
+    // Defensive fallback only — see the header comment. Nothing in the app
+    // issues a hard delete anymore, so this shouldn't fire in normal use.
+    // Since we don't know who deleted it, attribute the same way the
+    // 'update' branch's unrecognized-actor case does: use cancelledBy if
+    // the deleted document happened to have one set, otherwise notify both
+    // sides rather than guessing.
+    const actor = appointment.cancelledBy;
+    if (actor && providerUserId && actor === providerUserId) {
+      await notifyOnce(
+        databases,
+        {
+          userId: patientUserId,
+          title: 'Appointment cancelled',
+          body: `${providerName} cancelled ${slotLabel}.`,
+          link: '/dashboard',
+          dedupeKey: `${appointmentId}:cancelled:patient`
+        },
+        log,
+        error
+      );
+    } else if (actor && actor === patientUserId) {
+      await notifyOnce(
+        databases,
+        {
+          userId: providerUserId,
+          title: 'Appointment cancelled',
+          body: `${patientName} cancelled ${slotLabel}.`,
+          link: '/provider',
+          dedupeKey: `${appointmentId}:cancelled:provider`
+        },
+        log,
+        error
+      );
+    } else {
+      log(`Deleted appointment with unrecognized cancelledBy ("${actor}") — notifying both sides.`);
+      await notifyOnce(
+        databases,
+        {
+          userId: patientUserId,
+          title: 'Appointment cancelled',
+          body: `${slotLabel} with ${providerName} was cancelled.`,
+          link: '/dashboard',
+          dedupeKey: `${appointmentId}:cancelled:patient`
+        },
+        log,
+        error
+      );
+      await notifyOnce(
+        databases,
+        {
+          userId: providerUserId,
+          title: 'Appointment cancelled',
+          body: `${patientName}'s ${slotLabel} was cancelled.`,
+          link: '/provider',
+          dedupeKey: `${appointmentId}:cancelled:provider`
+        },
+        log,
+        error
+      );
+    }
     return res.json({ success: true });
   }
 
