@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
 import type { ArticleDoc } from '@/lib/articles';
 import type { CourseDoc } from '@/lib/courses';
+import { listProviders, ProviderDoc } from '@/lib/providers';
 import {
   listDraftArticles,
   listDraftFoods,
@@ -28,16 +29,18 @@ export function Admin() {
   const [articles, setArticles] = useState<ArticleDoc[]>([]);
   const [foods, setFoods] = useState<FoodAdminDoc[]>([]);
   const [courses, setCourses] = useState<CourseDoc[]>([]);
+  const [providers, setProviders] = useState<ProviderDoc[]>([]);
   const [status, setStatus] = useState<Status>('loading');
   const [pendingId, setPendingId] = useState<string | null>(null);
 
   async function loadAll() {
     setStatus('loading');
     try {
-      const [a, f, c] = await Promise.all([listDraftArticles(), listDraftFoods(), listDraftCourses()]);
+      const [a, f, c, p] = await Promise.all([listDraftArticles(), listDraftFoods(), listDraftCourses(), listProviders()]);
       setArticles(a);
       setFoods(f);
       setCourses(c);
+      setProviders(p);
       setStatus('idle');
     } catch {
       setStatus('error');
@@ -103,6 +106,7 @@ export function Admin() {
 
       {status === 'idle' && (
         <div className="mt-8 space-y-10">
+          <ProvidersSection providers={providers} />
           <ReviewSection
             title="Articles"
             emptyLabel="No draft articles."
@@ -133,6 +137,55 @@ export function Admin() {
         </div>
       )}
     </main>
+  );
+}
+
+function ProvidersSection({ providers }: { providers: ProviderDoc[] }) {
+  const unclaimed = providers.filter((p) => !p.userId);
+
+  return (
+    <section>
+      <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Providers</h2>
+      <p className="mt-1 text-xs text-brand-500 dark:text-brand-100">
+        A provider without a linked account can't be notified about bookings, cancellations, or messages —
+        booking confirmations to the patient still go through, but the provider never hears about it until
+        they claim their profile.
+      </p>
+
+      {providers.length === 0 && <p className="mt-2 text-sm text-brand-500 dark:text-brand-100">No providers yet.</p>}
+
+      {providers.length > 0 && (
+        <ul className="mt-3 space-y-2">
+          {providers.map((p) => (
+            <li
+              key={p.$id}
+              className="flex items-center justify-between gap-3 rounded-lg border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950"
+            >
+              <div>
+                <p className="text-sm font-medium text-brand-700 dark:text-sand-100">{p.name}</p>
+                {p.claimEmail && <p className="text-xs text-brand-300 dark:text-brand-100">{p.claimEmail}</p>}
+              </div>
+              <span
+                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
+                  p.userId
+                    ? 'bg-brand-500/10 text-brand-700 dark:text-sand-50'
+                    : 'bg-clay-400/10 text-clay-500 dark:text-clay-400'
+                }`}
+              >
+                {p.userId ? 'Claimed' : 'Not claimed'}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {unclaimed.length > 0 && (
+        <p className="mt-3 text-xs text-clay-500 dark:text-clay-400">
+          {unclaimed.length} provider{unclaimed.length === 1 ? '' : 's'} not yet claimed — ask them to sign in
+          with the email above and claim their profile from the Care section.
+        </p>
+      )}
+    </section>
   );
 }
 

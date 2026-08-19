@@ -55,9 +55,11 @@ export async function sendMessage(params: {
         body.length > 80 ? `${body.slice(0, 80)}…` : body,
         `/appointments/${appointmentId}/messages`
       );
-    } catch {
-      // ignore — a failed notification shouldn't fail the send
+    } catch (err) {
+      console.warn('Failed to create message notification:', err);
     }
+  } else {
+    console.warn('sendMessage called without a recipientUserId — recipient likely has no linked account yet, skipping notification.');
   }
 
   return message;

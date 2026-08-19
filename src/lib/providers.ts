@@ -13,6 +13,7 @@ export interface ProviderDoc extends Models.Document {
   whatsapp?: string;
   status: string;
   userId?: string;
+  claimEmail?: string;
 }
 
 export interface SlotDoc extends Models.Document {
@@ -102,7 +103,10 @@ export async function bookSlot(
     // permission on a document it creates.
     [Permission.read(Role.user(userId)), Permission.delete(Role.user(userId))]
   );
-  // Best-effort — a failed notification shouldn't undo a successful booking.
+  // Best-effort — a failed notification shouldn't undo a successful booking,
+  // but log so a silent failure (e.g. a provider who hasn't claimed their
+  // profile yet, so there's no account to notify) is visible in the console
+  // instead of just looking like "notifications don't work."
   try {
     await createNotification(
       userId,
@@ -110,8 +114,8 @@ export async function bookSlot(
       `${slotTimeLabel} with ${providerName}`,
       '/dashboard'
     );
-  } catch {
-    // ignore
+  } catch (err) {
+    console.warn('Failed to create patient booking notification:', err);
   }
   try {
     const provider = await getProvider(providerId);
@@ -122,9 +126,11 @@ export async function bookSlot(
         `${patientName} booked ${slotTimeLabel}`,
         '/provider'
       );
+    } else {
+      console.warn(`Provider ${providerId} has no linked userId (profile not claimed) — skipping provider notification.`);
     }
-  } catch {
-    // ignore
+  } catch (err) {
+    console.warn('Failed to create provider booking notification:', err);
   }
   return appointment;
 }
@@ -223,9 +229,11 @@ export async function cancelAppointment(appointmentId: string): Promise<void> {
             }).format(new Date(slot.startTime))
           : 'their appointment'
       };
+    } else {
+      console.warn(`Provider ${appointment.providerId} has no linked userId (profile not claimed) — skipping cancellation notification.`);
     }
-  } catch {
-    // ignore — proceed with cancellation regardless
+  } catch (err) {
+    console.warn('Failed to gather cancellation notification context:', err);
   }
 
   await databases.deleteDocument(DB.databaseId, DB.collections.appointments, appointmentId);
@@ -238,8 +246,8 @@ export async function cancelAppointment(appointmentId: string): Promise<void> {
         `${notifyContext.patientName} cancelled ${notifyContext.slotLabel}`,
         '/provider'
       );
-    } catch {
-      // ignore
+    } catch (err) {
+      console.warn('Failed to create cancellation notification:', err);
     }
   }
 }
