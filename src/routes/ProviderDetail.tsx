@@ -117,9 +117,13 @@ export function ProviderDetail() {
       </Link>
 
       <div className="mt-4 flex items-start gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-2xl text-white">
-          {provider.name.charAt(0).toUpperCase()}
-        </div>
+        {provider.photoUrl ? (
+          <img src={provider.photoUrl} alt="" className="h-16 w-16 shrink-0 rounded-full object-cover" />
+        ) : (
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-2xl text-white">
+            {provider.name.charAt(0).toUpperCase()}
+          </div>
+        )}
         <div>
           <h1 className="font-display text-2xl text-brand-700 dark:text-sand-50">{provider.name}</h1>
           <p className="text-sm text-brand-500 dark:text-brand-100">{provider.title}</p>

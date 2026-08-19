@@ -317,9 +317,17 @@ function CarePreview() {
                 className="rounded-lg border border-brand-100 bg-white p-5 transition hover:border-brand-500 dark:border-ink-800 dark:bg-ink-950"
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-lg text-white">
-                    {provider.name.charAt(0).toUpperCase()}
-                  </div>
+                  {provider.photoUrl ? (
+                    <img
+                      src={provider.photoUrl}
+                      alt=""
+                      className="h-11 w-11 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-500 font-display text-lg text-white">
+                      {provider.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <div>
                     <p className="font-medium text-brand-700 dark:text-sand-50">{provider.name}</p>
                     <p className="text-xs text-brand-300 dark:text-brand-100">{provider.title}</p>
