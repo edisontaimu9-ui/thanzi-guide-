@@ -349,14 +349,19 @@ export function Ask() {
   }
 
   async function shareAnswer(text: string) {
+    // The share sheet gets text + a link back to Ask (most apps — WhatsApp,
+    // SMS, etc. — append the url after the text automatically). The
+    // clipboard fallback has to combine them itself since there's no
+    // separate "url" field when just copying plain text.
+    const url = `${window.location.origin}${import.meta.env.BASE_URL}ask`;
     if (navigator.share) {
       try {
-        await navigator.share({ text });
+        await navigator.share({ text, url });
       } catch {
         // Person cancelled the share sheet, or it's unsupported — nothing to do.
       }
     } else {
-      copyAnswer(-1, text);
+      copyAnswer(-1, `${text}\n\n${url}`);
     }
   }
 
