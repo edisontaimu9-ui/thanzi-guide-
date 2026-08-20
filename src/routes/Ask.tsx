@@ -84,6 +84,21 @@ export function Ask() {
   const [loading, setLoading] = useState(false);
   const sessionId = useRef(loadStoredSessionId());
   const bottomRef = useRef<HTMLDivElement>(null);
+  // Tracks which answer messages (by index) have finished typing, so the
+  // Sources list and disclaimer only appear once the typewriter is done —
+  // otherwise they render immediately under a still-animating answer and
+  // visibly jump/flicker as the answer grows past them.
+  const [typingDone, setTypingDone] = useState<Record<number, boolean>>(() => {
+    const initial: Record<number, boolean> = {};
+    loadStoredMessages().forEach((m, i) => {
+      if (m.role === 'answer' && !m.animate) initial[i] = true;
+    });
+    return initial;
+  });
+
+  function markTypingDone(index: number) {
+    setTypingDone((d) => (d[index] ? d : { ...d, [index]: true }));
+  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -107,6 +122,7 @@ export function Ask() {
       // Ignore — clearing in-memory state below is what actually matters.
     }
     setMessages([]);
+    setTypingDone({});
   }
 
   async function ask(question: string) {
@@ -193,21 +209,27 @@ export function Ask() {
             );
           }
           const { answer, sources } = m.result;
+          // knowledge_base entries ground the answer but aren't a citeable
+          // "source" a reader can look up — Oasis's internal knowledge stays
+          // silent, only Chakudya-backed references are shown.
+          const visibleSources = sources.filter((s) => s.source !== 'knowledge_base');
+          const done = !!typingDone[i];
           return (
             <div key={i} className="rounded-2xl rounded-tl-sm border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950">
               <TypewriterText
                 text={answer}
                 animate={!!m.animate}
                 onTick={() => bottomRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' })}
+                onComplete={() => markTypingDone(i)}
               />
 
-              {sources.length > 0 && (
+              {done && visibleSources.length > 0 && (
                 <div className="mt-3 border-t border-brand-100 pt-3 dark:border-ink-800">
                   <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-300 dark:text-brand-100">
                     Sources
                   </p>
                   <ul className="mt-1.5 space-y-1">
-                    {sources.map((s) => (
+                    {visibleSources.map((s) => (
                       <li key={s.id} className="text-xs text-brand-300 dark:text-brand-100">
                         <span className="font-mono text-brand-500 dark:text-brand-100">[{s.id}]</span> {s.title}{' '}
                         <span className="opacity-75">· {sourceLabel(s.source)}</span>
@@ -217,9 +239,11 @@ export function Ask() {
                 </div>
               )}
 
-              <div className="mt-3 rounded-lg bg-clay-400/10 px-3 py-2 text-xs text-clay-500 dark:text-clay-400">
-                Educational information only — not a diagnosis. Speak with a clinician for personal medical advice.
-              </div>
+              {done && (
+                <div className="mt-3 rounded-lg bg-clay-400/10 px-3 py-2 text-xs text-clay-500 dark:text-clay-400">
+                  Educational information only — not a diagnosis. Speak with a clinician for personal medical advice.
+                </div>
+              )}
             </div>
           );
         })}

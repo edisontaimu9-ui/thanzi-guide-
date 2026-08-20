@@ -102,19 +102,24 @@ export function MarkdownText({ text }: { text: string }) {
 export function TypewriterText({
   text,
   animate,
-  onTick
+  onTick,
+  onComplete
 }: {
   text: string;
   animate: boolean;
   onTick?: () => void;
+  onComplete?: () => void;
 }) {
   const [shownLength, setShownLength] = useState(animate ? 0 : text.length);
   const onTickRef = useRef(onTick);
   onTickRef.current = onTick;
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
     if (!animate) {
       setShownLength(text.length);
+      onCompleteRef.current?.();
       return;
     }
     setShownLength(0);
@@ -126,7 +131,10 @@ export function TypewriterText({
       shown = Math.min(text.length, shown + chunkSize);
       setShownLength(shown);
       onTickRef.current?.();
-      if (shown >= text.length) clearInterval(id);
+      if (shown >= text.length) {
+        clearInterval(id);
+        onCompleteRef.current?.();
+      }
     }, intervalMs);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
