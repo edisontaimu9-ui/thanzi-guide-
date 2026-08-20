@@ -209,10 +209,6 @@ export function Ask() {
             );
           }
           const { answer, sources } = m.result;
-          // knowledge_base entries ground the answer but aren't a citeable
-          // "source" a reader can look up — Oasis's internal knowledge stays
-          // silent, only Chakudya-backed references are shown.
-          const visibleSources = sources.filter((s) => s.source !== 'knowledge_base');
           const done = !!typingDone[i];
           return (
             <div key={i} className="rounded-2xl rounded-tl-sm border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950">
@@ -223,16 +219,21 @@ export function Ask() {
                 onComplete={() => markTypingDone(i)}
               />
 
-              {done && visibleSources.length > 0 && (
+              {done && sources.length > 0 && (
                 <div className="mt-3 border-t border-brand-100 pt-3 dark:border-ink-800">
                   <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-300 dark:text-brand-100">
                     Sources
                   </p>
                   <ul className="mt-1.5 space-y-1">
-                    {visibleSources.map((s) => (
+                    {sources.map((s) => (
                       <li key={s.id} className="text-xs text-brand-300 dark:text-brand-100">
-                        <span className="font-mono text-brand-500 dark:text-brand-100">[{s.id}]</span> {s.title}{' '}
-                        <span className="opacity-75">· {sourceLabel(s.source)}</span>
+                        <span className="font-mono text-brand-500 dark:text-brand-100">[{s.id}]</span> {s.title}
+                        {/* "Knowledge base" is an internal category tag, not
+                            something a reader needs — the citation title
+                            (e.g. a textbook chapter) speaks for itself. */}
+                        {s.source !== 'knowledge_base' && (
+                          <span className="opacity-75"> · {sourceLabel(s.source)}</span>
+                        )}
                       </li>
                     ))}
                   </ul>
