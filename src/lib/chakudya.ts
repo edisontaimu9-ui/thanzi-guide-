@@ -290,7 +290,7 @@ export async function ragAsk(query: string, topK = 6, sessionId?: string): Promi
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       query,
-      context: 'general',
+      context: 'both',
       top_k: topK,
       ...(sessionId ? { session_id: sessionId } : {})
     })
