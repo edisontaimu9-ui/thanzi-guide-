@@ -1,11 +1,25 @@
 import { Fragment, ReactNode, useEffect, useRef, useState } from 'react';
 
 // Minimal Markdown renderer — no dependency, just enough for RAG answers:
-// **bold**, *italics*, `code`, and "* "/"- " bullet lists. Deliberately not
-// a full CommonMark parser; /rag/ask answers don't use headings, tables,
-// links, or nested lists.
+// **bold**, *italics*, `code`, "* "/"- " bullet lists, and "| a | b |"
+// pipe tables. Deliberately not a full CommonMark parser; /rag/ask answers
+// don't use headings, links, or nested lists.
 
 let keySeed = 0;
+
+function isTableRow(line: string): boolean {
+  const t = line.trim();
+  return t.length > 1 && t.startsWith('|') && t.endsWith('|');
+}
+
+function splitTableRow(line: string): string[] {
+  const t = line.trim().slice(1, -1);
+  return t.split('|').map((c) => c.trim());
+}
+
+function isSeparatorRow(cells: string[]): boolean {
+  return cells.length > 0 && cells.every((c) => /^:?-{1,}:?$/.test(c.trim()));
+}
 
 function parseInline(text: string): ReactNode[] {
   const nodes: ReactNode[] = [];
@@ -42,6 +56,7 @@ export function MarkdownText({ text }: { text: string }) {
   const blocks: ReactNode[] = [];
   let listBuffer: string[] = [];
   let paraBuffer: string[] = [];
+  let tableBuffer: string[] = [];
 
   function flushList() {
     if (listBuffer.length) {
@@ -72,8 +87,66 @@ export function MarkdownText({ text }: { text: string }) {
     }
   }
 
+  function flushTable() {
+    if (!tableBuffer.length) return;
+    // A real table needs a header row plus a "|---|---|" separator row.
+    // Anything short of that (e.g. a stray line typed mid-animation, or
+    // just a line with a pipe in it) isn't a table — fall back to
+    // rendering the buffered lines as normal paragraph text so nothing
+    // gets silently dropped.
+    if (tableBuffer.length >= 2) {
+      const headerCells = splitTableRow(tableBuffer[0]);
+      const sepCells = splitTableRow(tableBuffer[1]);
+      if (isSeparatorRow(sepCells)) {
+        const bodyRows = tableBuffer.slice(2).map(splitTableRow);
+        blocks.push(
+          <div key={keySeed++} className="my-3 -mx-1 overflow-x-auto">
+            <table className="w-full min-w-full border-collapse text-left text-xs">
+              <thead>
+                <tr className="border-b border-brand-100 dark:border-ink-800">
+                  {headerCells.map((c) => (
+                    <th
+                      key={keySeed++}
+                      className="whitespace-nowrap px-2 py-1.5 font-semibold text-brand-700 dark:text-sand-50"
+                    >
+                      {parseInline(c)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {bodyRows.map((row) => (
+                  <tr key={keySeed++} className="border-b border-brand-100/60 last:border-0 dark:border-ink-800/60">
+                    {row.map((c) => (
+                      <td key={keySeed++} className="px-2 py-1.5 align-top text-brand-700 dark:text-sand-100">
+                        {parseInline(c)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        tableBuffer = [];
+        return;
+      }
+    }
+    paraBuffer.push(...tableBuffer);
+    tableBuffer = [];
+  }
+
   for (const rawLine of lines) {
     const line = rawLine.trim();
+    if (isTableRow(line)) {
+      if (tableBuffer.length === 0) {
+        flushList();
+        flushPara();
+      }
+      tableBuffer.push(line);
+      continue;
+    }
+    flushTable();
     const listMatch = /^[*-]\s+(.*)/.exec(line);
     if (listMatch) {
       flushPara();
@@ -86,6 +159,7 @@ export function MarkdownText({ text }: { text: string }) {
       paraBuffer.push(line);
     }
   }
+  flushTable();
   flushList();
   flushPara();
 
