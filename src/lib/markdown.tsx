@@ -1,4 +1,4 @@
-import { Fragment, ReactNode } from 'react';
+import { Fragment, ReactNode, useEffect, useRef, useState } from 'react';
 
 // Minimal Markdown renderer — no dependency, just enough for RAG answers:
 // **bold**, *italics*, `code`, and "* "/"- " bullet lists. Deliberately not
@@ -90,4 +90,47 @@ export function MarkdownText({ text }: { text: string }) {
   flushPara();
 
   return <div className="text-sm leading-relaxed text-brand-700 dark:text-sand-50">{blocks}</div>;
+}
+
+// Reveals `text` a chunk at a time through MarkdownText, for a typewriter
+// effect on freshly-arrived answers. `animate={false}` (e.g. answers
+// restored from a saved conversation) renders instantly — nobody wants to
+// re-watch history type itself out on every page load.
+//
+// Chunk size scales with total length so a one-line and a 400-word answer
+// both finish in roughly the same ~2.5s, instead of long answers crawling.
+export function TypewriterText({
+  text,
+  animate,
+  onTick
+}: {
+  text: string;
+  animate: boolean;
+  onTick?: () => void;
+}) {
+  const [shownLength, setShownLength] = useState(animate ? 0 : text.length);
+  const onTickRef = useRef(onTick);
+  onTickRef.current = onTick;
+
+  useEffect(() => {
+    if (!animate) {
+      setShownLength(text.length);
+      return;
+    }
+    setShownLength(0);
+    const totalTicks = 60;
+    const intervalMs = 30;
+    const chunkSize = Math.max(1, Math.ceil(text.length / totalTicks));
+    let shown = 0;
+    const id = setInterval(() => {
+      shown = Math.min(text.length, shown + chunkSize);
+      setShownLength(shown);
+      onTickRef.current?.();
+      if (shown >= text.length) clearInterval(id);
+    }, intervalMs);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text, animate]);
+
+  return <MarkdownText text={text.slice(0, shownLength)} />;
 }

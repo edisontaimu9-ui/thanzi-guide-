@@ -280,9 +280,10 @@ export interface RagAskResult {
 
 /**
  * Grounded AI answer for a nutrition/food question, sourced from CNR's
- * knowledge base (Malawi FCT, exchange lists, packaged foods, etc).
- * `context: 'general'` is the right value for Thanzi Guide's public,
- * non-clinical audience — 'clinical' is for Oasis CNST.
+ * knowledge base (Malawi FCT, exchange lists, packaged foods, general +
+ * clinical reference chapters, etc). `context: 'both'` so a public,
+ * non-clinical question can still surface clinical reference content
+ * (e.g. "explain diabetes") — see fix in this function's history.
  */
 export async function ragAsk(query: string, topK = 6, sessionId?: string): Promise<RagAskResult> {
   const res = await fetch(`${BASE_URL}/rag/ask`, {
@@ -303,4 +304,25 @@ export async function ragAsk(query: string, topK = 6, sessionId?: string): Promi
     throw new Error(json.message || 'Chakudya API returned an error');
   }
   return json.data;
+}
+
+/**
+ * POST /memory/write — records one turn of the Ask conversation as a
+ * session "fact" so later questions in the same session can recall it
+ * (handleRagAsk's match_memory step already pulls this back in when
+ * session_id is passed to ragAsk — this is the missing write side of
+ * that loop). Public, rate-limited. Fire-and-forget: memory is a nice-to
+ * -have for conversational continuity, never something the Ask UI should
+ * block or error out on.
+ */
+export async function writeMemory(sessionId: string, content: string): Promise<void> {
+  try {
+    await fetch(`${BASE_URL}/memory/write`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId, content, kind: 'fact' })
+    });
+  } catch {
+    // Best-effort only — a failed memory write should never surface to the user.
+  }
 }

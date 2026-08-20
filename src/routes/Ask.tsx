@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { ragAsk, RagAskResult } from '@/lib/chakudya';
-import { MarkdownText } from '@/lib/markdown';
+import { ragAsk, writeMemory, RagAskResult } from '@/lib/chakudya';
+import { TypewriterText } from '@/lib/markdown';
 
 const SOURCE_LABELS: Record<string, string> = {
   knowledge_base: 'Knowledge base',
@@ -35,27 +35,79 @@ const suggested = [
 
 type Message =
   | { role: 'user'; text: string }
-  | { role: 'answer'; result: RagAskResult }
+  | { role: 'answer'; result: RagAskResult; animate?: boolean }
   | { role: 'error'; message: string };
 
-// One session id per page load so /rag/ask can pull this session's own
-// recalled context into later answers, without persisting anything once
-// the tab closes.
+const SESSION_STORAGE_KEY = 'thanzi-ask-session-id';
+const MESSAGES_STORAGE_KEY = 'thanzi-ask-messages';
+
 function makeSessionId(): string {
   return crypto.randomUUID ? crypto.randomUUID() : `sess_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 }
 
+// The conversation (and the session id tying it to /rag/ask's server-side
+// memory recall) persists in localStorage so leaving the Ask tab and coming
+// back — or reopening the app later — picks the same chat back up instead
+// of starting blank every time.
+function loadStoredSessionId(): string {
+  try {
+    const stored = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (stored) return stored;
+  } catch {
+    // localStorage unavailable (private mode, etc.) — fall through to a fresh id.
+  }
+  const fresh = makeSessionId();
+  try {
+    localStorage.setItem(SESSION_STORAGE_KEY, fresh);
+  } catch {
+    // Best-effort — an in-memory-only session id still works for this page load.
+  }
+  return fresh;
+}
+
+function loadStoredMessages(): Message[] {
+  try {
+    const raw = localStorage.getItem(MESSAGES_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as Message[];
+    // Restored history should never re-play the typewriter animation.
+    return parsed.map((m) => (m.role === 'answer' ? { ...m, animate: false } : m));
+  } catch {
+    return [];
+  }
+}
+
 export function Ask() {
   useDocumentTitle('Ask');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(loadStoredMessages);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const sessionId = useRef(makeSessionId());
+  const sessionId = useRef(loadStoredSessionId());
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MESSAGES_STORAGE_KEY, JSON.stringify(messages));
+    } catch {
+      // Storage full/unavailable — conversation just won't survive a reload this time.
+    }
+  }, [messages]);
+
+  function startNewChat() {
+    const fresh = makeSessionId();
+    sessionId.current = fresh;
+    try {
+      localStorage.setItem(SESSION_STORAGE_KEY, fresh);
+      localStorage.removeItem(MESSAGES_STORAGE_KEY);
+    } catch {
+      // Ignore — clearing in-memory state below is what actually matters.
+    }
+    setMessages([]);
+  }
 
   async function ask(question: string) {
     const q = question.trim();
@@ -65,7 +117,11 @@ export function Ask() {
     setLoading(true);
     try {
       const result = await ragAsk(q, 6, sessionId.current);
-      setMessages((m) => [...m, { role: 'answer', result }]);
+      setMessages((m) => [...m, { role: 'answer', result, animate: true }]);
+      // Fire-and-forget: record this turn as session memory so later
+      // questions in the same conversation can recall it. Never blocks
+      // or affects the UI if it fails.
+      writeMemory(sessionId.current, `Q: ${q}\nA: ${result.answer}`);
     } catch {
       setMessages((m) => [...m, { role: 'error', message: "Couldn't get an answer right now. Please try again." }]);
     } finally {
@@ -80,10 +136,23 @@ export function Ask() {
 
   return (
     <main className="mx-auto flex max-w-2xl flex-col px-6 py-12">
-      <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Ask</h1>
-      <p className="mt-2 text-brand-500 dark:text-brand-100">
-        Ask health and nutrition questions and get answers grounded in Thanzi Guide's own content.
-      </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl text-brand-700 dark:text-sand-100">Ask</h1>
+          <p className="mt-2 text-brand-500 dark:text-brand-100">
+            Ask health and nutrition questions and get answers grounded in Thanzi Guide's own content.
+          </p>
+        </div>
+        {messages.length > 0 && (
+          <button
+            type="button"
+            onClick={startNewChat}
+            className="mt-1 shrink-0 rounded-full border border-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-500 hover:border-brand-500 hover:text-brand-700 dark:border-ink-800 dark:text-brand-100"
+          >
+            New chat
+          </button>
+        )}
+      </div>
 
       {messages.length === 0 && (
         <div className="mt-6">
@@ -126,7 +195,11 @@ export function Ask() {
           const { answer, sources } = m.result;
           return (
             <div key={i} className="rounded-2xl rounded-tl-sm border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950">
-              <MarkdownText text={answer} />
+              <TypewriterText
+                text={answer}
+                animate={!!m.animate}
+                onTick={() => bottomRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' })}
+              />
 
               {sources.length > 0 && (
                 <div className="mt-3 border-t border-brand-100 pt-3 dark:border-ink-800">
