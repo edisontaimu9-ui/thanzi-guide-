@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { ragAsk, RagAskResult } from '@/lib/chakudya';
+import { MarkdownText } from '@/lib/markdown';
 
 const SOURCE_LABELS: Record<string, string> = {
   knowledge_base: 'Knowledge base',
@@ -125,7 +126,7 @@ export function Ask() {
           const { answer, sources } = m.result;
           return (
             <div key={i} className="rounded-2xl rounded-tl-sm border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950">
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-brand-700 dark:text-sand-50">{answer}</p>
+              <MarkdownText text={answer} />
 
               {sources.length > 0 && (
                 <div className="mt-3 border-t border-brand-100 pt-3 dark:border-ink-800">
