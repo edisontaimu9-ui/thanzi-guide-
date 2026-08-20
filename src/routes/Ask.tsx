@@ -35,113 +35,356 @@ const suggested = [
 
 type Message =
   | { role: 'user'; text: string }
-  | { role: 'answer'; result: RagAskResult; animate?: boolean }
+  | { role: 'answer'; result: RagAskResult; animate?: boolean; feedback?: 'like' | 'dislike' }
   | { role: 'error'; message: string };
 
-const SESSION_STORAGE_KEY = 'thanzi-ask-session-id';
-const MESSAGES_STORAGE_KEY = 'thanzi-ask-messages';
-
-function makeSessionId(): string {
-  return crypto.randomUUID ? crypto.randomUUID() : `sess_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+// A "thread" is one saved conversation: its own message list and its own
+// Chakudya session id (session ids are how /rag/ask's server-side memory
+// recall is scoped, so each thread needs a distinct one — sharing one
+// across threads would bleed memory between unrelated conversations).
+interface Thread {
+  id: string;
+  sessionId: string;
+  title: string;
+  messages: Message[];
+  updatedAt: number;
 }
 
-// The conversation (and the session id tying it to /rag/ask's server-side
-// memory recall) persists in localStorage so leaving the Ask tab and coming
-// back — or reopening the app later — picks the same chat back up instead
-// of starting blank every time.
-function loadStoredSessionId(): string {
-  try {
-    const stored = localStorage.getItem(SESSION_STORAGE_KEY);
-    if (stored) return stored;
-  } catch {
-    // localStorage unavailable (private mode, etc.) — fall through to a fresh id.
-  }
-  const fresh = makeSessionId();
-  try {
-    localStorage.setItem(SESSION_STORAGE_KEY, fresh);
-  } catch {
-    // Best-effort — an in-memory-only session id still works for this page load.
-  }
-  return fresh;
+const THREADS_STORAGE_KEY = 'thanzi-ask-threads';
+const ACTIVE_THREAD_STORAGE_KEY = 'thanzi-ask-active-thread';
+// Legacy single-conversation keys from before multi-thread history existed.
+// Only read once, to migrate anyone's in-progress chat into thread form.
+const LEGACY_SESSION_KEY = 'thanzi-ask-session-id';
+const LEGACY_MESSAGES_KEY = 'thanzi-ask-messages';
+
+function makeId(): string {
+  return crypto.randomUUID ? crypto.randomUUID() : `id_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 }
 
-function loadStoredMessages(): Message[] {
+function threadTitle(messages: Message[]): string {
+  const firstUser = messages.find((m): m is Extract<Message, { role: 'user' }> => m.role === 'user');
+  if (!firstUser) return 'New chat';
+  return firstUser.text.length > 48 ? `${firstUser.text.slice(0, 48)}…` : firstUser.text;
+}
+
+function newThread(): Thread {
+  return { id: makeId(), sessionId: makeId(), title: 'New chat', messages: [], updatedAt: Date.now() };
+}
+
+// Loads saved threads, migrating the old single-conversation storage format
+// (from before branching existed) into a thread the first time this runs.
+function loadThreads(): Thread[] {
   try {
-    const raw = localStorage.getItem(MESSAGES_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as Message[];
-    // Restored history should never re-play the typewriter animation.
-    return parsed.map((m) => (m.role === 'answer' ? { ...m, animate: false } : m));
+    const raw = localStorage.getItem(THREADS_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Thread[];
+      // Restored history should never re-play the typewriter animation.
+      return parsed.map((t) => ({
+        ...t,
+        messages: t.messages.map((m) => (m.role === 'answer' ? { ...m, animate: false } : m))
+      }));
+    }
   } catch {
-    return [];
+    // Corrupt/unavailable storage — fall through to migration or a blank thread.
   }
+
+  try {
+    const legacySession = localStorage.getItem(LEGACY_SESSION_KEY);
+    const legacyRaw = localStorage.getItem(LEGACY_MESSAGES_KEY);
+    if (legacyRaw) {
+      const legacyMessages = (JSON.parse(legacyRaw) as Message[]).map((m) =>
+        m.role === 'answer' ? { ...m, animate: false } : m
+      );
+      if (legacyMessages.length) {
+        const migrated: Thread = {
+          id: makeId(),
+          sessionId: legacySession || makeId(),
+          title: threadTitle(legacyMessages),
+          messages: legacyMessages,
+          updatedAt: Date.now()
+        };
+        localStorage.removeItem(LEGACY_MESSAGES_KEY);
+        localStorage.removeItem(LEGACY_SESSION_KEY);
+        return [migrated];
+      }
+    }
+  } catch {
+    // Ignore — worst case the old conversation is lost, not corrupted.
+  }
+
+  return [];
+}
+
+function loadActiveThreadId(threads: Thread[]): string {
+  try {
+    const stored = localStorage.getItem(ACTIVE_THREAD_STORAGE_KEY);
+    if (stored && threads.some((t) => t.id === stored)) return stored;
+  } catch {
+    // Fall through.
+  }
+  return threads[0]?.id ?? '';
+}
+
+function relativeTime(ts: number): string {
+  const diffMs = Date.now() - ts;
+  const mins = Math.round(diffMs / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  return `${days}d ago`;
+}
+
+// ---- Small inline icons (no icon library dependency in this project) ----
+
+function CopyIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+function LikeIcon({ filled }: { filled?: boolean }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 10v12" />
+      <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+    </svg>
+  );
+}
+function DislikeIcon({ filled }: { filled?: boolean }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(180deg)' }}>
+      <path d="M7 10v12" />
+      <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+    </svg>
+  );
+}
+function ShareIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <path d="m8.59 13.51 6.83 3.98M15.41 6.51 8.59 10.49" />
+    </svg>
+  );
+}
+function RetryIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 1 0 3-6.7" />
+      <path d="M3 4v5h5" />
+    </svg>
+  );
+}
+function BranchIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 3v12" />
+      <circle cx="6" cy="18" r="3" />
+      <circle cx="18" cy="6" r="3" />
+      <path d="M18 9a9 9 0 0 1-9 9" />
+    </svg>
+  );
+}
+function HistoryIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8" />
+      <path d="M3 3v5h5" />
+      <path d="M12 7v5l4 2" />
+    </svg>
+  );
 }
 
 export function Ask() {
   useDocumentTitle('Ask');
-  const [messages, setMessages] = useState<Message[]>(loadStoredMessages);
+  const [threads, setThreads] = useState<Thread[]>(loadThreads);
+  const [activeThreadId, setActiveThreadId] = useState<string>(() => loadActiveThreadId(loadThreads()));
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const sessionId = useRef(loadStoredSessionId());
+  const [historyOpen, setHistoryOpen] = useState(false);
+  // Transient "Copied" confirmation, keyed by message index in the active thread.
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  // Tracks which answer messages (by index) have finished typing, so the
-  // Sources list and disclaimer only appear once the typewriter is done —
-  // otherwise they render immediately under a still-animating answer and
-  // visibly jump/flicker as the answer grows past them.
-  const [typingDone, setTypingDone] = useState<Record<number, boolean>>(() => {
-    const initial: Record<number, boolean> = {};
-    loadStoredMessages().forEach((m, i) => {
-      if (m.role === 'answer' && !m.animate) initial[i] = true;
-    });
-    return initial;
-  });
 
-  function markTypingDone(index: number) {
-    setTypingDone((d) => (d[index] ? d : { ...d, [index]: true }));
+  // Tracks which answer messages have finished typing, so the Sources list
+  // and disclaimer only appear once the typewriter is done — otherwise they
+  // render immediately under a still-animating answer and visibly jump.
+  // Keyed by "threadId:index" so switching threads and coming back doesn't
+  // re-trigger a visible flicker (already-typed messages stay marked done).
+  const [typingDone, setTypingDone] = useState<Record<string, boolean>>({});
+
+  function markTypingDone(key: string) {
+    setTypingDone((d) => (d[key] ? d : { ...d, [key]: true }));
   }
+
+  let activeThread = threads.find((t) => t.id === activeThreadId);
+  if (!activeThread) {
+    // First run (no saved threads) or the stored active id no longer
+    // exists — fall back to an in-memory blank thread. It gets persisted
+    // for real the moment the person asks something (see updateThread).
+    activeThread = newThread();
+  }
+  const messages = activeThread.messages;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, loading]);
+  }, [messages.length, loading]);
 
   useEffect(() => {
     try {
-      localStorage.setItem(MESSAGES_STORAGE_KEY, JSON.stringify(messages));
+      localStorage.setItem(THREADS_STORAGE_KEY, JSON.stringify(threads));
     } catch {
       // Storage full/unavailable — conversation just won't survive a reload this time.
     }
-  }, [messages]);
+  }, [threads]);
 
-  function startNewChat() {
-    const fresh = makeSessionId();
-    sessionId.current = fresh;
+  useEffect(() => {
     try {
-      localStorage.setItem(SESSION_STORAGE_KEY, fresh);
-      localStorage.removeItem(MESSAGES_STORAGE_KEY);
+      localStorage.setItem(ACTIVE_THREAD_STORAGE_KEY, activeThreadId);
     } catch {
-      // Ignore — clearing in-memory state below is what actually matters.
+      // Best-effort.
     }
-    setMessages([]);
-    setTypingDone({});
+  }, [activeThreadId]);
+
+  // Applies `updater` to the given thread's message list, creating the
+  // thread in the saved list if this is its first message.
+  function updateThread(id: string, updater: (msgs: Message[]) => Message[]) {
+    setThreads((prev) => {
+      const exists = prev.some((t) => t.id === id);
+      const base = exists ? prev : [...prev, id === activeThread!.id ? activeThread! : newThread()];
+      return base.map((t) => {
+        if (t.id !== id) return t;
+        const nextMessages = updater(t.messages);
+        return {
+          ...t,
+          messages: nextMessages,
+          title: t.title === 'New chat' ? threadTitle(nextMessages) : t.title,
+          updatedAt: Date.now()
+        };
+      });
+    });
   }
 
-  async function ask(question: string) {
+  function startNewChat() {
+    const t = newThread();
+    setThreads((prev) => [...prev, t]);
+    setActiveThreadId(t.id);
+    setHistoryOpen(false);
+  }
+
+  function switchThread(id: string) {
+    setActiveThreadId(id);
+    setHistoryOpen(false);
+  }
+
+  function deleteThread(id: string, e: React.MouseEvent) {
+    e.stopPropagation();
+    setThreads((prev) => {
+      const next = prev.filter((t) => t.id !== id);
+      if (id === activeThreadId) {
+        setActiveThreadId(next[0]?.id ?? '');
+      }
+      return next;
+    });
+  }
+
+  async function ask(question: string, threadId: string = activeThreadId) {
     const q = question.trim();
     if (!q || loading) return;
+    const sid = (threads.find((t) => t.id === threadId) ?? activeThread!).sessionId;
     setInput('');
-    setMessages((m) => [...m, { role: 'user', text: q }]);
+    updateThread(threadId, (msgs) => [...msgs, { role: 'user', text: q }]);
     setLoading(true);
     try {
-      const result = await ragAsk(q, 6, sessionId.current);
-      setMessages((m) => [...m, { role: 'answer', result, animate: true }]);
+      const result = await ragAsk(q, 6, sid);
+      updateThread(threadId, (msgs) => [...msgs, { role: 'answer', result, animate: true }]);
       // Fire-and-forget: record this turn as session memory so later
-      // questions in the same conversation can recall it. Never blocks
-      // or affects the UI if it fails.
-      writeMemory(sessionId.current, `Q: ${q}\nA: ${result.answer}`);
+      // questions in the same thread can recall it. Never blocks or
+      // affects the UI if it fails.
+      writeMemory(sid, `Q: ${q}\nA: ${result.answer}`);
     } catch {
-      setMessages((m) => [...m, { role: 'error', message: "Couldn't get an answer right now. Please try again." }]);
+      updateThread(threadId, (msgs) => [
+        ...msgs,
+        { role: 'error', message: "Couldn't get an answer right now. Please try again." }
+      ]);
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Regenerates the answer at `index`: drops it (and anything after it,
+  // since later turns may have relied on that answer's context) and re-asks
+  // the question that preceded it.
+  function retry(index: number) {
+    if (loading) return;
+    const question = messages[index - 1];
+    if (!question || question.role !== 'user') return;
+    updateThread(activeThreadId, (msgs) => msgs.slice(0, index));
+    ask(question.text, activeThreadId);
+  }
+
+  function toggleFeedback(index: number, kind: 'like' | 'dislike') {
+    updateThread(activeThreadId, (msgs) =>
+      msgs.map((m, i) => {
+        if (i !== index || m.role !== 'answer') return m;
+        return { ...m, feedback: m.feedback === kind ? undefined : kind };
+      })
+    );
+  }
+
+  async function copyAnswer(index: number, text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex((i) => (i === index ? null : i)), 1500);
+    } catch {
+      // Clipboard permission denied or unavailable — silently do nothing
+      // rather than throwing an error over a non-critical convenience action.
+    }
+  }
+
+  async function shareAnswer(text: string) {
+    if (navigator.share) {
+      try {
+        await navigator.share({ text });
+      } catch {
+        // Person cancelled the share sheet, or it's unsupported — nothing to do.
+      }
+    } else {
+      copyAnswer(-1, text);
+    }
+  }
+
+  // Forks the conversation up to and including `index` into a brand-new
+  // thread with its own session id, then replays that prefix into the new
+  // session's server-side memory so /rag/ask's recall still has the same
+  // context the original thread had at that point.
+  function branchAt(index: number) {
+    const prefix = messages.slice(0, index + 1).map((m) => (m.role === 'answer' ? { ...m, animate: false } : m));
+    const t: Thread = {
+      id: makeId(),
+      sessionId: makeId(),
+      title: threadTitle(prefix),
+      messages: prefix,
+      updatedAt: Date.now()
+    };
+    setThreads((prev) => [...prev, t]);
+    setActiveThreadId(t.id);
+    setHistoryOpen(false);
+
+    for (let i = 0; i < prefix.length; i++) {
+      const m = prefix[i];
+      if (m.role === 'answer') {
+        const q = prefix[i - 1];
+        if (q?.role === 'user') {
+          writeMemory(t.sessionId, `Q: ${q.text}\nA: ${m.result.answer}`);
+        }
+      }
     }
   }
 
@@ -149,6 +392,8 @@ export function Ask() {
     e.preventDefault();
     ask(input);
   }
+
+  const sortedThreads = [...threads].sort((a, b) => b.updatedAt - a.updatedAt);
 
   return (
     <main className="mx-auto flex max-w-2xl flex-col px-6 py-12">
@@ -159,15 +404,57 @@ export function Ask() {
             Ask health and nutrition questions and get answers grounded in Thanzi Guide's own content.
           </p>
         </div>
-        {messages.length > 0 && (
+        <div className="relative flex shrink-0 items-center gap-2">
           <button
             type="button"
-            onClick={startNewChat}
-            className="mt-1 shrink-0 rounded-full border border-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-500 hover:border-brand-500 hover:text-brand-700 dark:border-ink-800 dark:text-brand-100"
+            onClick={() => setHistoryOpen((o) => !o)}
+            aria-label="Chat history"
+            className="mt-1 flex items-center gap-1 rounded-full border border-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-500 hover:border-brand-500 hover:text-brand-700 dark:border-ink-800 dark:text-brand-100"
           >
-            New chat
+            <HistoryIcon />
           </button>
-        )}
+          {messages.length > 0 && (
+            <button
+              type="button"
+              onClick={startNewChat}
+              className="mt-1 rounded-full border border-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-500 hover:border-brand-500 hover:text-brand-700 dark:border-ink-800 dark:text-brand-100"
+            >
+              New chat
+            </button>
+          )}
+
+          {historyOpen && (
+            <div className="absolute right-0 top-10 z-10 max-h-80 w-72 overflow-y-auto rounded-xl border border-brand-100 bg-white p-1.5 shadow-lg dark:border-ink-800 dark:bg-ink-950">
+              {sortedThreads.length === 0 && (
+                <p className="px-3 py-3 text-xs text-brand-300 dark:text-brand-100">No conversations yet.</p>
+              )}
+              {sortedThreads.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => switchThread(t.id)}
+                  className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-xs hover:bg-brand-100/40 dark:hover:bg-ink-800/60 ${
+                    t.id === activeThreadId ? 'bg-brand-100/60 dark:bg-ink-800' : ''
+                  }`}
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-brand-700 dark:text-sand-50">{t.title}</span>
+                    <span className="text-[10px] text-brand-300 dark:text-brand-100">{relativeTime(t.updatedAt)}</span>
+                  </span>
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => deleteThread(t.id, e)}
+                    className="shrink-0 rounded-full px-1.5 py-0.5 text-brand-300 hover:bg-clay-400/20 hover:text-clay-500 dark:text-brand-100"
+                    aria-label="Delete conversation"
+                  >
+                    ✕
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {messages.length === 0 && (
@@ -205,18 +492,27 @@ export function Ask() {
             return (
               <div key={i} className="rounded-lg border border-clay-400/40 bg-clay-400/10 px-4 py-3 text-sm text-clay-500 dark:text-clay-400">
                 {m.message}
+                <button
+                  type="button"
+                  onClick={() => retry(i)}
+                  disabled={loading}
+                  className="ml-2 font-semibold underline underline-offset-2 disabled:opacity-50"
+                >
+                  Retry
+                </button>
               </div>
             );
           }
           const { answer, sources } = m.result;
-          const done = !!typingDone[i];
+          const key = `${activeThreadId}:${i}`;
+          const done = !!typingDone[key];
           return (
             <div key={i} className="rounded-2xl rounded-tl-sm border border-brand-100 bg-white p-4 dark:border-ink-800 dark:bg-ink-950">
               <TypewriterText
                 text={answer}
                 animate={!!m.animate}
                 onTick={() => bottomRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' })}
-                onComplete={() => markTypingDone(i)}
+                onComplete={() => markTypingDone(key)}
               />
 
               {done && sources.length > 0 && (
@@ -243,6 +539,67 @@ export function Ask() {
               {done && (
                 <div className="mt-3 rounded-lg bg-clay-400/10 px-3 py-2 text-xs text-clay-500 dark:text-clay-400">
                   Educational information only — not a diagnosis. Speak with a clinician for personal medical advice.
+                </div>
+              )}
+
+              {done && (
+                <div className="mt-2 flex items-center gap-1 border-t border-brand-100 pt-2 dark:border-ink-800">
+                  <button
+                    type="button"
+                    onClick={() => copyAnswer(i, answer)}
+                    aria-label="Copy answer"
+                    title={copiedIndex === i ? 'Copied!' : 'Copy'}
+                    className="rounded-full p-1.5 text-brand-300 hover:bg-brand-100/50 hover:text-brand-700 dark:text-brand-100 dark:hover:bg-ink-800"
+                  >
+                    <CopyIcon />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleFeedback(i, 'like')}
+                    aria-label="Good response"
+                    className={`rounded-full p-1.5 hover:bg-brand-100/50 dark:hover:bg-ink-800 ${
+                      m.feedback === 'like' ? 'text-brand-500' : 'text-brand-300 dark:text-brand-100'
+                    }`}
+                  >
+                    <LikeIcon filled={m.feedback === 'like'} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleFeedback(i, 'dislike')}
+                    aria-label="Bad response"
+                    className={`rounded-full p-1.5 hover:bg-brand-100/50 dark:hover:bg-ink-800 ${
+                      m.feedback === 'dislike' ? 'text-clay-500' : 'text-brand-300 dark:text-brand-100'
+                    }`}
+                  >
+                    <DislikeIcon filled={m.feedback === 'dislike'} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => shareAnswer(answer)}
+                    aria-label="Share answer"
+                    title={copiedIndex === -1 ? 'Copied!' : 'Share'}
+                    className="rounded-full p-1.5 text-brand-300 hover:bg-brand-100/50 hover:text-brand-700 dark:text-brand-100 dark:hover:bg-ink-800"
+                  >
+                    <ShareIcon />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => retry(i)}
+                    disabled={loading}
+                    aria-label="Retry"
+                    className="rounded-full p-1.5 text-brand-300 hover:bg-brand-100/50 hover:text-brand-700 disabled:opacity-50 dark:text-brand-100 dark:hover:bg-ink-800"
+                  >
+                    <RetryIcon />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => branchAt(i)}
+                    aria-label="Branch in new chat"
+                    title="Branch in new chat"
+                    className="rounded-full p-1.5 text-brand-300 hover:bg-brand-100/50 hover:text-brand-700 dark:text-brand-100 dark:hover:bg-ink-800"
+                  >
+                    <BranchIcon />
+                  </button>
                 </div>
               )}
             </div>
