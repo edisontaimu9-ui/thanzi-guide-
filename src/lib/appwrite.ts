@@ -63,7 +63,8 @@ export const DB = {
     mealLogs: 'meal_logs',
     exerciseLogs: 'exercise_logs',
     userReferences: 'user_references',
-    referenceChunks: 'reference_chunks'
+    referenceChunks: 'reference_chunks',
+    suggestedPrompts: 'suggested_prompts'
   }
 } as const;
 

@@ -2220,6 +2220,48 @@
                     ]
                 }
             ]
+        },
+        {
+            "$id": "suggested_prompts",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"label:editor\")",
+                "update(\"label:editor\")",
+                "delete(\"label:admin\")"
+            ],
+            "databaseId": "thanzi_guide",
+            "name": "Suggested Prompts",
+            "enabled": true,
+            "documentSecurity": false,
+            "attributes": [
+                {
+                    "key": "text",
+                    "type": "string",
+                    "size": 300,
+                    "required": true
+                },
+                {
+                    "key": "category",
+                    "type": "string",
+                    "size": 32,
+                    "required": false
+                },
+                {
+                    "key": "active",
+                    "type": "boolean",
+                    "required": false,
+                    "default": true
+                }
+            ],
+            "indexes": [
+                {
+                    "key": "active_idx",
+                    "type": "key",
+                    "attributes": [
+                        "active"
+                    ]
+                }
+            ]
         }
     ],
     "buckets": [
