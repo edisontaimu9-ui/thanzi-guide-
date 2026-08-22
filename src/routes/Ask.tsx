@@ -69,18 +69,44 @@ function groupCitedSources(list: RagAskResult['sources']): GroupedSource[] {
   return order.map((k) => map.get(k)!);
 }
 
-// A couple of disease/medicine topics up front give the field the same
-// "explain this" shape as the free-text questions below, so people
-// unfamiliar with the format see what kind of thing they can ask.
-const suggested = [
+// A larger pool than we actually show at once. A handful of disease/medicine
+// topics are mixed in with food/nutrition ones so people unfamiliar with the
+// format see what kind of thing they can ask, in both shapes ("explain this"
+// and plain questions). Randomly sampled down to SUGGESTED_COUNT per visit
+// (see pickSuggested) so the panel doesn't look identical every time.
+const suggestedPool = [
   'What nutrients are in nsima?',
   'What causes anaemia?',
-  "Explain diabetes: causes, symptoms, and nutrition considerations.",
+  'Explain diabetes: causes, symptoms, and nutrition considerations.',
   'How much water should I drink daily?',
   'Is groundnut flour good for a baby?',
   'What foods help manage high blood pressure?',
-  'Explain metformin: uses, side effects, and food interactions.'
+  'Explain metformin: uses, side effects, and food interactions.',
+  'What should I eat during pregnancy?',
+  'Is soya flour a good protein source?',
+  'What causes malnutrition in children?',
+  'Explain hypertension: causes, symptoms, and nutrition considerations.',
+  'How can I tell if a baby is underweight?',
+  'What foods are good for breastfeeding mothers?',
+  'Is mgaiwa nsima healthier than white nsima?',
+  'What causes kwashiorkor?',
+  'Explain iron-deficiency anaemia and which foods help.',
+  'How much protein does a growing child need?',
+  'What foods should a diabetic avoid?'
 ];
+
+const SUGGESTED_COUNT = 7;
+
+// Fisher-Yates shuffle, then take the first n. Keeps suggestedPool as the
+// single source of truth for what's eligible, while what's shown varies.
+function pickSuggested(pool: string[], n: number): string[] {
+  const arr = [...pool];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, n);
+}
 
 type Message =
   | { role: 'user'; text: string }
@@ -279,6 +305,10 @@ export function Ask() {
   // only one message at a time, and it resets whenever the thread changes.
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
+  // Picked once per mount (lazy initializer, not re-rolled on every render)
+  // so the panel doesn't reshuffle mid-visit — only when the Ask page is
+  // freshly opened.
+  const [suggested] = useState(() => pickSuggested(suggestedPool, SUGGESTED_COUNT));
 
   function markTypingDone(key: string) {
     setTypingDone((d) => (d[key] ? d : { ...d, [key]: true }));
