@@ -172,6 +172,14 @@ function ShareIcon() {
     </svg>
   );
 }
+function EditIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+      <path d="m15 5 4 4" />
+    </svg>
+  );
+}
 function RetryIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -217,6 +225,11 @@ export function Ask() {
   // Keyed by "threadId:index" so switching threads and coming back doesn't
   // re-trigger a visible flicker (already-typed messages stay marked done).
   const [typingDone, setTypingDone] = useState<Record<string, boolean>>({});
+  // Index (within the active thread) of the user message currently being
+  // edited, if any — null when nothing's being edited. Editing is exclusive:
+  // only one message at a time, and it resets whenever the thread changes.
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editValue, setEditValue] = useState('');
 
   function markTypingDone(key: string) {
     setTypingDone((d) => (d[key] ? d : { ...d, [key]: true }));
@@ -275,11 +288,13 @@ export function Ask() {
     setThreads((prev) => [...prev, t]);
     setActiveThreadId(t.id);
     setHistoryOpen(false);
+    setEditingIndex(null);
   }
 
   function switchThread(id: string) {
     setActiveThreadId(id);
     setHistoryOpen(false);
+    setEditingIndex(null);
   }
 
   function deleteThread(id: string, e: React.MouseEvent) {
@@ -293,12 +308,13 @@ export function Ask() {
     });
   }
 
-  async function ask(question: string, threadId: string = activeThreadId) {
-    const q = question.trim();
-    if (!q || loading) return;
-    const sid = (threads.find((t) => t.id === threadId) ?? activeThread!).sessionId;
-    setInput('');
-    updateThread(threadId, (msgs) => [...msgs, { role: 'user', text: q }]);
+  // Shared tail end of asking a question: hits /rag/ask for `q` in `sid`,
+  // appends the answer (or error) to `threadId`. Callers are responsible for
+  // getting the user-facing question message into place first — `ask` below
+  // appends a new one, `saveEdit` replaces an existing one in place — since
+  // those two cases need different message-list edits before the same
+  // network round trip.
+  async function runQuery(threadId: string, sid: string, q: string) {
     setLoading(true);
     try {
       const result = await ragAsk(q, 6, sid);
@@ -317,6 +333,15 @@ export function Ask() {
     }
   }
 
+  async function ask(question: string, threadId: string = activeThreadId) {
+    const q = question.trim();
+    if (!q || loading) return;
+    const sid = (threads.find((t) => t.id === threadId) ?? activeThread!).sessionId;
+    setInput('');
+    updateThread(threadId, (msgs) => [...msgs, { role: 'user', text: q }]);
+    await runQuery(threadId, sid, q);
+  }
+
   // Regenerates the answer at `index`: drops it (and anything after it,
   // since later turns may have relied on that answer's context) and re-asks
   // the question that preceded it.
@@ -326,6 +351,29 @@ export function Ask() {
     if (!question || question.role !== 'user') return;
     updateThread(activeThreadId, (msgs) => msgs.slice(0, index));
     ask(question.text, activeThreadId);
+  }
+
+  // Edits the user question at `index` in place, drops everything after it
+  // (the old answer, and any later turns — they were grounded in the old
+  // wording), and re-asks with the new text. Same "later turns get dropped"
+  // rule as retry, just also rewriting the question itself.
+  function saveEdit(index: number, newText: string) {
+    const q = newText.trim();
+    if (!q || loading) return;
+    const sid = activeThread!.sessionId;
+    updateThread(activeThreadId, (msgs) => [...msgs.slice(0, index), { role: 'user', text: q }]);
+    setEditingIndex(null);
+    runQuery(activeThreadId, sid, q);
+  }
+
+  function startEdit(index: number, currentText: string) {
+    if (loading) return;
+    setEditingIndex(index);
+    setEditValue(currentText);
+  }
+
+  function cancelEdit() {
+    setEditingIndex(null);
   }
 
   function toggleFeedback(index: number, kind: 'like' | 'dislike') {
@@ -381,6 +429,7 @@ export function Ask() {
     setThreads((prev) => [...prev, t]);
     setActiveThreadId(t.id);
     setHistoryOpen(false);
+    setEditingIndex(null);
 
     for (let i = 0; i < prefix.length; i++) {
       const m = prefix[i];
@@ -485,11 +534,61 @@ export function Ask() {
       <div className="mt-6 flex-1 space-y-4">
         {messages.map((m, i) => {
           if (m.role === 'user') {
+            if (editingIndex === i) {
+              return (
+                <div key={i} className="flex justify-end">
+                  <div className="w-full max-w-[80%] rounded-2xl rounded-tr-sm border border-brand-500 bg-white p-2 dark:bg-ink-950">
+                    <textarea
+                      autoFocus
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          saveEdit(i, editValue);
+                        } else if (e.key === 'Escape') {
+                          cancelEdit();
+                        }
+                      }}
+                      rows={Math.min(6, Math.max(2, Math.ceil(editValue.length / 40)))}
+                      className="w-full resize-none rounded-lg bg-transparent px-1.5 py-1 text-sm text-brand-700 focus:outline-none dark:text-sand-50"
+                    />
+                    <div className="mt-1 flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={cancelEdit}
+                        className="rounded-full px-3 py-1 text-xs font-semibold text-brand-300 hover:text-brand-700 dark:text-brand-100"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => saveEdit(i, editValue)}
+                        disabled={!editValue.trim()}
+                        className="rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
             return (
-              <div key={i} className="flex justify-end">
+              <div key={i} className="flex flex-col items-end">
                 <div className="max-w-[80%] rounded-2xl rounded-tr-sm bg-brand-500 px-4 py-2.5 text-sm text-white">
                   {m.text}
                 </div>
+                <button
+                  type="button"
+                  onClick={() => startEdit(i, m.text)}
+                  disabled={loading}
+                  aria-label="Edit message"
+                  title="Edit"
+                  className="mt-1 rounded-full p-1 text-brand-300 hover:text-brand-700 disabled:opacity-40 dark:text-brand-100"
+                >
+                  <EditIcon />
+                </button>
               </div>
             );
           }
