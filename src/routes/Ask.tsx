@@ -20,6 +20,15 @@ function sourceLabel(source: string): string {
   return source || 'Source';
 }
 
+// The LLM is instructed to cite with ASCII brackets ([2]) but occasionally
+// reaches for full-width ones instead (【2】) — visually inconsistent, and it
+// silently broke citedSourceIds' match below (no Sources block at all, even
+// though the answer visibly cited things). Normalize before anything else
+// touches the text so rendering and citation-matching both see plain [N].
+function normalizeCitationBrackets(text: string): string {
+  return text.replace(/[\u3010\uFF3B]/g, '[').replace(/[\u3011\uFF3D]/g, ']');
+}
+
 // /rag/ask returns every candidate chunk the reranker fed the LLM (up to
 // top_k), but the LLM only cites the ones it actually drew from — several
 // candidates commonly come from the same source document and go unused.
@@ -622,7 +631,8 @@ export function Ask() {
               </div>
             );
           }
-          const { answer, sources } = m.result;
+          const { answer: rawAnswer, sources } = m.result;
+          const answer = normalizeCitationBrackets(rawAnswer);
           const citedIds = citedSourceIds(answer);
           const citedSources = sources.filter((s) => citedIds.has(s.id));
           const key = `${activeThreadId}:${i}`;
