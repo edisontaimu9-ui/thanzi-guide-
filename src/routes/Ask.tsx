@@ -44,6 +44,31 @@ function citedSourceIds(answer: string): Set<number> {
   return ids;
 }
 
+interface GroupedSource {
+  ids: number[];
+  title: string;
+  source: string;
+}
+
+// Several cited chunks are often different snippets of the very same
+// document (e.g. five rows out of one food composition table) — listing
+// each with its own repeated citation line is noisy. Groups them by
+// title+source so each unique document appears once, with every bracket
+// number that points to it, in the order it was first cited.
+function groupCitedSources(list: RagAskResult['sources']): GroupedSource[] {
+  const map = new Map<string, GroupedSource>();
+  const order: string[] = [];
+  for (const s of list) {
+    const key = `${s.title}\u0000${s.source}`;
+    if (!map.has(key)) {
+      map.set(key, { ids: [], title: s.title, source: s.source });
+      order.push(key);
+    }
+    map.get(key)!.ids.push(s.id);
+  }
+  return order.map((k) => map.get(k)!);
+}
+
 // A couple of disease/medicine topics up front give the field the same
 // "explain this" shape as the free-text questions below, so people
 // unfamiliar with the format see what kind of thing they can ask.
@@ -652,14 +677,17 @@ export function Ask() {
                     Sources
                   </p>
                   <ul className="mt-1.5 space-y-1">
-                    {citedSources.map((s) => (
-                      <li key={s.id} className="text-xs text-brand-300 dark:text-brand-100">
-                        <span className="font-mono text-brand-500 dark:text-brand-100">[{s.id}]</span> {s.title}
+                    {groupCitedSources(citedSources).map((g) => (
+                      <li key={g.ids.join(',')} className="text-xs text-brand-300 dark:text-brand-100">
+                        <span className="font-mono text-brand-500 dark:text-brand-100">
+                          {g.ids.map((id) => `[${id}]`).join('')}
+                        </span>{' '}
+                        {g.title}
                         {/* "Knowledge base" is an internal category tag, not
                             something a reader needs — the citation title
                             (e.g. a textbook chapter) speaks for itself. */}
-                        {s.source !== 'knowledge_base' && (
-                          <span className="opacity-75"> · {sourceLabel(s.source)}</span>
+                        {g.source !== 'knowledge_base' && (
+                          <span className="opacity-75"> · {sourceLabel(g.source)}</span>
                         )}
                       </li>
                     ))}
