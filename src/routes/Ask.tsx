@@ -20,6 +20,21 @@ function sourceLabel(source: string): string {
   return source || 'Source';
 }
 
+// /rag/ask returns every candidate chunk the reranker fed the LLM (up to
+// top_k), but the LLM only cites the ones it actually drew from — several
+// candidates commonly come from the same source document and go unused.
+// Showing all of them under "Sources" overstates what backs the answer, so
+// this pulls out just the [N] numbers that appear in the answer text.
+function citedSourceIds(answer: string): Set<number> {
+  const ids = new Set<number>();
+  const regex = /\[(\d+)\]/g;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(answer)) !== null) {
+    ids.add(parseInt(match[1], 10));
+  }
+  return ids;
+}
+
 // A couple of disease/medicine topics up front give the field the same
 // "explain this" shape as the free-text questions below, so people
 // unfamiliar with the format see what kind of thing they can ask.
@@ -608,6 +623,8 @@ export function Ask() {
             );
           }
           const { answer, sources } = m.result;
+          const citedIds = citedSourceIds(answer);
+          const citedSources = sources.filter((s) => citedIds.has(s.id));
           const key = `${activeThreadId}:${i}`;
           const done = !!typingDone[key];
           return (
@@ -619,13 +636,13 @@ export function Ask() {
                 onComplete={() => markTypingDone(key)}
               />
 
-              {done && sources.length > 0 && (
+              {done && citedSources.length > 0 && (
                 <div className="mt-3 border-t border-brand-100 pt-3 dark:border-ink-800">
                   <p className="text-[10px] font-semibold uppercase tracking-wide text-brand-300 dark:text-brand-100">
                     Sources
                   </p>
                   <ul className="mt-1.5 space-y-1">
-                    {sources.map((s) => (
+                    {citedSources.map((s) => (
                       <li key={s.id} className="text-xs text-brand-300 dark:text-brand-100">
                         <span className="font-mono text-brand-500 dark:text-brand-100">[{s.id}]</span> {s.title}
                         {/* "Knowledge base" is an internal category tag, not
