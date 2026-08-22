@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { ragAsk, writeMemory, RagAskResult } from '@/lib/chakudya';
 import { TypewriterText } from '@/lib/markdown';
+import { databases, DB, Query } from '@/lib/appwrite';
 
 const SOURCE_LABELS: Record<string, string> = {
   knowledge_base: 'Knowledge base',
@@ -69,11 +70,16 @@ function groupCitedSources(list: RagAskResult['sources']): GroupedSource[] {
   return order.map((k) => map.get(k)!);
 }
 
-// A larger pool than we actually show at once. A handful of disease/medicine
-// topics are mixed in with food/nutrition ones so people unfamiliar with the
-// format see what kind of thing they can ask, in both shapes ("explain this"
-// and plain questions). Randomly sampled down to SUGGESTED_COUNT per visit
-// (see pickSuggested) so the panel doesn't look identical every time.
+// Fallback pool, used only until the Appwrite-backed list arrives (or if
+// that fetch fails — offline, collection empty, etc.) so the panel never
+// renders blank. The real, larger prompt library lives in the
+// suggested_prompts collection and can be grown from the Appwrite console
+// without a redeploy; this local copy exists purely as a safety net and
+// deliberately stays small. A handful of disease/medicine topics are mixed
+// in with food/nutrition ones so people unfamiliar with the format see what
+// kind of thing they can ask, in both shapes ("explain this" and plain
+// questions). Randomly sampled down to SUGGESTED_COUNT per visit (see
+// pickSuggested) so the panel doesn't look identical every time.
 const suggestedPool = [
   'What nutrients are in nsima?',
   'What causes anaemia?',
@@ -106,6 +112,28 @@ function pickSuggested(pool: string[], n: number): string[] {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr.slice(0, n);
+}
+
+// Pulls every active prompt from Appwrite (a few hundred documents is a
+// trivial read, well under any page-size limit worth worrying about) and
+// lets pickSuggested do the random sampling client-side, same as the local
+// fallback — Appwrite doesn't offer a native "ORDER BY random()" query, and
+// this way both code paths share one sampling function. Returns [] on any
+// failure so the caller can decide what to fall back to, rather than
+// throwing mid-render.
+async function fetchSuggestedPrompts(): Promise<string[]> {
+  try {
+    const res = await databases.listDocuments(DB.databaseId, DB.collections.suggestedPrompts, [
+      Query.equal('active', true),
+      Query.limit(200)
+    ]);
+    return res.documents.map((d: any) => d.text).filter((t: unknown): t is string => typeof t === 'string' && t.trim().length > 0);
+  } catch {
+    // Offline, collection not created yet, or a transient Appwrite error —
+    // the local pool covers this, so fail silently rather than surfacing
+    // an error for what's a non-critical, decorative feature.
+    return [];
+  }
 }
 
 type Message =
@@ -305,10 +333,22 @@ export function Ask() {
   // only one message at a time, and it resets whenever the thread changes.
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
-  // Picked once per mount (lazy initializer, not re-rolled on every render)
-  // so the panel doesn't reshuffle mid-visit — only when the Ask page is
-  // freshly opened.
-  const [suggested] = useState(() => pickSuggested(suggestedPool, SUGGESTED_COUNT));
+  // Starts from the local pool so the panel is never blank, then upgrades
+  // to an Appwrite-sourced sample once that fetch resolves. Both come from
+  // the same pickSuggested shuffle, so the swap (if the user is still
+  // looking at the empty-state when it lands) is same-shape, not jarring.
+  const [suggested, setSuggested] = useState(() => pickSuggested(suggestedPool, SUGGESTED_COUNT));
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchSuggestedPrompts().then((texts) => {
+      if (cancelled || texts.length === 0) return;
+      setSuggested(pickSuggested(texts, Math.min(SUGGESTED_COUNT, texts.length)));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function markTypingDone(key: string) {
     setTypingDone((d) => (d[key] ? d : { ...d, [key]: true }));
@@ -387,21 +427,28 @@ export function Ask() {
     });
   }
 
-  // Shared tail end of asking a question: hits /rag/ask for `q` in `sid`,
-  // appends the answer (or error) to `threadId`. Callers are responsible for
-  // getting the user-facing question message into place first — `ask` below
-  // appends a new one, `saveEdit` replaces an existing one in place — since
-  // those two cases need different message-list edits before the same
-  // network round trip.
-  async function runQuery(threadId: string, sid: string, q: string) {
+  // Shared tail end of asking a question: hits /rag/ask for `apiQuery` in
+  // `sid`, appends the answer (or error) to `threadId`. Callers are
+  // responsible for getting the user-facing question message into place
+  // first — `ask` below appends a new one, `saveEdit` replaces an existing
+  // one in place — since those two cases need different message-list edits
+  // before the same network round trip.
+  //
+  // `apiQuery` vs `displayQ`: normally identical. Retry passes a longer
+  // `apiQuery` (see below) while keeping `displayQ` as the plain original
+  // question, so the extra instruction text never leaks into the chat
+  // bubble or into what gets written to session memory.
+  async function runQuery(threadId: string, sid: string, displayQ: string, apiQuery: string = displayQ) {
     setLoading(true);
     try {
-      const result = await ragAsk(q, 6, sid);
+      const result = await ragAsk(apiQuery, 6, sid);
       updateThread(threadId, (msgs) => [...msgs, { role: 'answer', result, animate: true }]);
       // Fire-and-forget: record this turn as session memory so later
       // questions in the same thread can recall it. Never blocks or
-      // affects the UI if it fails.
-      writeMemory(sid, `Q: ${q}\nA: ${result.answer}`);
+      // affects the UI if it fails. Uses displayQ (not apiQuery) so a
+      // retry's steering instruction doesn't get baked into memory and
+      // echoed back on the next question.
+      writeMemory(sid, `Q: ${displayQ}\nA: ${result.answer}`);
     } catch {
       updateThread(threadId, (msgs) => [
         ...msgs,
@@ -423,13 +470,23 @@ export function Ask() {
 
   // Regenerates the answer at `index`: drops it (and anything after it,
   // since later turns may have relied on that answer's context) and re-asks
-  // the question that preceded it.
+  // the question that preceded it — via runQuery directly, NOT ask(), since
+  // the question message already exists in the retained slice and ask()
+  // would append a second copy of it.
+  //
+  // The session's memory still holds the previous answer (writeMemory ran
+  // after the first attempt and retry doesn't erase it), so without a nudge
+  // the model tends to just repeat what it told itself last time. Appending
+  // an explicit rephrase instruction to the API-bound copy of the query
+  // steers it toward a genuinely different answer instead.
   function retry(index: number) {
     if (loading) return;
     const question = messages[index - 1];
     if (!question || question.role !== 'user') return;
+    const sid = activeThread!.sessionId;
     updateThread(activeThreadId, (msgs) => msgs.slice(0, index));
-    ask(question.text, activeThreadId);
+    const apiQuery = `${question.text}\n\n(Give a fresh answer to this — paraphrase rather than repeating your previous wording. Vary the phrasing and structure while keeping the facts and citations accurate.)`;
+    runQuery(activeThreadId, sid, question.text, apiQuery);
   }
 
   // Edits the user question at `index` in place, drops everything after it
