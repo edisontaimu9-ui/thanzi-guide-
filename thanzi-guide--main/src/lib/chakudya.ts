@@ -43,6 +43,24 @@ export interface ChakudyaFood {
   protein_g: number;
   carbs_g: number;
   fat_g: number;
+  // Micronutrient columns — present on every /foods and /foods/:id
+  // response, but individual values are `null` where the Malawi FCT
+  // source data doesn't have that figure for a given food yet.
+  fiber_g: number | null;
+  safa_g: number | null;
+  sugar_total_g: number | null;
+  vita_rae_mcg: number | null;
+  vitc_mg: number | null;
+  vitd_mcg: number | null;
+  vitb12_mcg: number | null;
+  folate_mcg: number | null;
+  calcium_mg: number | null;
+  iron_mg: number | null;
+  zinc_mg: number | null;
+  magnesium_mg: number | null;
+  potassium_mg: number | null;
+  sodium_mg: number | null;
+  iodine_mcg: number | null;
 }
 
 interface ListResponse<T> {
