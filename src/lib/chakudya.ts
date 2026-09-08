@@ -5,6 +5,33 @@
 
 const BASE_URL = 'https://chakudya-api.edisontaimu9.workers.dev';
 
+// Some `food_name` values in the Malawi FCT source data carry stray
+// leftover formatting characters — e.g. "{(Fish, whole, fresh,
+// Rhamphochromis esox, (Mcheni wa fuleshi)}*" — where a footnote marker
+// (trailing "*") and a mismatched "{"/"}" wrapper around the name got
+// saved as part of the string itself. The genuine local-name parenthetical
+// (e.g. "(Mcheni wa fuleshi)") is legitimate and must be kept.
+//
+// Fix applied here, once, at the data layer, so every screen that renders
+// a food name — search results, food detail, the homepage snapshot, meal
+// logs — gets the clean version automatically:
+//   1. Strip stray "{" / "}" characters entirely.
+//   2. Strip a trailing footnote "*".
+//   3. If that leaves one more "(" than ")" (the brace absorbed what was
+//      meant to be that paren's closer), drop the now-orphaned leading "(".
+export function cleanFoodName(name: string): string {
+  if (!name) return name;
+  let cleaned = name.replace(/[{}]/g, '').replace(/\*+\s*$/, '').trim();
+
+  const opens = (cleaned.match(/\(/g) || []).length;
+  const closes = (cleaned.match(/\)/g) || []).length;
+  if (cleaned.startsWith('(') && opens > closes) {
+    cleaned = cleaned.slice(1).trim();
+  }
+
+  return cleaned;
+}
+
 export interface ChakudyaFood {
   id: number;
   food_name: string;
@@ -16,6 +43,24 @@ export interface ChakudyaFood {
   protein_g: number;
   carbs_g: number;
   fat_g: number;
+  // Micronutrient columns — present on every /foods and /foods/:id
+  // response, but individual values are `null` where the Malawi FCT
+  // source data doesn't have that figure for a given food yet.
+  fiber_g: number | null;
+  safa_g: number | null;
+  sugar_total_g: number | null;
+  vita_rae_mcg: number | null;
+  vitc_mg: number | null;
+  vitd_mcg: number | null;
+  vitb12_mcg: number | null;
+  folate_mcg: number | null;
+  calcium_mg: number | null;
+  iron_mg: number | null;
+  zinc_mg: number | null;
+  magnesium_mg: number | null;
+  potassium_mg: number | null;
+  sodium_mg: number | null;
+  iodine_mcg: number | null;
 }
 
 interface ListResponse<T> {
@@ -47,7 +92,7 @@ export async function searchFoods(params: FoodSearchParams = {}): Promise<Chakud
   if (json.status !== 'success') {
     throw new Error(json.message || 'Chakudya API returned an error');
   }
-  return json.data;
+  return json.data.map((food) => ({ ...food, food_name: cleanFoodName(food.food_name) }));
 }
 
 export async function getFood(id: number): Promise<ChakudyaFood> {
@@ -59,7 +104,7 @@ export async function getFood(id: number): Promise<ChakudyaFood> {
   if (json.status !== 'success') {
     throw new Error(json.message || 'Chakudya API returned an error');
   }
-  return json.data;
+  return { ...json.data, food_name: cleanFoodName(json.data.food_name) };
 }
 
 // A food returned by the /foods/lookup cascade. Local hits share the same
@@ -120,7 +165,8 @@ export async function lookupFood(query: string): Promise<FoodLookupResult | null
   if (json.status !== 'success') {
     throw new Error(json.message || 'Chakudya API returned an error');
   }
-  return { food: json.data, source: json.source, cached: json.cached, freshlyCached: json.freshly_cached };
+  const food = { ...json.data, food_name: cleanFoodName(json.data.food_name) };
+  return { food, source: json.source, cached: json.cached, freshlyCached: json.freshly_cached };
 }
 
 // ── Community packaged-food submissions ────────────────────────────────────

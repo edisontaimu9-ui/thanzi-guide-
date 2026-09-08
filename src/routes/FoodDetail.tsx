@@ -5,6 +5,28 @@ import { useAuth } from '@/lib/auth-context';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
+// Micronutrient columns to surface, in display order. `key` must match a
+// ChakudyaFood field. Each food only shows the ones it actually has a
+// value for — the Malawi FCT source data has gaps, and a grid full of
+// "—" placeholders would be noisier than just omitting them.
+const MICRONUTRIENTS: { key: keyof ChakudyaFood; label: string; unit: string }[] = [
+  { key: 'fiber_g', label: 'Fiber', unit: 'g' },
+  { key: 'sugar_total_g', label: 'Sugar', unit: 'g' },
+  { key: 'safa_g', label: 'Saturated fat', unit: 'g' },
+  { key: 'vita_rae_mcg', label: 'Vitamin A', unit: 'mcg RAE' },
+  { key: 'vitc_mg', label: 'Vitamin C', unit: 'mg' },
+  { key: 'vitd_mcg', label: 'Vitamin D', unit: 'mcg' },
+  { key: 'vitb12_mcg', label: 'Vitamin B12', unit: 'mcg' },
+  { key: 'folate_mcg', label: 'Folate', unit: 'mcg' },
+  { key: 'calcium_mg', label: 'Calcium', unit: 'mg' },
+  { key: 'iron_mg', label: 'Iron', unit: 'mg' },
+  { key: 'zinc_mg', label: 'Zinc', unit: 'mg' },
+  { key: 'magnesium_mg', label: 'Magnesium', unit: 'mg' },
+  { key: 'potassium_mg', label: 'Potassium', unit: 'mg' },
+  { key: 'sodium_mg', label: 'Sodium', unit: 'mg' },
+  { key: 'iodine_mcg', label: 'Iodine', unit: 'mcg' }
+];
+
 export function FoodDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -98,9 +120,50 @@ export function FoodDetail() {
             Values are per {food.measure} ({food.weight_g}g) from the Chakudya Nutrition
             Registry, Malawi food composition data.
           </p>
+
+          <MicronutrientsPanel food={food} />
         </>
       )}
     </main>
+  );
+}
+
+function MicronutrientsPanel({ food }: { food: ChakudyaFood }) {
+  const available = MICRONUTRIENTS.filter((n) => food[n.key] != null);
+
+  if (available.length === 0) {
+    return (
+      <section className="mt-8">
+        <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Micronutrients</h2>
+        <p className="mt-2 text-sm text-brand-300 dark:text-brand-100">
+          Micronutrient data isn't in the registry yet for this food.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mt-8">
+      <h2 className="font-display text-lg text-brand-700 dark:text-sand-100">Micronutrients</h2>
+      <dl className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {available.map((n) => (
+          <div
+            key={n.key}
+            className="rounded-lg border border-brand-100 p-3 text-center dark:border-ink-800"
+          >
+            <dt className="text-xs uppercase tracking-wide text-brand-300 dark:text-brand-100">{n.label}</dt>
+            <dd className="mt-1 font-mono text-base font-semibold text-brand-700 dark:text-sand-100">
+              {food[n.key]} {n.unit}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {available.length < MICRONUTRIENTS.length && (
+        <p className="mt-2 text-xs text-brand-300 dark:text-brand-100">
+          Some micronutrient values aren't in the registry yet for this food.
+        </p>
+      )}
+    </section>
   );
 }
 
