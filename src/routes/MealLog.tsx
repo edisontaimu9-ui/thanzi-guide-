@@ -178,7 +178,25 @@ function LogMealForm({ userId, onLogged, onCancel }: { userId: string; onLogged:
         kj: food.kj ?? 0,
         protein_g: food.protein_g ?? 0,
         carbs_g: food.carbs_g ?? 0,
-        fat_g: food.fat_g ?? 0
+        fat_g: food.fat_g ?? 0,
+        // Barcode-scanned results can come from USDA/Open Food Facts/
+        // FatSecret, none of which supply the Malawi FCT micronutrient
+        // columns — genuinely unknown here, not just unfetched.
+        fiber_g: null,
+        safa_g: null,
+        sugar_total_g: null,
+        vita_rae_mcg: null,
+        vitc_mg: null,
+        vitd_mcg: null,
+        vitb12_mcg: null,
+        folate_mcg: null,
+        calcium_mg: null,
+        iron_mg: null,
+        zinc_mg: null,
+        magnesium_mg: null,
+        potassium_mg: null,
+        sodium_mg: null,
+        iodine_mcg: null
       });
     } catch {
       setError("Couldn't look up that barcode — try again.");
